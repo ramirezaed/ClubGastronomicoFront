@@ -23,3 +23,7 @@ export interface IRegisterUser {
 export interface IRegisterUserResponse {
   message: string;
 }
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}

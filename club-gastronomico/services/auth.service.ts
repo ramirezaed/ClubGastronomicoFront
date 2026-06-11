@@ -1,5 +1,6 @@
 import { AuthResponse, IRegisterUserResponse, IRegisterUser } from "@/types/auth.types";
 import axios from "axios";
+
 export const loginRequest = async (credentials: { email: string; password: string }): Promise<AuthResponse | null> => {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
@@ -39,5 +40,34 @@ export async function registerUser(data: IRegisterUser): Promise<IRegisterUserRe
       throw new Error(error.response?.data.message ?? "error al registrar usuario");
     }
   }
-  throw new Error("Error inesperado");
+  throw new Error("Ocurrio un error inesperado");
+}
+
+export async function forgotPassword(email: string): Promise<{ message: string }> {
+  try {
+    const response = await axios.post<{ message: string }>(`${process.env.NEXT_PUBLIC_API_URL}/auth/forgot-password`, {
+      email,
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message ?? "error al enviar correo de recuperacion");
+    }
+  }
+  throw new Error("Ocurrio un error inesperado");
+}
+
+export async function resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
+  try {
+    const response = await axios.post<{ message: string }>(`${process.env.NEXT_PUBLIC_API_URL}/auth/reset-password`, {
+      token,
+      newPassword,
+    });
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message ?? "error al restablecer la contraseña");
+    }
+  }
+  throw new Error("Ocurrio un error inesperado");
 }

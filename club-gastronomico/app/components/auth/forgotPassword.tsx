@@ -51,7 +51,7 @@ export default function ForgotPasswordPage() {
                 Hemos enviado un enlace para restablecer tu contraseña a <span className="font-semibold">{email}</span>
               </p>
               <Link
-                href="/auth/login"
+                href="/login"
                 className="inline-flex items-center gap-2 text-orange-600 font-semibold hover:text-orange-700 transition"
               >
                 <ArrowLeft size={18} />
@@ -93,7 +93,9 @@ export default function ForgotPasswordPage() {
                 />
               </div>
 
-              {error && <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-lg text-sm">{error}</div>}
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-600 p-3 rounded-lg text-sm">{error}</div>
+              )}
 
               <button
                 type="submit"

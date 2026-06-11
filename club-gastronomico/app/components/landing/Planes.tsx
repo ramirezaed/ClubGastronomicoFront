@@ -25,12 +25,14 @@ export default function Planes() {
                 <span className="text-gray-500">/mes</span>
               </div>
               <ul className="space-y-3 mb-8 grow">
-                {["Toma de pedidos básica", "Gestión de pedidos", "Reportes básicos", "Soporte por email"].map((item, idx) => (
-                  <li key={idx} className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
-                    <span>{item}</span>
-                  </li>
-                ))}
+                {["Toma de pedidos básica", "Gestión de pedidos", "Reportes básicos", "Soporte por email"].map(
+                  (item, idx) => (
+                    <li key={idx} className="flex items-center gap-2">
+                      <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ),
+                )}
               </ul>
             </div>
           </div>
@@ -73,7 +75,7 @@ export default function Planes() {
         {/* Botón centrado debajo */}
         <div className="flex justify-center">
           <Link
-            href="/auth/register"
+            href="/register"
             className="bg-linear-to-r from-orange-500 to-orange-600 text-white px-8 py-3 rounded-full font-semibold hover:from-orange-600 hover:to-orange-700 transition-all transform hover:scale-105 shadow-md inline-block text-center"
           >
             Comenzar Ahora

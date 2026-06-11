@@ -16,13 +16,7 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     const { data } = await axios.post<{ accessToken: string }>(`${process.env.NEXT_PUBLIC_API_URL}/auth/refreshToken`, {
       refreshToken: token.refreshToken,
     });
-
     const expiration = getTokenExpiration(data.accessToken);
-
-    console.log("TOKEN REFRESCADO CORRECTAMENTE");
-    console.log("NUEVA EXPIRACIÓN:", new Date(expiration));
-    console.log("========================================");
-
     return {
       ...token,
       accessToken: data.accessToken,

@@ -13,3 +13,13 @@ export interface AuthResponse {
 }
 
 export type Role = "SuperAdmin" | "owner" | "employee";
+
+export interface IRegisterUser {
+  name: string;
+  lastname: string;
+  email: string;
+  password: string;
+}
+export interface IRegisterUserResponse {
+  message: string;
+}

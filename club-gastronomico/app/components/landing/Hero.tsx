@@ -29,7 +29,7 @@ export default function Hero({ scrollToSection }: HeroProps) {
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
-                href="/auth/register"
+                href="/register"
                 className="bg-linear-to-r from-orange-500 to-orange-600 text-white px-8 py-3 rounded-full font-semibold hover:from-orange-600 hover:to-orange-700 transition-all transform hover:scale-105 text-center shadow-lg"
               >
                 Prueba gratis

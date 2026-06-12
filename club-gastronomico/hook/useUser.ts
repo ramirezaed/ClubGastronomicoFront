@@ -1,38 +1,21 @@
-import { getAllUser } from "@/services/user.service";
-import { getUserParams, User } from "@/types/user.types";
+import { getById } from "@/services/user.service";
+import { useState } from "react";
 
-import { useCallback, useState } from "react";
-
-export const useUsers = () => {
-  const [users, setUsers] = useState<User[]>([]); //si no hay ningun usuarios muestra vacios
-  const [loading, setLoading] = useState(true); //por default true, para que aparezcala leyenda "cargando"
+export const useUser = () => {
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-  });
 
-  //useCallback memoriza la funcion, evita que se cree en cada renderizacion
-  const fetchUser = useCallback(async (params?: getUserParams) => {
-    setLoading(true); //se vuele a colar para que cuando en la siguiente pagina aparezca
+  const fetchById = async (id: string) => {
+    setLoading(true);
     setError(null);
     try {
-      const response = await getAllUser(params);
-      setUsers(response.users.data);
-      if (response.users.page) {
-        setPagination({
-          page: response.users.page,
-          limit: response.users.limit || 10,
-          total: response.users.total || 0,
-        });
-      }
+      const response = await getById(id);
+      return response;
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Error al cargar usuarios");
+      setError(error instanceof Error ? error.message : " error al obtener datos del usuario");
     } finally {
       setLoading(false);
     }
-  }, []);
-
-  return { users, loading, error, pagination, fetchUser };
+  };
+  return { loading, error, fetchById };
 };

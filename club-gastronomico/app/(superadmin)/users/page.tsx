@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useUsers } from "@/hook/useUser";
+
+import { useUsers } from "@/hook/useUsers";
 import { UserTable } from "@/app/components/admin/userTable";
 import { Users as UsersIcon } from "lucide-react";
+import Link from "next/link";
 
 export default function UsersPage() {
   // const { users, loading, error, fetchUsers, toggleStatus, changeRole } = useUsers();
@@ -72,8 +74,14 @@ export default function UsersPage() {
         ) : (
           <ul>
             {users.map((user) => (
-              <li key={user.id}>
-                {user.name} - {user.email} {user.lastname} {user.company?.name}
+              <li key={user.id} className="flex justify-between items-center py-2 border-b">
+                <span>
+                  {user.name} - {user.email} {user.lastname} {user.company?.name}
+                </span>
+
+                <Link href={`/users/${user.id}`} className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+                  Ver detalle
+                </Link>
               </li>
             ))}
           </ul>

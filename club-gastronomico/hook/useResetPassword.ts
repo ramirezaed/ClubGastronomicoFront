@@ -9,7 +9,7 @@ export const useResetPassword = (token: string) => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-  const router = useRouter(); // o useNavigate() según tu router
+  const router = useRouter(); 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

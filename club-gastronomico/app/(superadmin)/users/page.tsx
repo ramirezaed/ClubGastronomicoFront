@@ -1,14 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import { useUsers } from "@/hook/useUsers";
-import { UserTable } from "@/app/components/admin/userTable";
 import { Users as UsersIcon } from "lucide-react";
 import Link from "next/link";
 
 export default function UsersPage() {
-  // const { users, loading, error, fetchUsers, toggleStatus, changeRole } = useUsers();
   const { users, loading, error, fetchUser } = useUsers();
   const [filter, setFilter] = useState({ is_active: "", role: "" });
 
@@ -18,6 +15,7 @@ export default function UsersPage() {
     if (filter.role) params.role = filter.role;
     fetchUser(params);
   }, [filter, fetchUser]);
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -63,11 +61,6 @@ export default function UsersPage() {
       {/* Error */}
       {error && <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl">{error}</div>}
 
-      {/* Tabla */}
-      {/* <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-        <UserTable users={users} loading={loading} onToggleStatus={toggleStatus} onChangeRole={changeRole} />
-      </div> */}
-
       <div className="bg-white rounded-xl shadow-sm p-4">
         {loading ? (
           <p>Cargando usuarios...</p>
@@ -76,7 +69,14 @@ export default function UsersPage() {
             {users.map((user) => (
               <li key={user.id} className="flex justify-between items-center py-2 border-b">
                 <span>
-                  {user.name} - {user.email} {user.lastname} {user.company?.name}
+                  {user.name} - {user.email} {user.lastname} {user.company?.name} {user.role.name}
+                  <span
+                    className={`px-2 py-1 text-xs rounded-full ${
+                      user.is_active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                    }`}
+                  >
+                    {user.is_active ? "Activo" : "Inactivo"}
+                  </span>
                 </span>
 
                 <Link href={`/users/${user.id}`} className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">

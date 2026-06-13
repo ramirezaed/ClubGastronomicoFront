@@ -41,3 +41,10 @@ export interface PaginationResponse<T> {
     totalPages: number;
   };
 }
+export interface activateDeactivateResponse {
+  //   message: string;
+  userActualizado: {
+    id: string;
+    is_active: boolean;
+  };
+}

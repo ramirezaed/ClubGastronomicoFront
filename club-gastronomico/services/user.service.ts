@@ -1,4 +1,4 @@
-import { getUserParams, PaginationResponse, User } from "@/types/user.types";
+import { activateDeactivateResponse, getUserParams, PaginationResponse, User } from "@/types/user.types";
 import api from "@/lib/axios";
 export async function getUser() {}
 
@@ -20,10 +20,32 @@ export async function getById(id: string): Promise<User> {
     const response = await api.get(`/user/${id}`);
     return response.data.user;
   } catch (error) {
-    console.error(error);
     if (error instanceof Error) {
       throw error;
     }
     throw new Error("error al buscar usuario");
+  }
+}
+
+export async function activate(id: string): Promise<activateDeactivateResponse> {
+  try {
+    const response = await api.patch(`user/activate/${id}`);
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("error al activar usuario");
+  }
+}
+export async function deactivate(id: string): Promise<activateDeactivateResponse> {
+  try {
+    const response = await api.patch(`user/deactivate/${id}`);
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("error al desactivar usuario");
   }
 }

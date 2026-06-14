@@ -6,22 +6,42 @@ import { useUser } from "@/hook/useUser";
 import { User } from "@/types/user.types";
 import { CheckCircle, XCircle, User as UserIcon, Mail, Building2, Store, Briefcase } from "lucide-react";
 import { StatusToggle } from "@/app/components/ui/togleStatus";
+import { useRouter } from "next/navigation";
+import { DeleteButton } from "@/app/components/ui/DeleteButton";
+import Modal from "@/app/components/ui/Modal";
 
 export default function UserDetailPage() {
+  const router = useRouter();
   const params = useParams();
   const id = params.id as string;
-  const { loading, updating, error, fetchById, tooglestatus } = useUser();
+  const { loading, updating, error, fetchById, toogglestatus, deleteUser } = useUser();
   const [user, setUser] = useState<User | null>(null);
+  const [modalOpen, setModalOpen] = useState(false); //seteo el modal, por defecto false (cerrado)
+  const [modalMessage, setModalMessage] = useState(""); //mensaje del modal, por defcto vacio
 
   const handleToggleStatus = async () => {
     if (!user) return;
-    const response = await tooglestatus(user.id, user.is_active);
+    const response = await toogglestatus(user.id, user.is_active);
     if (response) {
       setUser({
         ...user,
         is_active: response.userActualizado.is_active,
       });
     }
+  };
+
+  const handleDelete = async () => {
+    if (!user) return;
+    const response = await deleteUser(user.id);
+    if (response) {
+      setModalMessage(response.message || "Usuario eliminado exitosamente");
+      setModalOpen(true);
+    }
+  };
+  //funcion cerrar modal, al cerrar vuelve a la pagina usuarios
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    router.push("/users");
   };
 
   useEffect(() => {
@@ -163,6 +183,7 @@ export default function UserDetailPage() {
               </div>
             </div>
             <StatusToggle isActive={user.is_active} loading={updating} onToggle={handleToggleStatus} />
+            <DeleteButton loading={loading} itemName={`al usuario ${user.name}`} onDelete={handleDelete} />
             {/* Información de empresa */}
             <div>
               <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
@@ -199,6 +220,7 @@ export default function UserDetailPage() {
           </div>
         </div>
       </div>
+      <Modal isOpen={modalOpen} onClose={handleCloseModal} title="¡Registro exitoso!" message={modalMessage} />
     </div>
   );
 }

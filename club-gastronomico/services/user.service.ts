@@ -1,4 +1,10 @@
-import { activateDeactivateResponse, getUserParams, PaginationResponse, User } from "@/types/user.types";
+import {
+  activateDeactivateResponse,
+  getUserParams,
+  PaginationResponse,
+  softDeleteUser,
+  User,
+} from "@/types/user.types";
 import api from "@/lib/axios";
 export async function getUser() {}
 
@@ -47,5 +53,18 @@ export async function deactivate(id: string): Promise<activateDeactivateResponse
       throw error;
     }
     throw new Error("error al desactivar usuario");
+  }
+}
+
+export async function softDelete(id: string): Promise<softDeleteUser> {
+  try {
+    const response = await api.delete(`/user/${id}`);
+
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("error al eliminar usuario");
   }
 }

@@ -2,90 +2,262 @@
 
 import { useEffect, useState } from "react";
 import { useUsers } from "@/hook/useUsers";
-import { Users as UsersIcon } from "lucide-react";
+import { Users as UsersIcon, CheckCircle, XCircle, Eye, AlertTriangle } from "lucide-react";
 import Link from "next/link";
+import { AuthBackground } from "@/app/components/auth/authBackground";
+import { AuthCard } from "@/app/components/auth/authcard";
 
 export default function UsersPage() {
   const { users, loading, error, fetchUser } = useUsers();
-  const [filter, setFilter] = useState({ is_active: "", role: "" });
+
+  const [filter, setFilter] = useState({
+    is_active: "",
+    role: "",
+  });
 
   useEffect(() => {
     const params: any = {};
-    if (filter.is_active !== "") params.is_active = filter.is_active === "true";
-    if (filter.role) params.role = filter.role;
+
+    if (filter.is_active !== "") {
+      params.is_active = filter.is_active === "true";
+    }
+
+    if (filter.role) {
+      params.role = filter.role;
+    }
+
     fetchUser(params);
   }, [filter, fetchUser]);
 
+  const getRoleBadgeClass = (roleName: string) => {
+    const roleMap: Record<string, string> = {
+      SuperAdmin: "bg-purple-100 text-purple-700",
+      owner: "bg-blue-100 text-blue-700",
+      employee: "bg-green-100 text-green-700",
+    };
+
+    return roleMap[roleName] || "bg-gray-100 text-gray-700";
+  };
+
+  if (error) {
+    return (
+      <AuthBackground>
+        <AuthCard
+          icon={AlertTriangle}
+          title="No pudimos cargar los usuarios"
+          subtitle="Ocurrió un problema al comunicarnos con el servidor."
+        >
+          <div className="space-y-6 text-center">
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
+              <p className="text-red-600 font-medium">En este momento no podemos mostrar la información solicitada.</p>
+
+              <p className="text-sm text-gray-500 mt-2">
+                Verifica tu conexión o intenta nuevamente dentro de unos minutos.
+              </p>
+            </div>
+
+            <button
+              onClick={() => fetchUser()}
+              className="
+                w-full
+                bg-linear-to-r
+                from-orange-500
+                to-orange-600
+                text-white
+                py-2.5
+                rounded-xl
+                font-semibold
+                hover:from-orange-600
+                hover:to-orange-700
+                transition
+                transform
+                hover:scale-[1.02]
+                shadow-md
+                cursor-pointer
+              "
+            >
+              Reintentar
+            </button>
+          </div>
+        </AuthCard>
+      </AuthBackground>
+    );
+  }
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">Usuarios</h1>
-          <p className="text-gray-500 mt-1">Gestiona los usuarios del sistema</p>
-        </div>
-        <div className="bg-orange-100 p-3 rounded-xl">
-          <UsersIcon className="w-6 h-6 text-orange-600" />
-        </div>
-      </div>
-
-      {/* Filtros */}
-      <div className="bg-white rounded-xl shadow-sm p-4 flex gap-4">
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Estado</label>
-          <select
-            value={filter.is_active}
-            onChange={(e) => setFilter({ ...filter, is_active: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-          >
-            <option value="">Todos</option>
-            <option value="true">Activos</option>
-            <option value="false">Inactivos</option>
-          </select>
-        </div>
-        <div className="flex-1">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Rol</label>
-          <select
-            value={filter.role}
-            onChange={(e) => setFilter({ ...filter, role: e.target.value })}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-          >
-            <option value="">Todos</option>
-            <option value="SuperAdmin">SuperAdmin</option>
-            <option value="owner">Owner</option>
-            <option value="employee">Employee</option>
-          </select>
+    <div className="min-h-screen bg-linear-to-br from-orange-50 to-amber-50 p-8 relative">
+      {/* Fondo con texto repetido */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+        <div className="absolute inset-0 opacity-[0.08]">
+          {[...Array(20)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute text-2xl font-bold text-gray-800 whitespace-nowrap"
+              style={{
+                top: `${(i * 120) % 1000}px`,
+                left: `${(i * 80) % 1000}px`,
+                transform: "rotate(12deg)",
+                opacity: i % 3 === 0 ? 0.2 : i % 3 === 1 ? 0.4 : 0.1,
+              }}
+            >
+              Club Gastronómico
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Error */}
-      {error && <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-xl">{error}</div>}
+      <div className="max-w-7xl mx-auto relative z-10">
+        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden">
+          <div className="h-1 bg-linear-to-r from-orange-500 to-orange-600" />
 
-      <div className="bg-white rounded-xl shadow-sm p-4">
-        {loading ? (
-          <p>Cargando usuarios...</p>
-        ) : (
-          <ul>
-            {users.map((user) => (
-              <li key={user.id} className="flex justify-between items-center py-2 border-b">
-                <span>
-                  {user.name} - {user.email} {user.lastname} {user.company?.name} {user.role.name}
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      user.is_active ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {user.is_active ? "Activo" : "Inactivo"}
-                  </span>
-                </span>
+          {/* Header */}
+          <div className="p-8 border-b border-gray-100">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-3xl font-bold text-gray-800">Usuarios</h1>
 
-                <Link href={`/users/${user.id}`} className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
-                  Ver detalle
-                </Link>
-              </li>
-            ))}
-          </ul>
-        )}
+                <p className="text-gray-500 mt-1">Gestiona los usuarios del sistema</p>
+              </div>
+
+              <div className="w-16 h-16 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center">
+                <UsersIcon className="w-8 h-8 text-white" />
+              </div>
+            </div>
+          </div>
+
+          {/* Filtros */}
+          <div className="p-8 border-b border-gray-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Estado</label>
+
+                <select
+                  value={filter.is_active}
+                  onChange={(e) =>
+                    setFilter({
+                      ...filter,
+                      is_active: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2.5 rounded-xl border-gray-200 bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                >
+                  <option value="">Todos los estados</option>
+                  <option value="true">Activos</option>
+                  <option value="false">Inactivos</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Rol</label>
+
+                <select
+                  value={filter.role}
+                  onChange={(e) =>
+                    setFilter({
+                      ...filter,
+                      role: e.target.value,
+                    })
+                  }
+                  className="w-full px-4 py-2.5 rounded-xl border-gray-200 bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                >
+                  <option value="">Todos los roles</option>
+                  <option value="SuperAdmin">SuperAdmin</option>
+                  <option value="owner">Owner</option>
+                  <option value="employee">Employee</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          {/* Tabla */}
+          <div className="p-8">
+            {loading ? (
+              <div className="text-center py-12">
+                <div className="animate-pulse">
+                  <div className="w-16 h-16 mx-auto rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg mb-4" />
+
+                  <p className="text-gray-600">Cargando usuarios...</p>
+                </div>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200 bg-gray-50">
+                      <th className="text-left py-4 px-4">Usuario</th>
+
+                      <th className="text-left py-4 px-4">Email</th>
+
+                      <th className="text-left py-4 px-4">Empresa</th>
+
+                      <th className="text-left py-4 px-4">Rol</th>
+
+                      <th className="text-left py-4 px-4">Estado</th>
+
+                      <th className="text-left py-4 px-4">Acciones</th>
+                    </tr>
+                  </thead>
+
+                  <tbody>
+                    {users.map((user) => (
+                      <tr key={user.id} className="border-b border-gray-100 hover:bg-gray-50">
+                        <td className="py-4 px-4">
+                          {user.name} {user.lastname}
+                        </td>
+
+                        <td className="py-4 px-4">{user.email}</td>
+
+                        <td className="py-4 px-4">{user.company?.name || "—"}</td>
+
+                        <td className="py-4 px-4">
+                          <span
+                            className={`px-3 py-1 rounded-full text-xs font-semibold ${getRoleBadgeClass(
+                              user.role.name,
+                            )}`}
+                          >
+                            {user.role.name}
+                          </span>
+                        </td>
+
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-2">
+                            {user.is_active ? (
+                              <>
+                                <CheckCircle className="w-5 h-5 text-green-500" />
+                                <span className="text-green-600">Activo</span>
+                              </>
+                            ) : (
+                              <>
+                                <XCircle className="w-5 h-5 text-red-500" />
+                                <span className="text-red-600">Inactivo</span>
+                              </>
+                            )}
+                          </div>
+                        </td>
+
+                        <td className="py-4 px-4">
+                          <Link
+                            href={`/users/${user.id}`}
+                            className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-orange-500 to-orange-600 text-white rounded-xl shadow-md hover:scale-[1.02] transition-all"
+                          >
+                            <Eye className="w-4 h-4" />
+                            Ver detalle
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+
+                {users.length === 0 && (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500">No se encontraron usuarios</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,11 +1,15 @@
-import { activate, deactivate, getById } from "@/services/user.service";
+import { activate, deactivate, getById, softDelete } from "@/services/user.service";
 import { useState } from "react";
-
+/**
+ * Hook personalizado para gestionar las acciones individuales de un usuario.
+ * Proporciona estados de carga, actualización y manejo de errores.
+ */
 export const useUser = () => {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  //obtener usuario por id
   const fetchById = async (id: string) => {
     setLoading(true);
     setError(null);
@@ -18,6 +22,7 @@ export const useUser = () => {
       setLoading(false);
     }
   };
+  // Activa una cuenta de usuario.
   const activateUser = async (id: string) => {
     setUpdating(true);
     setError(null);
@@ -30,6 +35,7 @@ export const useUser = () => {
       setUpdating(false);
     }
   };
+  //desactiva cuenta de usuario
   const deactivateUser = async (id: string) => {
     setUpdating(true);
     setError(null);
@@ -42,12 +48,25 @@ export const useUser = () => {
       setUpdating(false);
     }
   };
-  const tooglestatus = async (id: string, isActive: boolean) => {
+  // alterna el estado de activado a desactivado, segun su estado actual
+  const toogglestatus = async (id: string, isActive: boolean) => {
     if (isActive) {
       return deactivateUser(id);
     }
     return activateUser(id);
   };
+  //baja logica de un usuario
+  const deleteUser = async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      return await softDelete(id);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al eliminar usuario");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  return { loading, error, fetchById, activateUser, deactivateUser, tooglestatus, updating };
+  return { loading, error, fetchById, activateUser, deactivateUser, toogglestatus, updating, deleteUser };
 };

@@ -48,3 +48,7 @@ export interface activateDeactivateResponse {
     is_active: boolean;
   };
 }
+
+export interface softDeleteUser {
+  message: string;
+}

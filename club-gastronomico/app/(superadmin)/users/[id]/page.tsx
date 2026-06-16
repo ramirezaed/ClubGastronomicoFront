@@ -9,7 +9,6 @@ import { StatusToggle } from "@/app/components/ui/togleStatus";
 import { useRouter } from "next/navigation";
 import { DeleteButton } from "@/app/components/ui/DeleteButton";
 import Modal from "@/app/components/ui/Modal";
-import { AuthBackground } from "@/app/components/auth/authBackground";
 import { ErrorState } from "@/app/components/ui/errorState";
 import { LoadingState } from "@/app/components/ui/loandigstate";
 
@@ -98,125 +97,126 @@ export default function UserDetailPage() {
   }
 
   return (
-    <AuthBackground>
-      <div className="max-w-4xl mx-auto relative z-10">
-        {/* Card principal */}
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl overflow-hidden">
-          {/* Barra naranja superior */}
-          <div className="h-1 bg-linear-to-r from-orange-500 to-orange-600"></div>
-
-          {/* Header */}
-          <div className="p-6 border-b border-gray-100">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center">
-                <UserIcon className="w-8 h-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-800">
-                  {user.name} {user.lastname}
-                </h1>
-                <div className="flex items-center gap-2 mt-2">
-                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getRoleBadgeClass(user.role.name)}`}>
-                    {user.role.name}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    {user.is_active ? (
-                      <>
-                        <CheckCircle className="w-5 h-5 text-green-500" />
-                        <span className="text-sm font-medium text-green-600">Activo</span>
-                      </>
-                    ) : (
-                      <>
-                        <XCircle className="w-5 h-5 text-red-500" />
-                        <span className="text-sm font-medium text-red-600">Inactivo</span>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+    <div className="w-full bg-white flex flex-col justify-center rounded-3xl shadow-2xl overflow-hidden">
+      {/* Header */}
+      <div className="p-6 border-b border-gray-100">
+        <div className="flex items-center gap-4">
+          <div className="w-16 h-16 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
+            <UserIcon className="w-8 h-8 text-white" />
           </div>
-
-          {/* Contenido */}
-          <div className="p-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Información de contacto */}
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <div className="w-1 h-6 rounded-full bg-linear-to-r from-orange-500 to-orange-600" />
-                  Información de Contacto
-                </h2>
-                <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                  <Mail className="w-5 h-5 text-gray-400 shrink-0" />
-                  <div>
-                    <p className="text-xs text-gray-500 uppercase tracking-wide">Email</p>
-
-                    <p className="text-gray-800 font-medium break-all">{user.email}</p>
-                  </div>
-                </div>
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+              {user.name} {user.lastname}
+            </h1>
+            <div className="flex flex-wrap items-center gap-2 mt-2">
+              <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getRoleBadgeClass(user.role.name)}`}>
+                {user.role.name}
+              </span>
+              <div className="flex items-center gap-1">
+                {user.is_active ? (
+                  <>
+                    <CheckCircle className="w-5 h-5 text-green-500" />
+                    <span className="text-sm font-medium text-green-600">Activo</span>
+                  </>
+                ) : (
+                  <>
+                    <XCircle className="w-5 h-5 text-red-500" />
+                    <span className="text-sm font-medium text-red-600">Inactivo</span>
+                  </>
+                )}
               </div>
-
-              {/* Información de empresa */}
-              <div>
-                <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                  <div className="w-1 h-6 rounded-full bg-linear-to-r from-orange-500 to-orange-600" />
-                  Información de Empresa
-                </h2>
-                <div className="space-y-3">
-                  <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
-                    <Building2 className="w-5 h-5 text-gray-400 shrink-0" />
-                    <div>
-                      <p className="text-xs text-gray-500 uppercase tracking-wide">Empresa</p>
-                      <p className="text-gray-800 font-medium">{user.company?.name ?? "Sin empresa asignada"}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-orange-100 bg-orange-50/50 p-6">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <h3 className="font-semibold text-gray-800">Estado del usuario</h3>
-
-                <p className="text-sm text-gray-500 mt-1">
-                  Activa o desactiva el acceso de este usuario al sistema. Los usuarios inactivos no podrán iniciar
-                  sesión.
-                </p>
-              </div>
-
-              <StatusToggle isActive={user.is_active} loading={updating} onToggle={handleToggleStatus} />
-            </div>
-          </div>
-
-          <div className="border-t border-gray-100 bg-gray-50 px-8 py-6">
-            <div className="flex flex-col-reverse sm:flex-row sm:justify-between gap-4">
-              <button
-                onClick={() => router.back()}
-                className="
-                px-6 py-2.5
-                rounded-xl
-                bg-linear-to-r
-                from-orange-500
-                to-orange-600
-                text-white
-                font-medium
-                shadow-md
-                hover:scale-[1.02]
-                transition-all
-                duration-200
-                cursor-pointer
-            "
-              >
-                Volver
-              </button>
-              <DeleteButton loading={loading} itemName={`al usuario ${user.name}`} onDelete={handleDelete} />
             </div>
           </div>
         </div>
       </div>
-      <Modal isOpen={modalOpen} onClose={handleCloseModal} title="¡Usario Eliminado!" message={modalMessage} />
-    </AuthBackground>
+
+      {/* Contenido */}
+      <div className="p-4 md:p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Información de contacto */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <div className="w-1 h-6 rounded-full bg-linear-to-r from-orange-500 to-orange-600" />
+              Información de Contacto
+            </h2>
+            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+              <Mail className="w-5 h-5 text-gray-400 shrink-0" />
+              <div>
+                <p className="text-xs text-gray-500 uppercase tracking-wide">Email</p>
+                <p className="text-gray-800 font-medium break-all">{user.email}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Información de empresa */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <div className="w-1 h-6 rounded-full bg-linear-to-r from-orange-500 to-orange-600" />
+              Información de Empresa
+            </h2>
+            <div className="space-y-3">
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                <Building2 className="w-5 h-5 text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Empresa</p>
+                  <p className="text-gray-800 font-medium">{user.company?.name ?? "Sin empresa asignada"}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+                <Store className="w-5 h-5 text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Sucursal</p>
+                  <p className="text-gray-800 font-medium">{user.branch?.name ?? "Sin sucursal asignada"}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Estado del usuario - con padding reducido en móvil */}
+      <div className="rounded-2xl border border-orange-100 bg-orange-50/50 p-4 md:p-6 mx-4 md:mx-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h3 className="font-semibold text-gray-800">Estado del usuario</h3>
+            <p className="text-sm text-gray-500 mt-1">Activa o desactiva el acceso de este usuario al sistema.</p>
+          </div>
+          <StatusToggle isActive={user.is_active} loading={updating} onToggle={handleToggleStatus} />
+        </div>
+      </div>
+
+      {/* Botones - sin gap-40 ni py-20 en móvil */}
+      <div className="border-t border-gray-100 bg-gray-50 px-4 md:px-8 py-4 md:py-6 mt-4">
+        <div className="flex flex-col sm:flex-row sm:justify-center gap-3 sm:gap-6">
+          <button
+            onClick={() => router.back()}
+            className="
+            w-full sm:w-auto
+            px-6 py-2.5
+            rounded-xl
+            bg-linear-to-r
+            from-orange-500
+            to-orange-600
+            text-white
+            font-medium
+            shadow-md
+            hover:scale-[1.02]
+            transition-all
+            duration-200
+            cursor-pointer
+            order-2 sm:order-1
+          "
+          >
+            Volver
+          </button>
+          {/* <div className="order-1 sm:order-2"> */}
+          <div className="flex flex-col sm:flex-row sm:justify-center  gap-3 sm:gap-6">
+            <DeleteButton loading={loading} itemName={`al usuario ${user.name}`} onDelete={handleDelete} />
+          </div>
+        </div>
+      </div>
+
+      <Modal isOpen={modalOpen} onClose={handleCloseModal} title="¡Usuario Eliminado!" message={modalMessage} />
+    </div>
   );
 }

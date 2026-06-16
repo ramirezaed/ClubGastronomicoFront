@@ -13,10 +13,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-
-
-
-
 @keyframes loading-bar {
   0% {
     transform: scaleX(0);

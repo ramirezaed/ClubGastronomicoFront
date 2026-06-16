@@ -19,43 +19,43 @@ export function DeleteButton({ loading = false, itemName = "este elemento", onDe
 
   return (
     <>
-      {/* Botón eliminar */}
+      {/* Botón eliminar centrado */}
       <button
         type="button"
         disabled={loading}
         onClick={() => setOpen(true)}
         className="
-          inline-flex items-center gap-2
-          px-4 py-2 rounded-xl
+          inline-flex items-center justify-center gap-2
+          w-full sm:w-auto
+          px-5 py-2.5 rounded-xl
           bg-red-50 text-red-600
           hover:bg-red-100
           cursor-pointer
           border border-red-200
-          font-medium
+          font-semibold text-sm
           transition-all duration-200
           disabled:opacity-50
           disabled:cursor-not-allowed
         "
       >
-        <Trash2 size={18} />
-        {loading ? "Eliminando..." : "Eliminar"}
+        <Trash2 size={16} />
+        <span>{loading ? "Eliminando..." : "Eliminar"}</span>
       </button>
 
       {/* Modal con línea superior */}
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="w-full max-w-sm mx-4 bg-white rounded-2xl shadow-xl overflow-hidden">
-            {/* Línea superior roja */}
-            <div className="h-1 bg-orange-500"></div>
+            {/* Línea superior */}
+            <div className="h-1 bg-linear-to-r from-orange-500 to-orange-600"></div>
 
             <div className="p-6">
               <div className="text-center">
                 <div className="w-12 h-12 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-4">
-                  <Trash2 className="w-6 h-6 text-red-600" />
+                  <Trash2 className="w-5 h-5 text-red-600" />
                 </div>
 
-                <h3 className="text-lg font-semibold text-gray-800 ">¿Eliminar {itemName}?</h3>
-
+                <h3 className="text-lg font-semibold text-gray-800">¿Eliminar {itemName}?</h3>
                 <p className="text-sm text-gray-500 mt-2">Esta acción no se puede deshacer.</p>
               </div>
 
@@ -64,11 +64,11 @@ export function DeleteButton({ loading = false, itemName = "este elemento", onDe
                   type="button"
                   onClick={() => setOpen(false)}
                   className="
-                    flex-1 py-2 rounded-xl
+                    flex-1 py-2.5 rounded-xl
                     bg-gray-100 text-gray-700
                     hover:bg-gray-200
                     cursor-pointer
-                    font-medium
+                    font-semibold text-sm
                     transition
                   "
                 >
@@ -82,10 +82,9 @@ export function DeleteButton({ loading = false, itemName = "este elemento", onDe
                   className="
                     flex-1 py-2.5
                     bg-linear-to-r from-orange-500 to-orange-600
-                    text-white font-medium
-                    rounded-xl shadow-md
+                    text-white font-semibold text-sm
+                    rounded-xl shadow-xs
                     hover:scale-[1.02]
-
                     transition-all duration-200
                     cursor-pointer
                     disabled:opacity-50

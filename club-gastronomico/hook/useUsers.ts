@@ -15,7 +15,7 @@ export const useUsers = () => {
 
   //useCallback memoriza la funcion, evita que se cree en cada renderizacion
   const fetchUser = useCallback(async (params?: getUserParams) => {
-    setLoading(true); //se vuele a colar para que cuando en la siguiente pagina aparezca
+    setLoading(true); //se vuele a colocar para que cuando en la siguiente pagina aparezca
     setError(null);
     try {
       const response = await getAllUser(params);

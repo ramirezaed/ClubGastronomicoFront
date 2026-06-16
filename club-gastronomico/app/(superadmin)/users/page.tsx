@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { useUsers } from "@/hook/useUsers";
 import { Users as UsersIcon, CheckCircle, XCircle, Eye, AlertTriangle } from "lucide-react";
 import Link from "next/link";
-import { AuthBackground } from "@/app/components/auth/authBackground";
-import { AuthCard } from "@/app/components/auth/authcard";
+import { ErrorState } from "@/app/components/ui/errorState";
 
 export default function UsersPage() {
   const { users, loading, error, fetchUser } = useUsers();
@@ -17,18 +16,16 @@ export default function UsersPage() {
 
   useEffect(() => {
     const params: any = {};
-
     if (filter.is_active !== "") {
       params.is_active = filter.is_active === "true";
     }
-
     if (filter.role) {
       params.role = filter.role;
     }
-
     fetchUser(params);
   }, [filter, fetchUser]);
 
+  //funcion para mostrar lso roles
   const getRoleBadgeClass = (roleName: string) => {
     const roleMap: Record<string, string> = {
       SuperAdmin: "bg-purple-100 text-purple-700",
@@ -39,49 +36,9 @@ export default function UsersPage() {
     return roleMap[roleName] || "bg-gray-100 text-gray-700";
   };
 
+  //componente muestra error cuando no hay respuesta de la api
   if (error) {
-    return (
-      <AuthBackground>
-        <AuthCard
-          icon={AlertTriangle}
-          title="No pudimos cargar los usuarios"
-          subtitle="Ocurrió un problema al comunicarnos con el servidor."
-        >
-          <div className="space-y-6 text-center">
-            <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
-              <p className="text-red-600 font-medium">En este momento no podemos mostrar la información solicitada.</p>
-
-              <p className="text-sm text-gray-500 mt-2">
-                Verifica tu conexión o intenta nuevamente dentro de unos minutos.
-              </p>
-            </div>
-
-            <button
-              onClick={() => fetchUser()}
-              className="
-                w-full
-                bg-linear-to-r
-                from-orange-500
-                to-orange-600
-                text-white
-                py-2.5
-                rounded-xl
-                font-semibold
-                hover:from-orange-600
-                hover:to-orange-700
-                transition
-                transform
-                hover:scale-[1.02]
-                shadow-md
-                cursor-pointer
-              "
-            >
-              Reintentar
-            </button>
-          </div>
-        </AuthCard>
-      </AuthBackground>
-    );
+    return <ErrorState title=" No pudimos cargar los usuarios" onRetry={() => fetchUser} />;
   }
 
   return (

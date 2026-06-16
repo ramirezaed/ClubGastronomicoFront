@@ -29,6 +29,7 @@ export function DeleteButton({ loading = false, itemName = "este elemento", onDe
           px-4 py-2 rounded-xl
           bg-red-50 text-red-600
           hover:bg-red-100
+          cursor-pointer
           border border-red-200
           font-medium
           transition-all duration-200
@@ -74,23 +75,6 @@ export function DeleteButton({ loading = false, itemName = "este elemento", onDe
                   Cancelar
                 </button>
 
-                {/* <button
-                  type="button"
-                  onClick={handleDelete}
-                  disabled={loading}
-                  className="
-                    flex-1 py-2 rounded-xl
-                     bg-orange-500 text-white
-                     hover:bg-orange-700
-                    cursor-pointer
-                    font-medium
-                    transition
-                    disabled:opacity-50
-                  "
-                >
-                  {loading ? "Eliminando..." : "Eliminar"}
-                </button> */}
-
                 <button
                   type="button"
                   onClick={handleDelete}
@@ -101,6 +85,7 @@ export function DeleteButton({ loading = false, itemName = "este elemento", onDe
                     text-white font-medium
                     rounded-xl shadow-md
                     hover:scale-[1.02]
+
                     transition-all duration-200
                     cursor-pointer
                     disabled:opacity-50

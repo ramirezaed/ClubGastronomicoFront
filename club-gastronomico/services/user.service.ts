@@ -1,5 +1,6 @@
 import {
   activateDeactivateResponse,
+  changeRol,
   getUserParams,
   PaginationResponse,
   softDeleteUser,
@@ -66,5 +67,17 @@ export async function softDelete(id: string): Promise<softDeleteUser> {
       throw error;
     }
     throw new Error("error al eliminar usuario");
+  }
+}
+
+export async function updateRol(id: string): Promise<changeRol> {
+  try {
+    const response = await api.patch(`/user/role/${id}`);
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("error al intentar cambiar el rol");
   }
 }

@@ -15,6 +15,7 @@ export default function UsersPage() {
     role: "",
   });
 
+  //funcion para obtener la lista completa de usuarios
   const loadUsers = () => {
     const params: getUserParams = {};
     if (filter.is_active !== "") {
@@ -25,11 +26,12 @@ export default function UsersPage() {
     }
     fetchUser(params);
   };
-
+  //funcion que se ejecuta cuando cambia alguno de los filtros
   useEffect(() => {
     loadUsers();
   }, [filter]);
 
+  //funcion para mostrar los roles con etiquetas diferentes
   const getRoleBadgeClass = (roleName: string) => {
     const roleMap: Record<string, string> = {
       SuperAdmin: "bg-purple-100 text-purple-700",

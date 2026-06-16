@@ -89,7 +89,7 @@ export function AdminMenu({ userName, userEmail }: AdminMenuProps) {
         </div>
 
         {/* Navegación */}
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto ">
           {menuItems.map((item) => {
             const Icon = item.icon;
             return (
@@ -98,12 +98,11 @@ export function AdminMenu({ userName, userEmail }: AdminMenuProps) {
                 href={item.href}
                 onClick={() => setIsOpen(false)}
                 className={`
-                  flex items-center gap-3 px-4 py-3 rounded-xl
-                  transition-all duration-200
+                  flex items-center gap-3 px-4 py-3 rounded-xl hover:text-orange-600  hover:scale-[1.02] transition-all duration-200 
                   ${
                     item.active
                       ? "bg-linear-to-r from-orange-50 to-amber-50 text-orange-600 font-medium shadow-sm"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-800"
+                      : "text-gray-600 hover:bg-amber-50 hover:text-gray-800"
                   }
                 `}
               >
@@ -123,9 +122,9 @@ export function AdminMenu({ userName, userEmail }: AdminMenuProps) {
             onClick={handleLogout}
             className="
               w-full flex items-center gap-3 px-4 py-3 rounded-xl
-              text-orange-600 hover:bg-orange-300 cursor-pointer   hover:scale-[1.02]
+              text-orange-600 hover:text-gray-50 hover:bg-orange-500 cursor-pointer   hover:scale-[1.02]
           
-              transition-all duration-200
+              transition-all duration-200 
               font-medium
             "
           >

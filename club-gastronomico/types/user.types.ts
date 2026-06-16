@@ -42,7 +42,6 @@ export interface PaginationResponse<T> {
   };
 }
 export interface activateDeactivateResponse {
-  //   message: string;
   userActualizado: {
     id: string;
     is_active: boolean;
@@ -51,4 +50,11 @@ export interface activateDeactivateResponse {
 
 export interface softDeleteUser {
   message: string;
+}
+
+export interface changeRol {
+  userActualizado: {
+    id: string;
+    role_id: string;
+  };
 }

@@ -16,7 +16,7 @@ export default function UserDetailPage() {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
-  const { loading, updating, error, fetchById, toogglestatus, deleteUser } = useUser();
+  const { loading, updating, error, fetchById, toogglestatus, deleteUser, updateRolUser } = useUser();
   const [user, setUser] = useState<User | null>(null);
   const [modalOpen, setModalOpen] = useState(false); //seteo el modal, por defecto false (cerrado)
   const [modalMessage, setModalMessage] = useState(""); //mensaje del modal, por defcto vacio

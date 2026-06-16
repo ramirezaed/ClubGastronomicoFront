@@ -1,4 +1,4 @@
-import { activate, deactivate, getById, softDelete } from "@/services/user.service";
+import { activate, deactivate, getById, softDelete, updateRol } from "@/services/user.service";
 import { useState } from "react";
 /**
  * Hook personalizado para gestionar las acciones individuales de un usuario.
@@ -67,6 +67,27 @@ export const useUser = () => {
       setLoading(false);
     }
   };
-
-  return { loading, error, fetchById, activateUser, deactivateUser, toogglestatus, updating, deleteUser };
+  const updateRolUser = async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await updateRol(id);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al cambiar el rol");
+    } finally {
+      setLoading(false);
+    }
+  };
+  return {
+    loading,
+    error,
+    fetchById,
+    activateUser,
+    deactivateUser,
+    toogglestatus,
+    updating,
+    deleteUser,
+    updateRolUser,
+  };
 };

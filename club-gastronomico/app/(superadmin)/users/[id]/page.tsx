@@ -112,7 +112,7 @@ export default function UserDetailPage() {
   }
 
   return (
-    <div className="w-full bg-white flex flex-col justify-center rounded-3xl shadow-2xl overflow-hidden">
+    <div className="w-full bg-white flex flex-col justify-center  overflow-hidden">
       {/* Header */}
       <div className="p-6 border-b border-gray-100">
         <div className="flex items-center gap-4">
@@ -183,7 +183,7 @@ export default function UserDetailPage() {
       </div>
 
       {/* Estado del usuario - con padding reducido en móvil */}
-      <div className="rounded-2xl border border-orange-100 bg-orange-50/50 p-4 md:p-6 mx-4 md:mx-6">
+      <div className="rounded-2xl border border-orange-100 bg-orange-50/50 p-4  mx-4 md:mx-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h3 className="font-semibold text-gray-800">Estado del usuario</h3>
@@ -192,7 +192,8 @@ export default function UserDetailPage() {
           <StatusToggle isActive={user.is_active} loading={updating} onToggle={handleToggleStatus} />
         </div>
       </div>
-      <div className="rounded-2xl border border-orange-100 bg-orange-50/50 p-4 md:p-6 mx-4 md:mx-6 mt-4">
+
+      <div className="rounded-2xl  border border-orange-100 bg-orange-50/50 p-4  mx-4 md:mx-6 mt-0.5">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <h3 className="font-semibold text-gray-800 text-lg">Rol del usuario</h3>

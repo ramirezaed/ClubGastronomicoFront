@@ -11,6 +11,7 @@ export const useUsers = () => {
     page: 1,
     limit: 10,
     total: 0,
+    totalPages: 1,
   });
 
   //useCallback memoriza la funcion, evita que se cree en cada renderizacion
@@ -25,6 +26,7 @@ export const useUsers = () => {
           page: response.users.page,
           limit: response.users.limit || 10,
           total: response.users.total || 0,
+          totalPages: response.users.totalPages || 1,
         });
       }
     } catch (error) {
@@ -33,6 +35,14 @@ export const useUsers = () => {
       setLoading(false);
     }
   }, []);
+
+  //hook para paginacion
+  const goToPage = useCallback(
+    (page: number, params?: getUserParams) => {
+      fetchUser({ ...params, page });
+    },
+    [fetchUser],
+  );
 
   //hook para buscador de usuarios
   const search = async (name?: string, email?: string) => {
@@ -49,5 +59,5 @@ export const useUsers = () => {
     [];
   };
 
-  return { users, loading, error, pagination, fetchUser, search };
+  return { users, loading, error, pagination, fetchUser, search, goToPage };
 };

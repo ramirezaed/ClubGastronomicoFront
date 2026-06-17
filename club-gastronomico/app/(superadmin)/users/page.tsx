@@ -9,7 +9,7 @@ import { getUserParams } from "@/types/user.types";
 import { LoadingState } from "@/app/components/ui/loandigstate";
 
 export default function UsersPage() {
-  const { users, loading, error, fetchUser, search } = useUsers();
+  const { users, loading, error, fetchUser, search, goToPage, pagination } = useUsers();
   //seteo el parametro de busqueda searchTrem, por defecto ""
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState({
@@ -63,6 +63,14 @@ export default function UsersPage() {
     return roleMap[roleName] || "bg-gray-100 text-gray-700";
   };
 
+  //funcion para cambiar de pagina respetando los filtros
+  const handlePageChange = (newPage: number) => {
+    const params: getUserParams = {};
+    if (filter.is_active !== "") params.is_active = filter.is_active === "true";
+    if (filter.role) params.role = filter.role;
+    goToPage(newPage, params);
+  };
+
   //si hay error muestra el error
   if (error) {
     return (
@@ -74,6 +82,7 @@ export default function UsersPage() {
     return <LoadingState title="Cargando datos de usuarios" description="Espere un momento por favor" />;
   }
 
+  console.log("pagination:", pagination);
   return (
     <>
       <div className="w-full bg-white flex flex-col">
@@ -152,11 +161,6 @@ export default function UsersPage() {
               {users.map((user) => (
                 <tr
                   key={user.id}
-                  /* Explicación de clases en Tailwind v4:
-                   - bg-white: Fondo base para las filas pares.
-                   - odd:bg-orange-50/60: Tiñe de naranja claro sutil e inequívoco las filas impares de forma nativa.
-                   - hover:bg-orange-100/80: Resalta cualquier renglón al pasar el mouse por encima.
-                */
                   className="bg-white odd:bg-orange-50/60 hover:bg-orange-100/80 transition-colors duration-150"
                 >
                   {/* Datos del Usuario */}
@@ -218,6 +222,60 @@ export default function UsersPage() {
             </div>
           )}
         </div>
+
+        {/* Paginación */}
+
+        {users.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-6 py-5 border-t border-gray-100 bg-lienar-to-r from-orange-50/50 to-amber-50/50 rounded-b-3xl">
+            <div className="flex items-center gap-4">
+              {/* Botón Anterior */}
+              <button
+                onClick={() => handlePageChange(pagination.page - 1)}
+                disabled={pagination.page <= 1}
+                className="
+        px-5 py-2.5 rounded-xl
+        text-sm font-medium
+        bg-white/90 backdrop-blur-sm
+        border-2 border-gray-200
+        text-gray-600
+        hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600
+        disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white/90 disabled:hover:text-gray-600
+        transition-all duration-200
+        shadow-sm hover:shadow-md
+        cursor-pointer
+      "
+              >
+                ← Anterior
+              </button>
+
+              {/* Texto de página */}
+              <span className="text-sm text-gray-500 whitespace-nowrap">
+                <span className="font-semibold text-gray-700">{pagination.page}</span>
+                <span className="text-gray-400"> / </span>
+                <span className="font-semibold text-gray-700">{pagination.totalPages ?? 1}</span>
+              </span>
+
+              {/* Botón Siguiente */}
+              <button
+                onClick={() => handlePageChange(pagination.page + 1)}
+                disabled={pagination.page >= (pagination.totalPages ?? 1)}
+                className="
+        px-5 py-2.5 rounded-xl
+        text-sm font-medium
+        bg-linear-to-r from-orange-500 to-orange-600
+        text-white
+        hover:scale-[1.03] hover:shadow-lg
+        disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-md
+        transition-all duration-200
+        shadow-md
+        cursor-pointer
+      "
+              >
+                Siguiente →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

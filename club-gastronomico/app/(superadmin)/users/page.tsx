@@ -9,7 +9,9 @@ import { getUserParams } from "@/types/user.types";
 import { LoadingState } from "@/app/components/ui/loandigstate";
 
 export default function UsersPage() {
-  const { users, loading, error, fetchUser } = useUsers();
+  const { users, loading, error, fetchUser, search } = useUsers();
+  //seteo el parametro de busqueda searchTrem, por defecto ""
+  const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState({
     is_active: "",
     role: "",
@@ -26,10 +28,30 @@ export default function UsersPage() {
     }
     fetchUser(params);
   };
+
   //funcion que se ejecuta cuando cambia alguno de los filtros
   useEffect(() => {
     loadUsers();
   }, [filter]);
+
+  //se ejecuta cuando se quiere buscar un usuario
+  // la busqueda se ejecuta 400ms dps de escribir la ultima letra
+  useEffect(() => {
+    if (searchTerm.trim() === "") return;
+    const timer = setTimeout(() => {
+      const isEmail = searchTerm.includes("@");
+      search(isEmail ? undefined : searchTerm, isEmail ? searchTerm : undefined);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  //limpia el buscador cuando se vuelve a la lista general
+  //si el buscador esta vacio llama carga la lista
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      loadUsers();
+    }
+  }, [searchTerm]);
 
   //funcion para mostrar los roles con etiquetas diferentes
   const getRoleBadgeClass = (roleName: string) => {
@@ -41,12 +63,13 @@ export default function UsersPage() {
     return roleMap[roleName] || "bg-gray-100 text-gray-700";
   };
 
+  //si hay error muestra el error
   if (error) {
     return (
       <ErrorState title="No pudimos cargar los usuarios" subtitle="Por favor intentelo mas tarde" onRetry={loadUsers} />
     );
   }
-
+  //muestra la barra de carga
   if (loading) {
     return <LoadingState title="Cargando datos de usuarios" description="Espere un momento por favor" />;
   }
@@ -99,18 +122,13 @@ export default function UsersPage() {
             {/* buscador */}
             <div>
               <label className="block text-sm font-semibold text-gray-700 mb-2">Buscar</label>
-              <select
-                value={filter.role}
-                onChange={(e) =>
-                  setFilter({
-                    ...filter,
-                    role: e.target.value,
-                  })
-                }
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Nombre o email"
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
-              >
-                <option value="">buscar usuario</option>
-              </select>
+              />
             </div>
           </div>
         </div>

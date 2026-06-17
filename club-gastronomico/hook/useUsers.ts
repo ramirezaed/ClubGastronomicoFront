@@ -1,4 +1,4 @@
-import { getAllUser, getById } from "@/services/user.service";
+import { getAllUser, searchUser } from "@/services/user.service";
 import { getUserParams, User } from "@/types/user.types";
 
 import { useCallback, useState } from "react";
@@ -34,5 +34,20 @@ export const useUsers = () => {
     }
   }, []);
 
-  return { users, loading, error, pagination, fetchUser };
+  //hook para buscador de usuarios
+  const search = async (name?: string, email?: string) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const response = await searchUser(name, email);
+      setUsers(response);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al buscar usuario");
+    } finally {
+      setLoading(false);
+    }
+    [];
+  };
+
+  return { users, loading, error, pagination, fetchUser, search };
 };

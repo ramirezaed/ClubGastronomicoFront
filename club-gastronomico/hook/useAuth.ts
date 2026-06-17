@@ -16,15 +16,12 @@ export const useAuth = () => {
     if (result?.error) {
       throw new Error();
     }
-    // Actualizar la sesión para obtener los datos más recientes
-    await update();
-    // Redirigir según rol - lo haremos después de obtener la sesión actualizada
-    router.push("/");
+    window.location.href = "/";
   };
 
   const logout = async () => {
     await signOut({ redirect: false });
-    router.push("/login");
+    window.location.href = "/";
   };
 
   return { login, logout };

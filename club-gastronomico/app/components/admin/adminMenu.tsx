@@ -4,21 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Users, Package, Shield, LogOut, Menu, X, User as UserIcon } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { useAuth } from "@/hook/useAuth";
 
-interface AdminMenuProps {
-  userName?: string;
-  userEmail?: string;
-}
-
-export function AdminMenu({ userName, userEmail }: AdminMenuProps) {
+export function AdminMenu() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-
-  const handleLogout = async () => {
-    await signOut({ redirect: false });
-    window.location.href = "/";
-  };
+  const { data: session } = useSession();
+  const { logout } = useAuth();
 
   const menuItems = [
     {
@@ -82,8 +75,8 @@ export function AdminMenu({ userName, userEmail }: AdminMenuProps) {
               <UserIcon className="w-5 h-5 text-white" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold text-gray-800 truncate">{userName}</p>
-              <p className="text-xs text-gray-500 truncate">{userEmail}</p>
+              <p className="text-sm font-semibold text-gray-800 truncate">{session?.user.name}</p>
+              <p className="text-xs text-gray-500 truncate">{session?.user.email}</p>
             </div>
           </div>
         </div>
@@ -119,7 +112,7 @@ export function AdminMenu({ userName, userEmail }: AdminMenuProps) {
         {/* Footer con cerrar sesión */}
         <div className="p-4 border-t border-gray-100 shrink-0">
           <button
-            onClick={handleLogout}
+            onClick={logout}
             className="
               w-full flex items-center gap-3 px-4 py-3 rounded-xl
               text-orange-600 hover:text-gray-50 hover:bg-orange-500 cursor-pointer   hover:scale-[1.02]

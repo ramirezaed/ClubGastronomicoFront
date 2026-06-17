@@ -80,3 +80,15 @@ export async function updateRol(id: string, role_id: string): Promise<changeRol>
     throw new Error("error al intentar cambiar el rol");
   }
 }
+
+export async function searchUser(name?: string, email?: string): Promise<User[]> {
+  try {
+    const response = await api.post(`/user/search`, { name, email });
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("error al buscar usuario");
+  }
+}

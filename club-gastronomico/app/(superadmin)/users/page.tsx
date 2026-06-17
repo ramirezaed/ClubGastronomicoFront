@@ -42,7 +42,9 @@ export default function UsersPage() {
   };
 
   if (error) {
-    return <ErrorState title="No pudimos cargar los usuarios" onRetry={loadUsers} />;
+    return (
+      <ErrorState title="No pudimos cargar los usuarios" subtitle="Por favor intentelo mas tarde" onRetry={loadUsers} />
+    );
   }
 
   if (loading) {

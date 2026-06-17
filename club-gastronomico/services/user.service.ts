@@ -7,7 +7,6 @@ import {
   User,
 } from "@/types/user.types";
 import api from "@/lib/axios";
-export async function getUser() {}
 
 export async function getAllUser(params?: getUserParams): Promise<PaginationResponse<User>> {
   try {
@@ -70,9 +69,9 @@ export async function softDelete(id: string): Promise<softDeleteUser> {
   }
 }
 
-export async function updateRol(id: string): Promise<changeRol> {
+export async function updateRol(id: string, role_id: string): Promise<changeRol> {
   try {
-    const response = await api.patch(`/user/role/${id}`);
+    const response = await api.patch(`/user/role/${id}`, { role_id }); //{role_id} es el body
     return response.data;
   } catch (error) {
     if (error instanceof Error) {

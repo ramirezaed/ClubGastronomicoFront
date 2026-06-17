@@ -15,9 +15,9 @@ interface ErrorStateProps {
 
 export function ErrorState({
   title,
-  subtitle = "Ocurrió un problema al comunicarnos con el servidor.",
-  message = "En este momento no podemos mostrar la información solicitada.",
-  description = "Verifica tu conexión o intenta nuevamente dentro de unos minutos.",
+  subtitle,
+  message,
+  description,
   retryText = "Reintentar",
   onRetry,
 }: ErrorStateProps) {
@@ -25,11 +25,13 @@ export function ErrorState({
     <AuthBackground>
       <AuthCard icon={AlertTriangle} title={title} subtitle={subtitle}>
         <div className="space-y-6 text-center">
-          <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
-            <p className="text-red-600 font-medium">{message}</p>
+          {(message || description) && (
+            <div className="bg-red-50 border border-red-100 rounded-2xl p-4">
+              {message && <p className="text-red-600 font-medium">{message}</p>}
 
-            <p className="text-sm text-gray-500 mt-2">{description}</p>
-          </div>
+              {description && <p className="text-sm text-gray-500 mt-2">{description}</p>}
+            </div>
+          )}
 
           {onRetry && (
             <button

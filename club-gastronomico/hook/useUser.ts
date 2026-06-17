@@ -67,11 +67,11 @@ export const useUser = () => {
       setLoading(false);
     }
   };
-  const updateRolUser = async (id: string) => {
+  const updateRolUser = async (id: string, role_id: string) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await updateRol(id);
+      const response = await updateRol(id, role_id);
       return response;
     } catch (error) {
       setError(error instanceof Error ? error.message : "error al cambiar el rol");

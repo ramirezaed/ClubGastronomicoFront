@@ -34,7 +34,7 @@ export default function UsersPage() {
     loadUsers();
   }, [filter]);
 
-  //se ejecuta cuando se quiere buscar un usuario
+  //buscador se ejecuta cuando se quiere buscar un usuario
   // la busqueda se ejecuta 400ms dps de escribir la ultima letra
   useEffect(() => {
     if (searchTerm.trim() === "") return;
@@ -73,16 +73,13 @@ export default function UsersPage() {
 
   //si hay error muestra el error
   if (error) {
-    return (
-      <ErrorState title="No pudimos cargar los usuarios" subtitle="Por favor intentelo mas tarde" onRetry={loadUsers} />
-    );
+    return <ErrorState title={error} subtitle="Por favor intentelo mas tarde" onRetry={loadUsers} />;
   }
   //muestra la barra de carga
   if (loading) {
     return <LoadingState title="Cargando datos de usuarios" description="Espere un momento por favor" />;
   }
 
-  console.log("pagination:", pagination);
   return (
     <>
       <div className="w-full bg-white flex flex-col">

@@ -21,7 +21,7 @@ export default function UserDetailPage() {
   const [user, setUser] = useState<User | null>(null);
   const [modalOpen, setModalOpen] = useState(false); //seteo el modal, por defecto false (cerrado)
   const [modalMessage, setModalMessage] = useState(""); //mensaje del modal, por defcto vacio
-  const { roles, fetchRoles } = useRoles(); //
+  const { roles, fetchRoles } = useRoles(); //trae todos los datos de los roles para cambiar de rol al usuario
   const [selectedRole, setSelectedRole] = useState("");
 
   //funcion para manejar el cambio de estado

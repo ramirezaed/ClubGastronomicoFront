@@ -3,7 +3,8 @@
 import { ErrorState } from "@/app/components/ui/errorState";
 import { LoadingState } from "@/app/components/ui/loandigstate";
 import { usePlans } from "@/hook/usePlans";
-import { AlertCircle, CheckCircle, CheckCircle2, ClipboardList, Crown, Edit3, Plus, Star, XCircle } from "lucide-react";
+import { CheckCircle, Crown, Edit3, Plus, XCircle } from "lucide-react";
+import Link from "next/link";
 import { useEffect } from "react";
 
 export default function PlansPage() {
@@ -20,7 +21,6 @@ export default function PlansPage() {
   };
 
   if (loading) {
-    console.log("planes", plans);
     return <LoadingState title="Cargando lista de planes" description="Espere un momento por favor" />;
   }
   if (error) {
@@ -98,13 +98,13 @@ export default function PlansPage() {
 
                 {/* Acción: Botón Editar Plan (Naranja con Degradado) */}
                 <div className="pt-4 border-t border-gray-100 mt-auto">
-                  <button
-                    onClick={() => console.log("Editar plan", plan.id)}
+                  <Link
+                    href={`/planes/${plan.id}`}
                     className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-linear-to-r from-orange-500 to-orange-600 text-white font-bold shadow-md transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                   >
                     <Edit3 className="w-4 h-4" />
                     <span>Editar Plan</span>
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}

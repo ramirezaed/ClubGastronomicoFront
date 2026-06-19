@@ -7,6 +7,7 @@ import {
   User,
 } from "@/types/user.types";
 import api from "@/lib/axios";
+import axios from "axios";
 
 export async function getAllUser(params?: getUserParams): Promise<PaginationResponse<User>> {
   try {
@@ -14,10 +15,10 @@ export async function getAllUser(params?: getUserParams): Promise<PaginationResp
     return response.data;
   } catch (error) {
     // muestra los mss que vienen de la api
-    if (error instanceof Error) {
-      throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message ?? "error al buscar usuario");
     }
-    throw new Error("error al buscar usuarios");
+    throw new Error("ocurrio un error inesperado");
   }
 }
 
@@ -26,10 +27,10 @@ export async function getById(id: string): Promise<User> {
     const response = await api.get(`/user/${id}`);
     return response.data.user;
   } catch (error) {
-    if (error instanceof Error) {
-      throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message ?? "error al bucar usuario");
     }
-    throw new Error("error al buscar usuario");
+    throw new Error("ocurrio un error inesperado");
   }
 }
 
@@ -38,34 +39,34 @@ export async function activate(id: string): Promise<activateDeactivateResponse> 
     const response = await api.patch(`user/activate/${id}`);
     return response.data;
   } catch (error) {
-    if (error instanceof Error) {
-      throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message ?? "error al intentar activar al usuario");
     }
-    throw new Error("error al activar usuario");
+    throw new Error("ocurrio un error inesperado");
   }
 }
+
 export async function deactivate(id: string): Promise<activateDeactivateResponse> {
   try {
     const response = await api.patch(`user/deactivate/${id}`);
     return response.data;
   } catch (error) {
-    if (error instanceof Error) {
-      throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message ?? "error al intentar desactivar al usuario");
     }
-    throw new Error("error al desactivar usuario");
+    throw new Error("ocurrio un error inesperado");
   }
 }
 
 export async function softDelete(id: string): Promise<softDeleteUser> {
   try {
     const response = await api.delete(`/user/${id}`);
-
     return response.data;
   } catch (error) {
-    if (error instanceof Error) {
-      throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message ?? "error al intentar eliminar el usuario");
     }
-    throw new Error("error al eliminar usuario");
+    throw new Error("ocurrio un error inesperado");
   }
 }
 
@@ -74,10 +75,10 @@ export async function updateRol(id: string, role_id: string): Promise<changeRol>
     const response = await api.patch(`/user/role/${id}`, { role_id }); //{role_id} es el body
     return response.data;
   } catch (error) {
-    if (error instanceof Error) {
-      throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message ?? "error al intentar cambiar de rol");
     }
-    throw new Error("error al intentar cambiar el rol");
+    throw new Error("ocurrio un error inesperado");
   }
 }
 
@@ -86,9 +87,9 @@ export async function searchUser(name?: string, email?: string): Promise<User[]>
     const response = await api.post(`/user/search`, { name, email });
     return response.data;
   } catch (error) {
-    if (error instanceof Error) {
-      throw error;
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data?.message ?? "error al buscar usuario");
     }
-    throw new Error("error al buscar usuario");
+    throw new Error("ocurrio un error inesperado");
   }
 }

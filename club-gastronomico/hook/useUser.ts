@@ -67,6 +67,7 @@ export const useUser = () => {
       setLoading(false);
     }
   };
+  //hook para cambiar de rol a un usuario
   const updateRolUser = async (id: string, role_id: string) => {
     setLoading(true);
     setError(null);

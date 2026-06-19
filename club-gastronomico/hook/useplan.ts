@@ -1,4 +1,4 @@
-import { getplanById, softDeletePlan } from "@/services/plan.service";
+import { getplanById, softDeletePlan, updatePlan } from "@/services/plan.service";
 import { Plans } from "@/types/plans.types";
 import { useState } from "react";
 
@@ -7,6 +7,12 @@ export const usePlan = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  //seteo los campos para modificar
+  const [price, setPrice] = useState("");
+  const [description, setDescription] = useState("");
+  const [formError, setFormError] = useState("");
+
+  //hook para buscar un plan por id
   const fetchPlanById = async (id: string) => {
     setLoading(true);
     setError(null);
@@ -21,6 +27,7 @@ export const usePlan = () => {
     }
   };
 
+  //hook para eliinar un plan
   const deletePlan = async (id: string) => {
     setLoading(true);
     setError(null);
@@ -33,11 +40,27 @@ export const usePlan = () => {
     }
   };
 
+  //hook para modificar los datos de un plan
+  const update = async (id: string, price?: string, description?: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await updatePlan(id, price, description);
+      setPlan(response);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al intentar actualizar el plan");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     plan,
     loading,
     error,
     fetchPlanById,
     deletePlan,
+    update,
   };
 };

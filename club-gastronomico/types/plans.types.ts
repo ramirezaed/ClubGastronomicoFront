@@ -1,7 +1,7 @@
 export interface Plans {
   id: string;
   name: string;
-  price: number;
+  price: string;
   description: string;
   is_active: boolean;
 }

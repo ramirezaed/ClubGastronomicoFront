@@ -1,30 +1,286 @@
 "use client";
 
-import { signOut } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { useUsers } from "@/hook/useUsers";
+import { Users as UsersIcon, CheckCircle, XCircle, Eye } from "lucide-react";
+import Link from "next/link";
+import { ErrorState } from "@/app/components/ui/errorState";
+import { getUserParams } from "@/types/user.types";
+import { LoadingState } from "@/app/components/ui/loandigstate";
 
-export default function Users() {
-  const handleLogout = async () => {
-    await signOut({ redirect: false });
-    window.location.href = "/";
+export default function UsersPage() {
+  const { users, loading, error, fetchUser, search, goToPage, pagination } = useUsers();
+  //seteo el parametro de busqueda searchTrem, por defecto ""
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filter, setFilter] = useState({
+    is_active: "",
+    role: "",
+  });
+
+  //funcion para obtener la lista completa de usuarios
+  const loadUsers = () => {
+    const params: getUserParams = {};
+    if (filter.is_active !== "") {
+      params.is_active = filter.is_active === "true";
+    }
+    if (filter.role) {
+      params.role = filter.role;
+    }
+    fetchUser(params);
   };
 
+  //funcion que se ejecuta cuando cambia alguno de los filtros
+  useEffect(() => {
+    loadUsers();
+  }, [filter]);
+
+  //buscador se ejecuta cuando se quiere buscar un usuario
+  // la busqueda se ejecuta 400ms dps de escribir la ultima letra
+  useEffect(() => {
+    if (searchTerm.trim() === "") return;
+    const timer = setTimeout(() => {
+      const isEmail = searchTerm.includes("@");
+      search(isEmail ? undefined : searchTerm, isEmail ? searchTerm : undefined);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  //limpia el buscador cuando se vuelve a la lista general
+  //si el buscador esta vacio llama carga la lista
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      loadUsers();
+    }
+  }, [searchTerm]);
+
+  //funcion para mostrar los roles con etiquetas diferentes
+  const getRoleBadgeClass = (roleName: string) => {
+    const roleMap: Record<string, string> = {
+      SuperAdmin: "bg-purple-100 text-purple-700",
+      owner: "bg-blue-100 text-blue-700",
+      employee: "bg-green-100 text-green-700",
+    };
+    return roleMap[roleName] || "bg-gray-100 text-gray-700";
+  };
+
+  //funcion para cambiar de pagina respetando los filtros
+  const handlePageChange = (newPage: number) => {
+    const params: getUserParams = {};
+    if (filter.is_active !== "") params.is_active = filter.is_active === "true";
+    if (filter.role) params.role = filter.role;
+    goToPage(newPage, params);
+  };
+
+  //si hay error muestra el error
+  if (error) {
+    return <ErrorState title={error} subtitle="Por favor intentelo mas tarde" onRetry={loadUsers} />;
+  }
+  //muestra la barra de carga
+  if (loading) {
+    return <LoadingState title="Cargando datos de usuarios" description="Espere un momento por favor" />;
+  }
+
   return (
-    <div>
-      <p>hola pagina de superadmin</p>
-      <button
-        onClick={handleLogout}
-        style={{
-          marginTop: "20px",
-          padding: "8px 16px",
-          backgroundColor: "#ef4444",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
-      >
-        Cerrar Sesión
-      </button>
-    </div>
+    <>
+      <div className="w-full bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col">
+        {/* 1. Sección de Filtros (Superior) */}
+        <div className="p-6 ">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Filtro de Estado */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
+              <select
+                value={filter.is_active}
+                onChange={(e) =>
+                  setFilter({
+                    ...filter,
+                    is_active: e.target.value,
+                  })
+                }
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
+              >
+                <option value="">Todos los estados</option>
+                <option value="true">Activos</option>
+                <option value="false">Inactivos</option>
+              </select>
+            </div>
+
+            {/* Filtro de Rol */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Rol</label>
+              <select
+                value={filter.role}
+                onChange={(e) =>
+                  setFilter({
+                    ...filter,
+                    role: e.target.value,
+                  })
+                }
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
+              >
+                <option value="">Todos los roles</option>
+                <option value="SuperAdmin">SuperAdmin</option>
+                <option value="owner">Owner</option>
+                <option value="employee">Employee</option>
+              </select>
+            </div>
+
+            {/* buscador */}
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-2">Buscar</label>
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Nombre o email"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* 2. Sección de Tabla (Inferior) */}
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left border-collapse">
+            <thead>
+              {/* Encabezado con un fondo naranja claro sólido */}
+
+              <tr className="bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 text-sm font-semibold text-gray-700">
+                <th className="py-3.5 px-6">Usuario</th>
+                <th className="py-3.5 px-6">Email</th>
+                <th className="py-3.5 px-6">Empresa</th>
+                <th className="py-3.5 px-6">Rol</th>
+                <th className="py-3.5 px-6">Estado</th>
+                <th className="py-3.5 px-6 text-right">Acciones</th>
+              </tr>
+            </thead>
+
+            <tbody className="divide-y divide-gray-100">
+              {users.map((user) => (
+                <tr
+                  key={user.id}
+                  className="bg-white odd:bg-orange-50/60 hover:bg-orange-100/80 transition-colors duration-150"
+                >
+                  {/* Datos del Usuario */}
+                  <td className="py-3.5 px-6 font-medium text-gray-800">
+                    {user.name} {user.lastname}
+                  </td>
+
+                  {/* Email */}
+                  <td className="py-3.5 px-6 text-sm text-gray-600">{user.email}</td>
+
+                  {/* Empresa */}
+                  <td className="py-3.5 px-6 text-sm text-gray-600">{user.company?.name || "—"}</td>
+
+                  {/* Rol */}
+                  <td className="py-3.5 px-6">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-semibold ${getRoleBadgeClass(user.role.name)}`}
+                    >
+                      {user.role.name === "SuperAdmin"
+                        ? "Administrador"
+                        : user.role.name === "owner"
+                          ? "Propietario"
+                          : user.role.name === "employee"
+                            ? "Empleado"
+                            : user.role.name}
+                    </span>
+                  </td>
+
+                  {/* Estado con Badge plano */}
+                  <td className="py-3.5 px-6">
+                    <div className="flex items-center gap-2">
+                      {user.is_active ? (
+                        <>
+                          <CheckCircle className="w-4 h-4 text-green-500" />
+                          <span className="text-sm font-medium text-green-600">Activo</span>
+                        </>
+                      ) : (
+                        <>
+                          <XCircle className="w-4 h-4 text-red-500" />
+                          <span className="text-sm font-medium text-red-600">Inactivo</span>
+                        </>
+                      )}
+                    </div>
+                  </td>
+
+                  {/* Acciones alineadas limpiamente a la derecha */}
+                  <td className="py-3.5 px-6 text-right">
+                    <Link
+                      href={`/users/${user.id}`}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-linear-to-r from-orange-500 to-orange-600 text-white text-sm font-medium rounded-lg shadow-xs hover:scale-[1.02] transition-all duration-200"
+                    >
+                      <Eye className="w-4 h-4" />
+                      Ver detalle
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          {/* Estado vacío */}
+          {users.length === 0 && (
+            <div className="text-center py-16 bg-white">
+              <p className="text-sm text-gray-400">No se encontraron usuarios en el sistema.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Paginación */}
+
+        {users.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-6 py-5 bg-linear-to-r from-orange-100 via-orange-50 to-orange-100">
+            <div className="flex items-center gap-4">
+              {/* Botón Anterior */}
+              <button
+                onClick={() => handlePageChange(pagination.page - 1)}
+                disabled={pagination.page <= 1}
+                className="
+                px-5 py-2.5 rounded-xl
+                text-sm font-medium
+                bg-white/90 backdrop-blur-sm
+                border-2 border-gray-200
+                text-gray-600
+                hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600
+                disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white/90 disabled:hover:text-gray-600
+                transition-all duration-200
+                shadow-sm hover:shadow-md
+                 cursor-pointer
+                  "
+              >
+                ← Anterior
+              </button>
+
+              {/* Texto de página */}
+              <span className="text-sm text-gray-500 whitespace-nowrap">
+                <span className="font-semibold text-gray-700">{pagination.page}</span>
+                <span className="text-gray-400"> / </span>
+                <span className="font-semibold text-gray-700">{pagination.totalPages ?? 1}</span>
+              </span>
+
+              {/* Botón Siguiente */}
+              <button
+                onClick={() => handlePageChange(pagination.page + 1)}
+                disabled={pagination.page >= (pagination.totalPages ?? 1)}
+                className="
+        px-5 py-2.5 rounded-xl
+        text-sm font-medium
+        bg-linear-to-r from-orange-500 to-orange-600
+        text-white
+        hover:scale-[1.03] hover:shadow-lg
+        disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-md
+        transition-all duration-200
+        shadow-md
+        cursor-pointer
+      "
+              >
+                Siguiente →
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
   );
 }

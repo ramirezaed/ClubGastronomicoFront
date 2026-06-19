@@ -6,7 +6,7 @@ import { LucideIcon } from "lucide-react";
 interface AuthCardProps {
   icon: LucideIcon;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   children: ReactNode;
 }
 

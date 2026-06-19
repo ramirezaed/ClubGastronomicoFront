@@ -1,36 +1,28 @@
 "use client";
-
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useState } from "react";
+import { useAuth } from "@/hook/useAuth";
 import { LogIn, Eye, EyeOff } from "lucide-react";
-import { AuthBackground } from "@/app/components/auth/authBackground";
 import { AuthCard } from "@/app/components/auth/authcard";
+import { AuthBackground } from "@/app/components/auth/authBackground";
 
 export default function LoginPage() {
-  const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
-    const result = await signIn("credentials", {
-      email: form.email,
-      password: form.password,
-      redirect: false,
-    });
-
-    if (result?.error) {
+    try {
+      await login(form);
+    } catch {
       setError("Email o contraseña incorrectos");
       setIsLoading(false);
-    } else {
-      router.push("/");
     }
   };
 

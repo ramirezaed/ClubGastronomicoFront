@@ -11,7 +11,7 @@ const ROLE_HOME: Record<Role, string> = {
 
 const ROLE_PREFIXES: Record<Role, string[]> = {
   SuperAdmin: ["/users", "/companies", "/plans"],
-  owner: ["/dashboard", "/menu", "/categories", "/employees", "/reports"],
+  owner: ["/dashboard", "/categories", "/employees", "/reports"],
   employee: ["/orders", "/register-order"],
 };
 

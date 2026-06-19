@@ -81,71 +81,70 @@ export default function UsersPage() {
   }
 
   return (
-    <>
-      <div className="w-full bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col">
-        {/* 1. Sección de Filtros (Superior) */}
-        <div className="p-6 ">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Filtro de Estado */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
-              <select
-                value={filter.is_active}
-                onChange={(e) =>
-                  setFilter({
-                    ...filter,
-                    is_active: e.target.value,
-                  })
-                }
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
-              >
-                <option value="">Todos los estados</option>
-                <option value="true">Activos</option>
-                <option value="false">Inactivos</option>
-              </select>
-            </div>
+    <div className="h-screen flex flex-col bg-linear-to-r from-orange-100 via-orange-50 to-orange-100">
+      {/* 1. Sección de Filtros (Superior - Fijo) */}
+      <div className="shrink-0 p-6 pb-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Filtro de Estado */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
+            <select
+              value={filter.is_active}
+              onChange={(e) =>
+                setFilter({
+                  ...filter,
+                  is_active: e.target.value,
+                })
+              }
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
+            >
+              <option value="">Todos los estados</option>
+              <option value="true">Activos</option>
+              <option value="false">Inactivos</option>
+            </select>
+          </div>
 
-            {/* Filtro de Rol */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Rol</label>
-              <select
-                value={filter.role}
-                onChange={(e) =>
-                  setFilter({
-                    ...filter,
-                    role: e.target.value,
-                  })
-                }
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
-              >
-                <option value="">Todos los roles</option>
-                <option value="SuperAdmin">SuperAdmin</option>
-                <option value="owner">Owner</option>
-                <option value="employee">Employee</option>
-              </select>
-            </div>
+          {/* Filtro de Rol */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Rol</label>
+            <select
+              value={filter.role}
+              onChange={(e) =>
+                setFilter({
+                  ...filter,
+                  role: e.target.value,
+                })
+              }
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
+            >
+              <option value="">Todos los roles</option>
+              <option value="SuperAdmin">SuperAdmin</option>
+              <option value="owner">Owner</option>
+              <option value="employee">Employee</option>
+            </select>
+          </div>
 
-            {/* buscador */}
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">Buscar</label>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Nombre o email"
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
-              />
-            </div>
+          {/* buscador */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Buscar</label>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Nombre o email"
+              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
+            />
           </div>
         </div>
+      </div>
 
-        {/* 2. Sección de Tabla (Inferior) */}
-        <div className="overflow-x-auto w-full">
+      {/* 2. Sección de Tabla (Scrollable) */}
+      <div className="flex-1 min-h-0 overflow-hidden">
+        <div className="h-full overflow-y-auto overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               {/* Encabezado con un fondo naranja claro sólido */}
-
-              <tr className="bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 text-sm font-semibold text-gray-700">
+              <tr className="bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 text-sm font-semibold text-gray-700 sticky top-0 z-10">
                 <th className="py-3.5 px-6">Usuario</th>
                 <th className="py-3.5 px-6">Email</th>
                 <th className="py-3.5 px-6">Empresa</th>
@@ -155,11 +154,11 @@ export default function UsersPage() {
               </tr>
             </thead>
 
-            <tbody className="divide-y divide-gray-100">
+            <tbody>
               {users.map((user) => (
                 <tr
                   key={user.id}
-                  className="bg-white odd:bg-orange-50/60 hover:bg-orange-100/80 transition-colors duration-150"
+                  className="bg-white odd:bg-orange-50/60 hover:bg-orange-100/80 transition-colors duration-150 cursor-pointer"
                 >
                   {/* Datos del Usuario */}
                   <td className="py-3.5 px-6 font-medium text-gray-800">
@@ -226,17 +225,17 @@ export default function UsersPage() {
             </div>
           )}
         </div>
+      </div>
 
-        {/* Paginación */}
-
-        {users.length > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-6 py-5 bg-linear-to-r from-orange-100 via-orange-50 to-orange-100">
-            <div className="flex items-center gap-4">
-              {/* Botón Anterior */}
-              <button
-                onClick={() => handlePageChange(pagination.page - 1)}
-                disabled={pagination.page <= 1}
-                className="
+      {/* 3. Paginación (Inferior - Fijo) */}
+      {users.length > 0 && (
+        <div className="shrink-0 flex flex-col sm:flex-row items-center justify-center gap-4 px-6 py-5 bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 border-t border-orange-200/50">
+          <div className="flex items-center gap-4">
+            {/* Botón Anterior */}
+            <button
+              onClick={() => handlePageChange(pagination.page - 1)}
+              disabled={pagination.page <= 1}
+              className="
                 px-5 py-2.5 rounded-xl
                 text-sm font-medium
                 bg-white/90 backdrop-blur-sm
@@ -246,41 +245,40 @@ export default function UsersPage() {
                 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white/90 disabled:hover:text-gray-600
                 transition-all duration-200
                 shadow-sm hover:shadow-md
-                 cursor-pointer
-                  "
-              >
-                ← Anterior
-              </button>
+                cursor-pointer
+              "
+            >
+              ← Anterior
+            </button>
 
-              {/* Texto de página */}
-              <span className="text-sm text-gray-500 whitespace-nowrap">
-                <span className="font-semibold text-gray-700">{pagination.page}</span>
-                <span className="text-gray-400"> / </span>
-                <span className="font-semibold text-gray-700">{pagination.totalPages ?? 1}</span>
-              </span>
+            {/* Texto de página */}
+            <span className="text-sm text-gray-500 whitespace-nowrap">
+              <span className="font-semibold text-gray-700">{pagination.page}</span>
+              <span className="text-gray-400"> / </span>
+              <span className="font-semibold text-gray-700">{pagination.totalPages ?? 1}</span>
+            </span>
 
-              {/* Botón Siguiente */}
-              <button
-                onClick={() => handlePageChange(pagination.page + 1)}
-                disabled={pagination.page >= (pagination.totalPages ?? 1)}
-                className="
-        px-5 py-2.5 rounded-xl
-        text-sm font-medium
-        bg-linear-to-r from-orange-500 to-orange-600
-        text-white
-        hover:scale-[1.03] hover:shadow-lg
-        disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-md
-        transition-all duration-200
-        shadow-md
-        cursor-pointer
-      "
-              >
-                Siguiente →
-              </button>
-            </div>
+            {/* Botón Siguiente */}
+            <button
+              onClick={() => handlePageChange(pagination.page + 1)}
+              disabled={pagination.page >= (pagination.totalPages ?? 1)}
+              className="
+                px-5 py-2.5 rounded-xl
+                text-sm font-medium
+                bg-linear-to-r from-orange-500 to-orange-600
+                text-white
+                hover:scale-[1.03] hover:shadow-lg
+                disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-md
+                transition-all duration-200
+                shadow-md
+                cursor-pointer
+              "
+            >
+              Siguiente →
+            </button>
           </div>
-        )}
-      </div>
-    </>
+        </div>
+      )}
+    </div>
   );
 }

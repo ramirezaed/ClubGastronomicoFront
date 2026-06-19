@@ -28,14 +28,16 @@ export default function PlansPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-linear-to-br from-orange-50 to-amber-50 p-4 sm:p-6 lg:p-8 overflow-hidden">
+    <div className="relative min-h-screen bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 p-4 sm:p-6 lg:p-8 overflow-hidden">
       {/* Contenido Principal */}
       <div className="relative z-10 max-w-5xl mx-auto">
         {/* Header de la sección */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-800 tracking-tight">Planes Disponibles</h1>
-            <p className="text-sm text-gray-500 mt-1">Gestiona las suscripciones y tarifas del club.</p>
+            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-800 tracking-tight font-[Poppins]">
+              Planes Disponibles
+            </h1>
+            <p className="text-s text-gray-500 mt-1 font-[Poppins]">Gestiona las suscripciones y tarifas del club.</p>
           </div>
 
           {/* Botón Agregar Nuevo Plan */}
@@ -54,7 +56,7 @@ export default function PlansPage() {
             <p className="text-gray-500 font-medium">No existen planes registrados actualmente.</p>
           </div>
         ) : (
-          <div className="grid gap-8 grid-cols-1 md:grid-cols-2">
+          <div className="grid gap-8 grid-cols-1 md:grid-cols-3">
             {plans.map((plan) => (
               <div
                 key={plan.id}
@@ -82,16 +84,20 @@ export default function PlansPage() {
                   </div>
 
                   {/* Nombre del Plan (plan.name) */}
-                  <h2 className="text-3xl font-black text-center text-gray-900 mb-4 tracking-tight">{plan.name}</h2>
+                  <h2 className="text-3xl font-black text-center text-gray-900 mb-4 tracking-tight font-[Poppins]">
+                    {plan.name}
+                  </h2>
 
                   {/* Precio Grande Estilo Tarjeta (plan.price) */}
                   <div className="flex items-baseline justify-center gap-1 mb-6">
-                    <span className="text-5xl font-black text-gray-900 tracking-tight">${plan.price}</span>
-                    <span className="text-sm font-semibold text-gray-500">/mes</span>
+                    <span className="text-5xl font-black text-gray-900 tracking-tight font-[Poppins]">
+                      ${plan.price}
+                    </span>
+                    <span className="text-sm font-semibold text-gray-500  font-[Poppins]">/mes</span>
                   </div>
 
                   {/* Descripción del Plan (plan.description) */}
-                  <p className="text-center text-gray-800 text-sm leading-relaxed mb-8 font-medium px-2">
+                  <p className="text-center text-gray-800 text-sm leading-relaxed mb-8 font-medium px-2 ">
                     {plan.description}
                   </p>
                 </div>

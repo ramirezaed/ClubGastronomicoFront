@@ -5,7 +5,7 @@ import { usePlan } from "@/hook/useplan";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle, DollarSign, FileText, Save, XCircle, Package } from "lucide-react";
+import { DollarSign, FileText, Save, Package } from "lucide-react";
 import Modal from "@/app/components/ui/Modal";
 import { ErrorState } from "@/app/components/ui/errorState";
 import { LoadingState } from "@/app/components/ui/loandigstate";
@@ -18,15 +18,17 @@ export default function PlanDetailPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
+  //seteo el estado de los campos para modificar
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [formError, setFormError] = useState("");
-  const [isSaving, setIsSaving] = useState(false);
 
+  //obtiene los datos del plan cuando se renderiz la pagina
   useEffect(() => {
     fetchPlanById(id);
   }, [id]);
 
+  //fucnion para eliminar un plan
   const handleDelete = async () => {
     if (!plan) return;
     const response = await deletePlan(plan.id);
@@ -36,6 +38,7 @@ export default function PlanDetailPage() {
     }
   };
 
+  //funcion se encarga de rellenar los campos del formulario
   useEffect(() => {
     if (plan) {
       setPrice(plan.price.toString());
@@ -43,23 +46,21 @@ export default function PlanDetailPage() {
     }
   }, [plan]);
 
+  //funcion para modificar los datos del plan
   const handleUpdate = async () => {
     setFormError("");
-    setIsSaving(true);
-
+    //si el precio o la description estan vacias lanza error
     if (!price.trim() || !description.trim()) {
       setFormError("Todos los campos son obligatorios");
-      setIsSaving(false);
       return;
     }
+    //si se ingresa un precio para el plan menor a 0
     if (Number(price) < 0) {
       setFormError("El precio no puede ser menor a 0");
-      setIsSaving(false);
       return;
     }
 
     const response = await update(id, price, description);
-    setIsSaving(false);
     if (response) {
       await fetchPlanById(id);
     }
@@ -70,17 +71,19 @@ export default function PlanDetailPage() {
     router.push("/planes");
   };
 
+  //si esta cargando muestra la barra
   if (loading) {
     return <LoadingState title="Cargando datos del plan" description="Espere un momento por favor" />;
   }
 
+  //si hay un error lanza el error que viene desde la api
   if (error) {
     return <ErrorState title={error} onRetry={() => fetchPlanById(id)} />;
   }
 
   if (!plan) {
     return (
-      <div className="w-full bg-white flex flex-col justify-center overflow-hidden">
+      <div className="w-full h-full bg-linear-to-r from-orange-100 via-orange-50/20 to-orange-100 flex flex-col justify-center overflow-hidden">
         <div className="p-8 text-center">
           <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-600 text-lg">Plan no encontrado</p>
@@ -96,14 +99,14 @@ export default function PlanDetailPage() {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto  flex flex-col justify-center overflow-hidden">
-      <div className="p-8 border-b border-gray-100">
+    <div className="w-full h-full bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col">
+      <div className="p-8 ">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
             <Package className="w-8 h-8 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">{plan.name}</h1>
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Plan {plan.name}</h1>
             <div className="flex flex-wrap items-center gap-2 mt-2">
               <span
                 className={`px-3 py-1 rounded-full text-sm font-semibold ${plan.is_active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
@@ -116,12 +119,13 @@ export default function PlanDetailPage() {
       </div>
 
       {/* Formulario */}
-      <div className="p-6 space-y-6">
+      <div className="p-6 space-y-6 flex flex-col items-center">
+        <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mb-10" />
         {/* Descripción */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             <span className="flex items-center gap-2">
-              <FileText className="w-4 h-4 text-gray-400" />
+              <FileText className="w- h-4 text-gray-400" />
               Descripción
             </span>
           </label>
@@ -129,7 +133,7 @@ export default function PlanDetailPage() {
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             rows={4}
-            className="w-full px-4 py-3 rounded-xl border-2 border-orange-600 bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all resize-none"
+            className="w-xl px-4 py-3 rounded-xl border-2 border-orange-600 bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all resize-none"
             placeholder="Ingresa la descripción del plan"
           />
         </div>
@@ -149,7 +153,7 @@ export default function PlanDetailPage() {
               min="0"
               value={price}
               onChange={(e) => setPrice(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 rounded-xl border-2 border-orange-600 bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
+              className="w-xl pl-12 pr-4 py-3 rounded-xl border-2 border-orange-600 bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all"
               placeholder="Ingresa el precio"
             />
           </div>
@@ -162,9 +166,8 @@ export default function PlanDetailPage() {
         {/* Botón Guardar cambios */}
         <button
           onClick={handleUpdate}
-          disabled={isSaving}
           className="
-            w-full
+            w-xl
             inline-flex items-center justify-center gap-2
             px-6 py-3
             rounded-xl
@@ -178,12 +181,13 @@ export default function PlanDetailPage() {
           "
         >
           <Save className="w-5 h-5" />
-          {isSaving ? "Guardando..." : "Guardar cambios"}
+          Guardar Cambios
         </button>
       </div>
 
       {/* Botones Volver y Eliminar */}
-      <div className="border-t border-gray-100 bg-gray-50 px-6 py-4">
+      <div className="  from-orange-100 via-orange-50/20 to-orange-100 px-6 py-4 flex flex-col items-center">
+        <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mb-10" />
         <div className="flex flex-col-reverse sm:flex-row sm:justify-between items-center gap-3">
           <button
             onClick={() => router.back()}

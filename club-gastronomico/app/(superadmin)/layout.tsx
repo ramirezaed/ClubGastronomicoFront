@@ -11,7 +11,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
         {/* Menú lateral */}
         <AdminMenu />
         {/* Contenido principal: pegado al menú, sin márgenes */}
-        <main className="flex-1  ml-0 lg:ml-64 flex flex-col">{children}</main>
+        <main className="flex-1  ml-0 lg:ml-64 flex flex-col ">{children}</main>
       </div>
     </div>
   );

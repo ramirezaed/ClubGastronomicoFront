@@ -7,11 +7,6 @@ export const usePlan = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  //seteo los campos para modificar
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
-  const [formError, setFormError] = useState("");
-
   //hook para buscar un plan por id
   const fetchPlanById = async (id: string) => {
     setLoading(true);

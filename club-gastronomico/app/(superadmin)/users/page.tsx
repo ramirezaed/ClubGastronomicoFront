@@ -82,9 +82,9 @@ export default function UsersPage() {
 
   return (
     <>
-      <div className="w-full bg-white flex flex-col">
+      <div className="w-full bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col">
         {/* 1. Sección de Filtros (Superior) */}
-        <div className="p-6 bg-gray-50/50 border-b border-gray-200/80">
+        <div className="p-6 ">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Filtro de Estado */}
             <div>
@@ -144,7 +144,8 @@ export default function UsersPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               {/* Encabezado con un fondo naranja claro sólido */}
-              <tr className="bg-orange-100 border-b border-orange-200 text-sm font-semibold text-gray-700">
+
+              <tr className="bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 text-sm font-semibold text-gray-700">
                 <th className="py-3.5 px-6">Usuario</th>
                 <th className="py-3.5 px-6">Email</th>
                 <th className="py-3.5 px-6">Empresa</th>
@@ -176,7 +177,13 @@ export default function UsersPage() {
                     <span
                       className={`px-3 py-1 rounded-full text-xs font-semibold ${getRoleBadgeClass(user.role.name)}`}
                     >
-                      {user.role.name}
+                      {user.role.name === "SuperAdmin"
+                        ? "Administrador"
+                        : user.role.name === "owner"
+                          ? "Propietario"
+                          : user.role.name === "employee"
+                            ? "Empleado"
+                            : user.role.name}
                     </span>
                   </td>
 
@@ -223,24 +230,24 @@ export default function UsersPage() {
         {/* Paginación */}
 
         {users.length > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-6 py-5 border-t border-gray-100 bg-lienar-to-r from-orange-50/50 to-amber-50/50 rounded-b-3xl">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-6 py-5 bg-linear-to-r from-orange-100 via-orange-50 to-orange-100">
             <div className="flex items-center gap-4">
               {/* Botón Anterior */}
               <button
                 onClick={() => handlePageChange(pagination.page - 1)}
                 disabled={pagination.page <= 1}
                 className="
-        px-5 py-2.5 rounded-xl
-        text-sm font-medium
-        bg-white/90 backdrop-blur-sm
-        border-2 border-gray-200
-        text-gray-600
-        hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600
-        disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white/90 disabled:hover:text-gray-600
-        transition-all duration-200
-        shadow-sm hover:shadow-md
-        cursor-pointer
-      "
+                px-5 py-2.5 rounded-xl
+                text-sm font-medium
+                bg-white/90 backdrop-blur-sm
+                border-2 border-gray-200
+                text-gray-600
+                hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600
+                disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white/90 disabled:hover:text-gray-600
+                transition-all duration-200
+                shadow-sm hover:shadow-md
+                 cursor-pointer
+                  "
               >
                 ← Anterior
               </button>

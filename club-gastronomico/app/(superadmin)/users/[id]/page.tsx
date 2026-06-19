@@ -112,9 +112,9 @@ export default function UserDetailPage() {
   }
 
   return (
-    <div className="w-full bg-white flex flex-col justify-center  overflow-hidden">
+    <div className="w-full h-full bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col">
       {/* Header */}
-      <div className="p-6 border-b border-gray-100">
+      <div className="p-6 ">
         <div className="flex items-center gap-4">
           <div className="w-16 h-16 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
             <UserIcon className="w-8 h-8 text-white" />
@@ -146,7 +146,8 @@ export default function UserDetailPage() {
       </div>
 
       {/* Contenido */}
-      <div className="p-4 md:p-6">
+      <div className="p-4 md:p-6 ">
+        <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-fulls mb-10" />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Información de contacto */}
           <div>
@@ -154,7 +155,7 @@ export default function UserDetailPage() {
               <div className="w-1 h-6 rounded-full bg-linear-to-r from-orange-500 to-orange-600" />
               Información de Contacto
             </h2>
-            <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+            <div className="flex items-center gap-3 p-4 rounded-xl">
               <Mail className="w-5 h-5 text-gray-400 shrink-0" />
               <div>
                 <p className="text-xs text-gray-500 uppercase tracking-wide">Email</p>
@@ -170,7 +171,7 @@ export default function UserDetailPage() {
               Información de Empresa
             </h2>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 p-4 bg-gray-50 rounded-xl">
+              <div className="flex items-center gap-3 p-4  rounded-xl">
                 <Building2 className="w-5 h-5 text-gray-400 shrink-0" />
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-wide">Empresa</p>
@@ -183,7 +184,7 @@ export default function UserDetailPage() {
       </div>
 
       {/* Estado del usuario - con padding reducido en móvil */}
-      <div className="rounded-2xl border border-orange-100 bg-orange-50/50 p-4  mx-4 md:mx-6">
+      <div className="rounded-2xl  p-4  mx-4 md:mx-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h3 className="font-semibold text-gray-800">Estado del usuario</h3>
@@ -193,7 +194,7 @@ export default function UserDetailPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl  border border-orange-100 bg-orange-50/50 p-4  mx-4 md:mx-6 mt-0.5">
+      <div className="rounded-2xl   p-4  mx-4 md:mx-6 mt-0.5">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <h3 className="font-semibold text-gray-800 text-lg">Rol del usuario</h3>
@@ -258,8 +259,10 @@ export default function UserDetailPage() {
       </div>
 
       {/* Botones - sin gap-40 ni py-20 en móvil */}
-      <div className="border-t border-gray-100 bg-gray-50 px-4 md:px-8 py-4 md:py-6 mt-4">
-        <div className="flex flex-col sm:flex-row sm:justify-center gap-3 sm:gap-6">
+      <div className=" px-4 md:px-8 py-4 md:py-6 mt-4">
+        <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mb-10" />
+
+        <div className="mt-10 flex flex-col sm:flex-row sm:justify-center gap-3 sm:gap-6">
           <button
             onClick={() => router.back()}
             className="

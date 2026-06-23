@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { Plans, softDeletePlanResponse } from "@/types/plans.types";
+import { Plans, RegisterPlan, softDeletePlanResponse } from "@/types/plans.types";
 import axios from "axios";
 
 export async function getPlans(): Promise<Plans[]> {
@@ -45,6 +45,18 @@ export async function updatePlan(id: string, price?: string, description?: strin
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data?.message ?? "error al intentar actualizar el plan");
+    }
+    throw new Error("ocurrio un error inesperado");
+  }
+}
+
+export async function newPlan(data: RegisterPlan): Promise<Plans> {
+  try {
+    const response = await api.post(`/plans`, data);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message ?? "error al agregar un nuevo plan");
     }
     throw new Error("ocurrio un error inesperado");
   }

@@ -66,7 +66,7 @@ export default function UserDetailPage() {
       loadUser(); //carga los datos del usuario
       fetchRoles(); //trae todos los datos de los roles
     }
-  }, [id]);
+  }, [id, fetchRoles]);
 
   //funcion para mostrar  roles con  badges
   const getRoleBadgeClass = (roleName: string) => {
@@ -120,7 +120,7 @@ export default function UserDetailPage() {
             <UserIcon className="w-8 h-8 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 font-[Poppins]">
               {user.name} {user.lastname}
             </h1>
             <div className="flex flex-wrap items-center gap-2 mt-2">

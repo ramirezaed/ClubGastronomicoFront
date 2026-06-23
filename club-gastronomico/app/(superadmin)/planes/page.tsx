@@ -37,17 +37,18 @@ export default function PlansPage() {
             <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-800 tracking-tight font-[Poppins]">
               Planes Disponibles
             </h1>
-            <p className="text-s text-gray-500 mt-1 font-[Poppins]">Gestiona las suscripciones y tarifas del club.</p>
+            <p className="text-s text-gray-500 mt-1 font-[Poppins]">Gestiona las suscripciones y tarifas.</p>
           </div>
 
           {/* Botón Agregar Nuevo Plan */}
-          <button
-            onClick={() => console.log("Agregar nuevo plan")}
+
+          <Link
+            href={`/planes/newPlan/`}
             className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-linear-to-r from-orange-500 to-orange-600 text-white font-semibold shadow-md transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
           >
             <Plus className="w-5 h-5" />
-            <span>Nuevo Plan</span>
-          </button>
+            <span>Nuevo plan</span>
+          </Link>
         </div>
 
         {/* Listado de Planes (Estrictamente 2 columnas) */}

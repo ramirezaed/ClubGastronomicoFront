@@ -9,3 +9,9 @@ export interface Plans {
 export interface softDeletePlanResponse {
   message: string;
 }
+
+export interface RegisterPlan {
+  name: string;
+  price: string;
+  description: string;
+}

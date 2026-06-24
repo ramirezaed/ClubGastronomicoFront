@@ -114,9 +114,9 @@ export default function UserDetailPage() {
   return (
     <div className="w-full h-full bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col">
       {/* Header */}
-      <div className="p-6 ">
+      <div className="py-1.5 ">
         <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
             <UserIcon className="w-8 h-8 text-white" />
           </div>
           <div>

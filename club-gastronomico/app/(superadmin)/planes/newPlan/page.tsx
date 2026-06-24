@@ -14,10 +14,10 @@ export default function RegisterPlanPage() {
   const [description, setDescription] = useState("");
   const [formError, setFormError] = useState("");
 
+  //funcion maneja el boton para crear nuevo plan
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setFormError("");
-
     // Validaciones
     if (!name.trim() || !price.trim() || !description.trim()) {
       setFormError("Todos los campos son obligatorios");
@@ -27,13 +27,12 @@ export default function RegisterPlanPage() {
       setFormError("El precio no puede ser menor a 0");
       return;
     }
-
+    //llama al hook para registrar un nuevo plan
     const response = await register({
       name,
       price,
       description,
     });
-
     if (response) {
       router.push("/planes");
     }
@@ -46,19 +45,19 @@ export default function RegisterPlanPage() {
   return (
     <div className="w-full h-full bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col">
       {/* Header con ícono y título */}
-      <div className="p-8 py-2">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
+      <div className="p-8 py-5">
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
             <Package className="w-8 h-8 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Crear nuevo plan</h1>
+            <h1 className="text-2xl md:text-3xl font-[Poppins] font-extrabold text-gray-800">Crear nuevo plan</h1>
           </div>
         </div>
       </div>
 
       {/* Formulario */}
-      <div className="py-5 space-y-6 flex flex-col items-center">
+      <div className="py-1.5 space-y-6 flex flex-col items-center">
         <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mb-8" />
 
         {/* Campo: Nombre */}
@@ -140,7 +139,7 @@ export default function RegisterPlanPage() {
           className="
             w-full max-w-xl
             inline-flex items-center justify-center gap-2
-            px-6 py-2
+            px-6 py-2 mb-3.5
             rounded-xl
             bg-linear-to-r from-orange-500 to-orange-600
             text-white font-medium

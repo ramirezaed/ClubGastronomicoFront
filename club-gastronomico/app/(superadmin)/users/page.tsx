@@ -144,7 +144,7 @@ export default function UsersPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               {/* Encabezado con un fondo naranja claro sólido */}
-              <tr className="bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 text-sm font-semibold text-gray-700 sticky top-0 z-10">
+              <tr className="bg-linear-to-r from-orange-200 via-orange-200 to-orange-200 text-sm font-semibold text-gray-700 sticky top-0 z-10">
                 <th className="py-3.5 px-6">Usuario</th>
                 <th className="py-3.5 px-6">Email</th>
                 <th className="py-3.5 px-6">Empresa</th>

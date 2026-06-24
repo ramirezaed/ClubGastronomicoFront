@@ -26,7 +26,7 @@ export default function PlanDetailPage() {
   //obtiene los datos del plan cuando se renderiz la pagina
   useEffect(() => {
     fetchPlanById(id);
-  }, [id]);
+  }, [id]); //cuando cambia el id del plan se vuele a ejecutar la funcion
 
   //fucnion para eliminar un plan
   const handleDelete = async () => {

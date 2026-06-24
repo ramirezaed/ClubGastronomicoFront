@@ -1,4 +1,4 @@
-import { getRoleById } from "@/services/role.service";
+import { deleteRole, getRoleById } from "@/services/role.service";
 import { role } from "@/types/role.types";
 import { useState } from "react";
 
@@ -22,10 +22,23 @@ export const useRole = () => {
     }
   };
 
+  const softDeleteRole = async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await deleteRole(id);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al intentar eliminar el rol");
+    } finally {
+      setLoading(false);
+    }
+  };
   return {
     role,
     loading,
     error,
     fetchRoleById,
+    softDeleteRole,
   };
 };

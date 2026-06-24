@@ -8,3 +8,7 @@ export interface GetRolesResponse {
   message: string;
   roles: role[];
 }
+
+export interface softDeleteRole {
+  message: string;
+}

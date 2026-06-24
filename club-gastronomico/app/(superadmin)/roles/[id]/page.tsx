@@ -1,22 +1,41 @@
 "use client";
 
+import { DeleteButton } from "@/app/components/ui/DeleteButton";
 import { ErrorState } from "@/app/components/ui/errorState";
 import { LoadingState } from "@/app/components/ui/loandigstate";
+import Modal from "@/app/components/ui/Modal";
 import { useRole } from "@/hook/useRole";
 import { ArrowLeft, CheckCircle, Shield, XCircle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function roleDetail() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
-  const { role, loading, error, fetchRoleById } = useRole();
+  const { role, loading, error, fetchRoleById, softDeleteRole } = useRole();
+  const [modalOpen, setModalOpen] = useState(false); //modal por defecto cerrado
+  const [modalMessage, setModalMessage] = useState(""); // por defecto el mensaje en el modal es ""
 
   //carga los datos del rol cuando se renderiza la pagina
   useEffect(() => {
     fetchRoleById(id);
   }, [id]); //cuando cambia el id se vuelve a ejecutar la funcion
+
+  //funcion para manejar el boton eliminar
+  const handleDelete = async () => {
+    if (!role) return;
+    const response = await softDeleteRole(role.id);
+    if (response) {
+      setModalOpen(true);
+    }
+  };
+
+  //funcion para cerrar el modal
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    router.push("/roles");
+  };
 
   //si esta cargando muestra la barra
   if (loading) {
@@ -101,8 +120,12 @@ export default function roleDetail() {
               </div>
             </div>
           </div>
+          <div className="flex flex-col sm:flex-row sm:justify-center  gap-3 sm:gap-6">
+            <DeleteButton loading={loading} itemName={`al usuario ${role.name}`} onDelete={handleDelete} />
+          </div>
         </div>
       </div>
+      <Modal isOpen={modalOpen} onClose={handleCloseModal} title="¡Rol Eliminado!" message={modalMessage} />
     </div>
   );
 }

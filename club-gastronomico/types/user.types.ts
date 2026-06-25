@@ -41,6 +41,7 @@ export interface PaginationResponse<T> {
     totalPages: number;
   };
 }
+
 export interface activateDeactivateResponse {
   userActualizado: {
     id: string;

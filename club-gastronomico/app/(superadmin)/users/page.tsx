@@ -9,7 +9,7 @@ import { getUserParams } from "@/types/user.types";
 import { LoadingState } from "@/app/components/ui/loandigstate";
 
 export default function UsersPage() {
-  const { users, loading, error, fetchUser, search, goToPage, pagination } = useUsers();
+  const { users, loading, pageLoading, error, fetchUser, search, goToPage, pagination } = useUsers();
   //seteo el parametro de busqueda searchTrem, por defecto ""
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState({
@@ -77,9 +77,6 @@ export default function UsersPage() {
   }
 
   //muestra la barra de carga
-  // {
-  //   loading && <LoadingState title="Cargando datos de usuarios" description="Espere un momento por favor" />;
-  // }
   if (loading) {
     return <LoadingState title="Cargando lista de usuarios" description="Espere un momento por favor" />;
   }
@@ -145,16 +142,15 @@ export default function UsersPage() {
       {/* 2. Sección de Tabla (Scrollable) */}
       <div className="flex-1 min-h-0 overflow-hidden">
         <div className="h-full overflow-y-auto overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full table-fixed text-left border-collapse">
             <thead>
-              {/* Encabezado con un fondo naranja claro sólido */}
               <tr className="bg-linear-to-r from-orange-200 via-orange-200 to-orange-200 text-sm font-semibold text-gray-700 sticky top-0 z-10">
-                <th className="py-3.5 px-6">Usuario</th>
-                <th className="py-3.5 px-6">Email</th>
-                <th className="py-3.5 px-6">Empresa</th>
-                <th className="py-3.5 px-6">Rol</th>
-                <th className="py-3.5 px-6">Estado</th>
-                <th className="py-3.5 px-6 text-right">Acciones</th>
+                <th className="w-50 py-3.5 px-6">Usuario</th>
+                <th className="w-70 py-3.5 px-6">Email</th>
+                <th className="w-40 py-3.5 px-6">Empresa</th>
+                <th className="w-32 py-3.5 px-6">Rol</th>
+                <th className="w-36 py-3.5 px-6">Estado</th>
+                <th className="w-40 py-3.5 px-6 text-right">Acciones</th>
               </tr>
             </thead>
 
@@ -170,7 +166,11 @@ export default function UsersPage() {
                   </td>
 
                   {/* Email */}
-                  <td className="py-3.5 px-6 text-sm text-gray-600">{user.email}</td>
+                  <td className="py-3.5 px-6 text-sm text-gray-600">
+                    <div className="max-w-xs truncate" title={user.email}>
+                      {user.email}
+                    </div>
+                  </td>
 
                   {/* Empresa */}
                   <td className="py-3.5 px-6 text-sm text-gray-600">{user.company?.name || "—"}</td>
@@ -211,7 +211,7 @@ export default function UsersPage() {
                   <td className="py-3.5 px-6 text-right">
                     <Link
                       href={`/users/${user.id}`}
-                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-linear-to-r from-orange-500 to-orange-600 text-white text-sm font-medium rounded-lg shadow-xs hover:scale-[1.02] transition-all duration-200"
+                      className="inline-flex items-center gap-2 px-2 py-1.5 bg-linear-to-r from-orange-500 to-orange-600 text-white text-sm font-medium rounded-lg shadow-xs hover:scale-[1.02] transition-all duration-200"
                     >
                       <Eye className="w-4 h-4" />
                       Ver detalle
@@ -238,7 +238,7 @@ export default function UsersPage() {
             {/* Botón Anterior */}
             <button
               onClick={() => handlePageChange(pagination.page - 1)}
-              disabled={pagination.page <= 1}
+              disabled={pageLoading || pagination.page <= 1}
               className="
                 px-5 py-2.5 rounded-xl
                 text-sm font-medium
@@ -265,7 +265,7 @@ export default function UsersPage() {
             {/* Botón Siguiente */}
             <button
               onClick={() => handlePageChange(pagination.page + 1)}
-              disabled={pagination.page >= (pagination.totalPages ?? 1)}
+              disabled={pageLoading || pagination.page >= (pagination.totalPages ?? 1)}
               className="
                 px-5 py-2.5 rounded-xl
                 text-sm font-medium

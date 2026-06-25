@@ -28,7 +28,7 @@ export default function PlansPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 p-4 sm:p-6 lg:p-8 overflow-hidden">
+    <div className=" h-full bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 p-4 sm:p-6 lg:p-8 overflow-hidden">
       {/* Contenido Principal */}
       <div className="relative z-10 max-w-5xl mx-auto">
         {/* Header de la sección */}

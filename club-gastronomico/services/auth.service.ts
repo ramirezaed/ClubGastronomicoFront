@@ -36,11 +36,11 @@ export async function registerUser(data: IRegisterUser): Promise<IRegisterUserRe
     const response = await axios.post<IRegisterUserResponse>(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, data);
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data.message ?? "error al registrar usuario");
+    if (error instanceof Error) {
+      throw error;
     }
+    throw new Error("ocurrio un error inesperado");
   }
-  throw new Error("Ocurrio un error inesperado");
 }
 
 export async function forgotPassword(email: string): Promise<{ message: string }> {
@@ -50,11 +50,11 @@ export async function forgotPassword(email: string): Promise<{ message: string }
     });
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data.message ?? "error al enviar correo de recuperacion");
+    if (error instanceof Error) {
+      throw error;
     }
+    throw new Error("ocurrio un error inesperado");
   }
-  throw new Error("Ocurrio un error inesperado");
 }
 
 export async function resetPassword(token: string, newPassword: string): Promise<{ message: string }> {
@@ -65,9 +65,9 @@ export async function resetPassword(token: string, newPassword: string): Promise
     });
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data.message ?? "error al restablecer la contraseña");
+    if (error instanceof Error) {
+      throw error;
     }
+    throw new Error("ocurrio un error inesperado");
   }
-  throw new Error("Ocurrio un error inesperado");
 }

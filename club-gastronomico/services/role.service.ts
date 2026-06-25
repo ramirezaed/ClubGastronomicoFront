@@ -8,10 +8,10 @@ export async function getRoles(): Promise<GetRolesResponse> {
     const response = await api.get(`/roles`);
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message ?? "Error al obtener los roles");
+    if (error instanceof Error) {
+      throw error;
     }
-    throw new Error("Ocurrió un error inesperado");
+    throw new Error("ocurrio un error inesperado");
   }
 }
 export async function getRoleById(id: string): Promise<role> {
@@ -19,32 +19,34 @@ export async function getRoleById(id: string): Promise<role> {
     const response = await api.get(`/roles/${id}`);
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data?.message ?? "Error al obtener el rol");
+    if (error instanceof Error) {
+      throw error;
     }
     throw new Error("ocurrio un error inesperado");
   }
 }
+
 export async function deleteRole(id: string): Promise<softDeleteRole> {
   try {
     const response = await api.delete(`/roles/${id}`);
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data.message ?? "Error al eliminar el rol");
+    if (error instanceof Error) {
+      throw error;
     }
     throw new Error("ocurrio un error inesperado");
   }
 }
+
 export async function register(data: registerRole): Promise<role> {
   try {
     const response = await api.post(`/roles`, data);
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data.message ?? "Error al intentar registrar un nuevo rol");
+    if (error instanceof Error) {
+      throw error;
     }
-    throw new Error("Ocurrio un error inesperado");
+    throw new Error("ocurrio un error inesperado");
   }
 }
 
@@ -53,9 +55,9 @@ export async function update(id: string, description?: string) {
     const response = await api.patch(`/roles/${id}`, { description });
     return response.data;
   } catch (error) {
-    if (axios.isAxiosError(error)) {
-      throw new Error(error.response?.data.message ?? "Error al intentar actualizar rol");
+    if (error instanceof Error) {
+      throw error;
     }
-    throw new Error("Ocurrio un error inesperado");
+    throw new Error("ocurrio un error inesperado");
   }
 }

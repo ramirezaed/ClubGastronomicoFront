@@ -39,7 +39,7 @@ export default function UsersPage() {
   useEffect(() => {
     if (searchTerm.trim() === "") return;
     const timer = setTimeout(() => {
-      const isEmail = searchTerm.includes("@");
+      const isEmail = searchTerm.includes("");
       search(isEmail ? undefined : searchTerm, isEmail ? searchTerm : undefined);
     }, 400);
     return () => clearTimeout(timer);
@@ -75,9 +75,13 @@ export default function UsersPage() {
   if (error) {
     return <ErrorState title={error} subtitle="Por favor intentelo mas tarde" onRetry={loadUsers} />;
   }
+
   //muestra la barra de carga
+  // {
+  //   loading && <LoadingState title="Cargando datos de usuarios" description="Espere un momento por favor" />;
+  // }
   if (loading) {
-    return <LoadingState title="Cargando datos de usuarios" description="Espere un momento por favor" />;
+    return <LoadingState title="Cargando lista de usuarios" description="Espere un momento por favor" />;
   }
 
   return (
@@ -96,7 +100,7 @@ export default function UsersPage() {
                   is_active: e.target.value,
                 })
               }
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
+              className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
             >
               <option value="">Todos los estados</option>
               <option value="true">Activos</option>
@@ -115,7 +119,7 @@ export default function UsersPage() {
                   role: e.target.value,
                 })
               }
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
+              className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
             >
               <option value="">Todos los roles</option>
               <option value="SuperAdmin">SuperAdmin</option>
@@ -132,7 +136,7 @@ export default function UsersPage() {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="Nombre o email"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
+              className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
             />
           </div>
         </div>

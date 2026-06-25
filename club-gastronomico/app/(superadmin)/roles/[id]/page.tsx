@@ -206,7 +206,7 @@ export default function roleDetail() {
             Volver
           </button>
 
-          <DeleteButton loading={loading} itemName={`el plan ${role.name}`} onDelete={handleDelete} />
+          <DeleteButton loading={loading} itemName={`el Rol ${role.name}`} onDelete={handleDelete} />
         </div>
       </div>
 

@@ -9,9 +9,9 @@ import { ArrowLeft, Save, Package, DollarSign, AlignLeft } from "lucide-react";
 export default function RegisterPlanPage() {
   const router = useRouter();
   const { register, loading, error } = usePlan();
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
+  const [name, setName] = useState(""); //seteo los campos, por default vacios
+  const [price, setPrice] = useState(""); //seteo los campos, por default vacios
+  const [description, setDescription] = useState(""); //seteo los campos, por default vacios
   const [formError, setFormError] = useState("");
 
   //funcion maneja el boton para crear nuevo plan

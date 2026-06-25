@@ -12,3 +12,8 @@ export interface GetRolesResponse {
 export interface softDeleteRole {
   message: string;
 }
+
+export interface registerRole {
+  name: string;
+  description: string;
+}

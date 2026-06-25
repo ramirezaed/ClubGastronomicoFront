@@ -112,18 +112,18 @@ export default function UserDetailPage() {
   }
 
   return (
-    <div className="w-full h-full bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col">
-      {/* Header */}
-      <div className="py-1.5 ">
-        <div className="flex items-center gap-4">
+    // <div className="w-full h-full bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col">
+    <div className="w-full min-h-screen bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col overflow-hidden">
+      {/* Header con ícono y título */}
+      <div className="p-8 py-5">
+        <div className="flex items-center gap-2">
           <div className="w-10 h-10 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
-            <UserIcon className="w-8 h-8 text-white" />
+            <UserIcon className="w-5 h-5 text-white" />
           </div>
+
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800 font-[Poppins]">
+            <h1 className="text-2xl md:text-3xl font-[Poppins] font-extrabold text-gray-800 flex items-center gap-3">
               {user.name} {user.lastname}
-            </h1>
-            <div className="flex flex-wrap items-center gap-2 mt-2">
               <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getRoleBadgeClass(user.role.name)}`}>
                 {user.role.name}
               </span>
@@ -140,14 +140,13 @@ export default function UserDetailPage() {
                   </>
                 )}
               </div>
-            </div>
+            </h1>
           </div>
         </div>
       </div>
+      <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mt-1 mx-auto mb-4 " />
 
-      {/* Contenido */}
-      <div className="p-4 md:p-6 ">
-        <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-fulls mb-10" />
+      <div className="p-2 space-y-3 md:p-6 ">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Información de contacto */}
           <div>
@@ -260,9 +259,9 @@ export default function UserDetailPage() {
 
       {/* Botones - sin gap-40 ni py-20 en móvil */}
       <div className=" px-4 md:px-8 py-4 md:py-6 mt-4">
-        <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mb-10" />
+        <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mt-16 mb-4 mx-auto" />
 
-        <div className="mt-10 flex flex-col sm:flex-row sm:justify-center gap-3 sm:gap-6">
+        <div className="mt-2 flex flex-col sm:flex-row sm:justify-center gap-3 sm:gap-6">
           <button
             onClick={() => router.back()}
             className="

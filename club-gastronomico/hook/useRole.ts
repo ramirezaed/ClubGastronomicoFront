@@ -1,5 +1,5 @@
-import { deleteRole, getRoleById } from "@/services/role.service";
-import { role } from "@/types/role.types";
+import { deleteRole, getRoleById, register } from "@/services/role.service";
+import { registerRole, role } from "@/types/role.types";
 import { useState } from "react";
 
 export const useRole = () => {
@@ -21,7 +21,6 @@ export const useRole = () => {
       setLoading(false);
     }
   };
-
   const softDeleteRole = async (id: string) => {
     setLoading(true);
     setError(null);
@@ -34,11 +33,25 @@ export const useRole = () => {
       setLoading(false);
     }
   };
+  const registerRole = async (data: registerRole) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await register(data);
+      setRole(response);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al intentar registrar un nuevo rol");
+    } finally {
+      setLoading(false);
+    }
+  };
   return {
     role,
     loading,
     error,
     fetchRoleById,
     softDeleteRole,
+    registerRole,
   };
 };

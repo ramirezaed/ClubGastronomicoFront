@@ -74,6 +74,7 @@ export default function roleDetail() {
           <div className="w-10 h-10 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
             <Shield className="w-5 h-5 text-white" />
           </div>
+
           <div>
             <h1 className="text-2xl md:text-3xl font-[Poppins] font-extrabold text-gray-800">Gestion de Rol</h1>
           </div>

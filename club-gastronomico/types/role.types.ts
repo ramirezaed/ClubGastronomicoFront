@@ -17,6 +17,3 @@ export interface registerRole {
   name: string;
   description: string;
 }
-export interface updateRole {
-  description: string;
-}

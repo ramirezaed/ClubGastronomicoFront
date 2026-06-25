@@ -1,5 +1,5 @@
 import { deleteRole, getRoleById, register, update } from "@/services/role.service";
-import { IupdateRole, registerRole, role } from "@/types/role.types";
+import { registerRole, role } from "@/types/role.types";
 import { useState } from "react";
 
 export const useRole = () => {
@@ -46,11 +46,11 @@ export const useRole = () => {
       setLoading(false);
     }
   };
-  const updateRole = async (id: string, data: IupdateRole) => {
+  const updateRole = async (id: string, description?: string) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await update(id, data);
+      const response = await update(id, description);
       setRole(response);
       return response;
     } catch (error) {
@@ -59,6 +59,7 @@ export const useRole = () => {
       setLoading(false);
     }
   };
+
   return {
     role,
     loading,

@@ -1,5 +1,5 @@
-import { deleteRole, getRoleById, register } from "@/services/role.service";
-import { registerRole, role } from "@/types/role.types";
+import { deleteRole, getRoleById, register, update } from "@/services/role.service";
+import { IupdateRole, registerRole, role } from "@/types/role.types";
 import { useState } from "react";
 
 export const useRole = () => {
@@ -46,6 +46,19 @@ export const useRole = () => {
       setLoading(false);
     }
   };
+  const updateRole = async (id: string, data: IupdateRole) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await update(id, data);
+      setRole(response);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al intentar actualizar el rol");
+    } finally {
+      setLoading(false);
+    }
+  };
   return {
     role,
     loading,
@@ -53,5 +66,6 @@ export const useRole = () => {
     fetchRoleById,
     softDeleteRole,
     registerRole,
+    updateRole,
   };
 };

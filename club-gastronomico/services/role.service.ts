@@ -1,6 +1,7 @@
-import { GetRolesResponse, registerRole, role, softDeleteRole } from "@/types/role.types";
+import { GetRolesResponse, IupdateRole, registerRole, role, softDeleteRole } from "@/types/role.types";
 import api from "@/lib/axios";
-import axios from "axios";
+import axios, { Axios } from "axios";
+import { updatePlan } from "@/services/plan.service";
 
 export async function getRoles(): Promise<GetRolesResponse> {
   try {
@@ -35,7 +36,6 @@ export async function deleteRole(id: string): Promise<softDeleteRole> {
     throw new Error("ocurrio un error inesperado");
   }
 }
-
 export async function register(data: registerRole): Promise<role> {
   try {
     const response = await api.post(`/roles`, data);
@@ -43,6 +43,17 @@ export async function register(data: registerRole): Promise<role> {
   } catch (error) {
     if (axios.isAxiosError(error)) {
       throw new Error(error.response?.data.message ?? "Error al intentar registrar un nuevo rol");
+    }
+    throw new Error("Ocurrio un error inesperado");
+  }
+}
+export async function update(id: string, data: IupdateRole) {
+  try {
+    const response = await api.patch(`/roles/${id}`, data);
+    return response.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw new Error(error.response?.data.message ?? "Error al intentar actualizar rol");
     }
     throw new Error("Ocurrio un error inesperado");
   }

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ErrorState } from "@/app/components/ui/errorState";
 import { getUserParams } from "@/types/user.types";
 import { LoadingState } from "@/app/components/ui/loandigstate";
+import Pagination from "@/app/components/ui/pagination";
 
 export default function UsersPage() {
   const { users, loading, pageLoading, error, fetchUser, search, goToPage, pagination } = useUsers();
@@ -63,15 +64,6 @@ export default function UsersPage() {
     return roleMap[roleName] || "bg-gray-100 text-gray-700";
   };
 
-  //funcion para cambiar de pagina respetando los filtros
-  const handlePageChange = (newPage: number) => {
-    const params: getUserParams = {};
-    if (filter.is_active !== "") params.is_active = filter.is_active === "true";
-    if (filter.role) params.role = filter.role;
-    goToPage(newPage, params);
-  };
-
-  //si hay error muestra el error
   if (error) {
     return <ErrorState title={error} subtitle="Por favor intentelo mas tarde" onRetry={loadUsers} />;
   }
@@ -231,56 +223,19 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* 3. Paginación (Inferior - Fijo) */}
       {users.length > 0 && (
-        <div className="shrink-0 flex flex-col sm:flex-row items-center justify-center gap-4 px-6 py-5 bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 border-t border-orange-200/50">
-          <div className="flex items-center gap-4">
-            {/* Botón Anterior */}
-            <button
-              onClick={() => handlePageChange(pagination.page - 1)}
-              disabled={pageLoading || pagination.page <= 1}
-              className="
-                px-5 py-2.5 rounded-xl
-                text-sm font-medium
-                bg-white/90 backdrop-blur-sm
-                border-2 border-gray-200
-                text-gray-600
-                hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600
-                disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white/90 disabled:hover:text-gray-600
-                transition-all duration-200
-                shadow-sm hover:shadow-md
-                cursor-pointer
-              "
-            >
-              ← Anterior
-            </button>
-
-            {/* Texto de página */}
-            <span className="text-sm text-gray-500 whitespace-nowrap">
-              <span className="font-semibold text-gray-700">{pagination.page}</span>
-              <span className="text-gray-400"> / </span>
-              <span className="font-semibold text-gray-700">{pagination.totalPages ?? 1}</span>
-            </span>
-
-            {/* Botón Siguiente */}
-            <button
-              onClick={() => handlePageChange(pagination.page + 1)}
-              disabled={pageLoading || pagination.page >= (pagination.totalPages ?? 1)}
-              className="
-                px-5 py-2.5 rounded-xl
-                text-sm font-medium
-                bg-linear-to-r from-orange-500 to-orange-600
-                text-white
-                hover:scale-[1.03] hover:shadow-lg
-                disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-md
-                transition-all duration-200
-                shadow-md
-                cursor-pointer
-              "
-            >
-              Siguiente →
-            </button>
-          </div>
+        <div className="shrink-0 flex flex-col sm:flex-row items-center justify-center gap-10 px-6 py-5.5 ">
+          <Pagination
+            currentPage={pagination.page}
+            totalPages={pagination.totalPages}
+            onPageChange={(page) => {
+              const params: getUserParams = {};
+              if (filter.is_active !== "") params.is_active = filter.is_active === "true";
+              if (filter.role) params.role = filter.role;
+              goToPage(page, params);
+            }}
+            isLoading={pageLoading}
+          />
         </div>
       )}
     </div>

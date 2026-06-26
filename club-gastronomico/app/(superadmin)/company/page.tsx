@@ -5,9 +5,11 @@ import { useCompanies } from "@/hook/useCompanies";
 import { Building2, CheckCircle, Eye, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useEffect } from "react";
+import Pagination from "@/app/components/ui/pagination";
+import { getCompaniesParams } from "@/types/company.types";
 
 export default function CompanyPage() {
-  const { companies, loading, pageLoading, error, pagination, fetchCompanies } = useCompanies();
+  const { companies, loading, pageLoading, error, pagination, goToPageCompanies, fetchCompanies } = useCompanies();
 
   useEffect(() => {
     fetchCompanies();
@@ -101,7 +103,7 @@ export default function CompanyPage() {
                   {/* Acciones */}
                   <td className="py-3.5 px-6 text-right">
                     <Link
-                      href={`/companies/${company.id}`}
+                      href={`/company/${company.id}`}
                       className="inline-flex items-center gap-2 px-3 py-1.5 bg-linear-to-r from-orange-500 to-orange-600 text-white text-sm font-medium rounded-lg shadow-xs hover:scale-[1.02] transition-all duration-200"
                     >
                       <Eye className="w-4 h-4" />
@@ -121,6 +123,19 @@ export default function CompanyPage() {
           )}
         </div>
       </div>
+      {companies.length > 0 && (
+        <div className="shrink-0 flex flex-col sm:flex-row items-center justify-center gap-10 px-6 py-5.5 ">
+          <Pagination
+            currentPage={pagination.page}
+            totalPages={pagination.totalPages}
+            onPageChange={(page) => {
+              const params: getCompaniesParams = {};
+              goToPageCompanies(page, params);
+            }}
+            isLoading={pageLoading}
+          />
+        </div>
+      )}
     </div>
   );
 }

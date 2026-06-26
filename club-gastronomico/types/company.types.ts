@@ -1,4 +1,4 @@
-export interface company {
+export interface Company {
   id: string;
   subscription_plan: {
     id: string;
@@ -22,4 +22,10 @@ export interface PaginationResponse<T> {
     limit: number;
     totalPages: number;
   };
+}
+
+//parametros para la paginacion de companias
+export interface getCompaniesParams {
+  page?: number;
+  limit?: number;
 }

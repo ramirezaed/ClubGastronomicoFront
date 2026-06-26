@@ -1,5 +1,5 @@
 import { getAllCompany } from "@/services/company.service";
-import { company } from "@/types/company.types";
+import { company, getCompaniesParams } from "@/types/company.types";
 import { useCallback, useState } from "react";
 
 export const useCompanies = () => {
@@ -14,7 +14,7 @@ export const useCompanies = () => {
     totalPages: 1,
   });
 
-  const fetchCompanies = useCallback(async (pageChange = false) => {
+  const fetchCompanies = useCallback(async (params?: getCompaniesParams, pageChange = false) => {
     if (pageChange) {
       setPageLoading(true);
     } else {
@@ -22,7 +22,7 @@ export const useCompanies = () => {
     }
     setError(null);
     try {
-      const response = await getAllCompany();
+      const response = await getAllCompany(params);
       setCompanies(response.company.data);
       if (response.company.page) {
         setPagination({
@@ -43,5 +43,12 @@ export const useCompanies = () => {
     }
   }, []);
 
-  return { companies, loading, pageLoading, error, pagination, fetchCompanies };
+  const goToPageCompanies = useCallback(
+    (page: number, params?: getCompaniesParams) => {
+      fetchCompanies({ ...params, page }, true);
+    },
+    [fetchCompanies],
+  );
+
+  return { companies, loading, pageLoading, error, pagination, goToPageCompanies, fetchCompanies };
 };

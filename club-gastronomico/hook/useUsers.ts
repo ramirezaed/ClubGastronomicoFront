@@ -50,6 +50,7 @@ export const useUsers = () => {
     },
     [fetchUser],
   );
+
   //hook para buscador de usuarios
   const search = async (name?: string, email?: string) => {
     setError(null);

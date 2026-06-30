@@ -1,4 +1,4 @@
-import { getCompanyById } from "@/services/company.service";
+import { changePlan, getCompanyById } from "@/services/company.service";
 import { Company } from "@/types/company.types";
 import { useState } from "react";
 
@@ -20,10 +20,26 @@ export const useCompany = () => {
       setLoading(false);
     }
   };
+
+  const changePlanCompany = async (id: string, namePlan: string) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const response = await changePlan(id, namePlan);
+      setCompany(response);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al intentar cambiar el plan");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     loading,
     company,
     error,
     fetchCompanyId,
+    changePlanCompany,
   };
 };

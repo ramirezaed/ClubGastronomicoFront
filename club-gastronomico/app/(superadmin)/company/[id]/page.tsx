@@ -24,7 +24,6 @@ export default function CompanyDetailPage() {
   if (error) {
     <ErrorState title={error} onRetry={() => fetchCompanyId(id)} />;
   }
-  console.log("looooooog", company?.name);
   if (!company) {
     return (
       <div className="w-full h-full bg-linear-to-r from-orange-100 via-orange-50/20 to-orange-100 flex flex-col justify-center overflow-hidden">
@@ -97,6 +96,7 @@ export default function CompanyDetailPage() {
                 <div className={`w-3 h-3 rounded-full ${company.is_active ? "bg-green-500" : "bg-red-500"}`} />
               </div>
               <div>
+                
                 <p className="text-sm text-gray-500 font-medium">Estado</p>
                 <p className="text-lg font-semibold text-gray-900">{company.is_active ? "Activo" : "Inactivo"}</p>
               </div>

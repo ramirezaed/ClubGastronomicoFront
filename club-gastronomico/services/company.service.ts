@@ -28,9 +28,9 @@ export async function getCompanyById(id: string) {
   }
 }
 
-export async function changePlan(id: string, namePlan: string) {
+export async function changePlan(id: string, plan_id: string) {
   try {
-    const response = await api.patch(`/company/${id}`, { namePlan });
+    const response = await api.patch(`/company/change-plan/${id}`, { plan_id });
     return response.data;
   } catch (error) {
     if (error instanceof Error) {

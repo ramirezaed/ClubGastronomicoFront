@@ -29,3 +29,8 @@ export interface getCompaniesParams {
   page?: number;
   limit?: number;
 }
+
+export interface activateDeactivateCompany {
+  id: string;
+  is_active: boolean;
+}

@@ -1,4 +1,4 @@
-import { changePlan, getCompanyById } from "@/services/company.service";
+import { activate, changePlan, deacticate, getCompanyById } from "@/services/company.service";
 import { Company } from "@/types/company.types";
 import { useState } from "react";
 
@@ -35,11 +35,37 @@ export const useCompany = () => {
     }
   };
 
+  const activateCompany = async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await activate(id);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al intentar activar la empresa");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const deacticateCompany = async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await deacticate(id);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al intentar desactivar la empresa");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     loading,
     company,
     error,
     fetchCompanyId,
     changePlanCompany,
+    activateCompany,
   };
 };

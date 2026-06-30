@@ -1,6 +1,5 @@
-import { Company, getCompaniesParams, PaginationResponse } from "@/types/company.types";
+import { activateDeactivateCompany, Company, getCompaniesParams, PaginationResponse } from "@/types/company.types";
 import api from "@/lib/axios";
-import { AArrowDown } from "lucide-react";
 
 export async function getAllCompany(params?: getCompaniesParams): Promise<PaginationResponse<Company>> {
   try {
@@ -37,5 +36,29 @@ export async function changePlan(id: string, plan_id: string) {
       throw error;
     }
     throw new Error("ocrurrio un error inesperado");
+  }
+}
+
+export async function activate(id: string): Promise<activateDeactivateCompany> {
+  try {
+    const response = await api.patch(`/company/activate/${id}`);
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("ocurrio un error inesperado");
+  }
+}
+
+export async function deacticate(id: string) {
+  try {
+    const response = await api.patch(`/company/deactivate/${id}`);
+    return response;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("ocurrio un error inesperado");
   }
 }

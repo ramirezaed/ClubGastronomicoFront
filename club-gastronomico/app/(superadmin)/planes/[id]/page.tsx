@@ -26,7 +26,7 @@ export default function PlanDetailPage() {
   //obtiene los datos del plan cuando se renderiz la pagina
   useEffect(() => {
     fetchPlanById(id);
-  }, [id]);
+  }, [id]); //cuando cambia el id del plan se vuele a ejecutar la funcion
 
   //fucnion para eliminar un plan
   const handleDelete = async () => {
@@ -100,30 +100,33 @@ export default function PlanDetailPage() {
 
   return (
     <div className="w-full h-full bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col">
-      <div className="p-8 ">
-        <div className="flex items-center gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
+      {/* Header con ícono y título */}
+      <div className="p-8 py-5">
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
             <Package className="w-8 h-8 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-gray-800">Plan {plan.name}</h1>
-            <div className="flex flex-wrap items-center gap-2 mt-2">
+            <h1 className="text-2xl md:text-3xl font-[Poppins] font-extrabold text-gray-800 flex items-center gap-3">
+              Plan {plan.name}
               <span
-                className={`px-3 py-1 rounded-full text-sm font-semibold ${plan.is_active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}
+                className={`px-3 py-1 rounded-full text-sm font-semibold ${
+                  plan.is_active ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"
+                }`}
               >
                 {plan.is_active ? "Activo" : "Inactivo"}
               </span>
-            </div>
+            </h1>
           </div>
         </div>
       </div>
 
       {/* Formulario */}
-      <div className="p-6 space-y-6 flex flex-col items-center">
-        <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mb-10" />
+      <div className="p-2 space-y-3 flex flex-col items-center">
+        <div className="h-0.5 w-10/12  bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full  mb-8" />
         {/* Descripción */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-sm font-medium text-gray-700 mt-5 mb-2">
             <span className="flex items-center gap-2">
               <FileText className="w- h-4 text-gray-400" />
               Descripción
@@ -187,7 +190,7 @@ export default function PlanDetailPage() {
 
       {/* Botones Volver y Eliminar */}
       <div className="  from-orange-100 via-orange-50/20 to-orange-100 px-6 py-4 flex flex-col items-center">
-        <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mb-10" />
+        <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mt-15 mb-5" />
         <div className="flex flex-col-reverse sm:flex-row sm:justify-between items-center gap-3">
           <button
             onClick={() => router.back()}

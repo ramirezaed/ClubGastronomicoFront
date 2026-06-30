@@ -166,7 +166,7 @@ export function AdminMenu() {
       label: "Mi Perfil",
       icon: Shield,
       href: "/me",
-      active: pathname === "/roles" || pathname?.startsWith("/roles/"),
+      active: pathname === "/me" || pathname?.startsWith("/me/"),
     },
   ];
 

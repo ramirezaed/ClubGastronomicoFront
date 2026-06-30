@@ -1,5 +1,5 @@
-import { getplanById, softDeletePlan, updatePlan } from "@/services/plan.service";
-import { Plans } from "@/types/plans.types";
+import { getplanById, newPlan, softDeletePlan, updatePlan } from "@/services/plan.service";
+import { Plans, RegisterPlan } from "@/types/plans.types";
 import { useState } from "react";
 
 export const usePlan = () => {
@@ -50,6 +50,21 @@ export const usePlan = () => {
     }
   };
 
+  //hook para registrar un nuevo plan
+  const register = async (data: RegisterPlan) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const response = await newPlan(data);
+      setPlan(response);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al intentar registrar un nuevo plan");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     plan,
     loading,
@@ -57,5 +72,6 @@ export const usePlan = () => {
     fetchPlanById,
     deletePlan,
     update,
+    register,
   };
 };

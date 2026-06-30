@@ -1,5 +1,6 @@
 import api from "@/lib/axios";
-import { Plans, softDeletePlanResponse } from "@/types/plans.types";
+import { Plans, RegisterPlan, softDeletePlanResponse } from "@/types/plans.types";
+import axios from "axios";
 
 export async function getPlans(): Promise<Plans[]> {
   try {
@@ -9,7 +10,7 @@ export async function getPlans(): Promise<Plans[]> {
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error("ocurrio un error al buscar los planes");
+    throw new Error("ocurrio un error inesperado");
   }
 }
 
@@ -21,7 +22,7 @@ export async function getplanById(id: string): Promise<Plans> {
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error("ocurrio un error al obtener informacion acerca del plan");
+    throw new Error("ocurrio un error inesperado");
   }
 }
 
@@ -33,7 +34,7 @@ export async function softDeletePlan(id: string): Promise<softDeletePlanResponse
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error("ocurrrio un problema al intentar eliminar el plan");
+    throw new Error("ocurrio un error inesperado");
   }
 }
 
@@ -45,6 +46,18 @@ export async function updatePlan(id: string, price?: string, description?: strin
     if (error instanceof Error) {
       throw error;
     }
-    throw new Error("Ocurrio un problema al intentar acutalizar los datos del plan");
+    throw new Error("ocurrio un error inesperado");
+  }
+}
+
+export async function newPlan(data: RegisterPlan): Promise<Plans> {
+  try {
+    const response = await api.post(`/plans`, data);
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("ocurrio un error inesperado");
   }
 }

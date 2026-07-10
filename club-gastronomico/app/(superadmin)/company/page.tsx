@@ -49,7 +49,7 @@ export default function CompanyPage() {
           <table className="w-full text-left border-collapse">
             <thead>
               {/* Encabezado con fondo naranja */}
-              <tr className="bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 text-sm font-semibold text-gray-700 sticky top-0 z-10">
+              <tr className="bg-linear-to-r from-orange-200 via-orange-200 to-orange-200 text-sm font-semibold text-gray-700 sticky top-0 z-10">
                 <th className="py-3.5 px-6">Nombre</th>
                 <th className="py-3.5 px-6">Direccion</th>
                 <th className="py-3.5 px-6">Plan</th>

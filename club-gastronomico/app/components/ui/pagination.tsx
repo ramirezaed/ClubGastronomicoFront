@@ -17,8 +17,6 @@ export default function Pagination({
   isLoading = false,
   className = "",
 }: PaginationProps) {
-  // Mostrar siempre si hay datos, aunque sea 1 página
-  // Si totalPages es 0 o undefined, no mostrar
   if (!totalPages || totalPages === 0) return null;
 
   const handlePrev = () => {
@@ -33,13 +31,67 @@ export default function Pagination({
     }
   };
 
+  // Generar array de números de página para mostrar
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const maxVisible = 5; // Número máximo de páginas visibles
+    const halfVisible = Math.floor(maxVisible / 2);
+
+    if (totalPages <= maxVisible) {
+      // Si hay pocas páginas, mostrar todas
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      // Siempre mostrar primera página
+      pages.push(1);
+
+      let startPage = Math.max(2, currentPage - halfVisible);
+      let endPage = Math.min(totalPages - 1, currentPage + halfVisible);
+
+      // Ajustar si estamos cerca del inicio
+      if (currentPage <= halfVisible + 1) {
+        endPage = maxVisible;
+      }
+
+      // Ajustar si estamos cerca del final
+      if (currentPage >= totalPages - halfVisible) {
+        startPage = totalPages - maxVisible + 1;
+      }
+
+      // Agregar elipsis si es necesario
+      if (startPage > 2) {
+        pages.push("...");
+      }
+
+      // Agregar páginas del rango
+      for (let i = startPage; i <= endPage; i++) {
+        if (i > 1 && i < totalPages) {
+          pages.push(i);
+        }
+      }
+
+      // Agregar elipsis si es necesario
+      if (endPage < totalPages - 1) {
+        pages.push("...");
+      }
+
+      // Siempre mostrar última página
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+
+  const pageNumbers = getPageNumbers();
+
   return (
-    <div className={`flex items-center justify-center gap-4 ${className}`}>
+    <div className={`flex items-center justify-center gap-2 ${className}`}>
       <button
         onClick={handlePrev}
         disabled={isLoading || currentPage <= 1}
         className="
-          px-4 py-2 rounded-lg text-sm font-medium
+          px-3 py-2 rounded-lg text-sm font-medium
           bg-white border border-gray-200
           text-gray-600
           hover:bg-orange-50 hover:border-orange-300 hover:text-orange-600
@@ -54,17 +106,48 @@ export default function Pagination({
         Anterior
       </button>
 
-      <span className="text-sm text-gray-500">
-        <span className="font-medium text-gray-700">{currentPage}</span>
-        <span className="text-gray-300 mx-1">/</span>
-        <span className="font-medium text-gray-700">{totalPages}</span>
-      </span>
+      <div className="flex items-center gap-1">
+        {pageNumbers.map((page, index) => {
+          if (page === "...") {
+            return (
+              <span key={`ellipsis-${index}`} className="px-3 py-2 text-sm text-gray-400">
+                …
+              </span>
+            );
+          }
+
+          const pageNum = page as number;
+          const isActive = pageNum === currentPage;
+
+          return (
+            <button
+              key={pageNum}
+              onClick={() => !isLoading && onPageChange(pageNum)}
+              disabled={isLoading}
+              className={`
+                px-3 py-2 rounded-lg text-sm font-medium
+                transition-all duration-200
+                ${
+                  isActive
+                    ? "bg-orange-500 text-white hover:bg-orange-600"
+                    : "bg-white border border-gray-200 text-gray-600 hover:bg-orange-50 hover:border-orange-300 hover:text-orange-600"
+                }
+                disabled:opacity-40 disabled:cursor-not-allowed
+                cursor-pointer
+                min-w-9
+              `}
+            >
+              {pageNum}
+            </button>
+          );
+        })}
+      </div>
 
       <button
         onClick={handleNext}
         disabled={isLoading || currentPage >= totalPages}
         className="
-          px-4 py-2 rounded-lg text-sm font-medium
+          px-3 py-2 rounded-lg text-sm font-medium
           bg-orange-500 text-white
           hover:bg-orange-600
           disabled:opacity-40 disabled:cursor-not-allowed

@@ -62,3 +62,15 @@ export async function deacticate(id: string) {
     throw new Error("ocurrio un error inesperado");
   }
 }
+
+export async function softDelete(id: string) {
+  try {
+    const response = await api.delete(`/company/${id}`);
+    return response;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("ocurrio un error inesperado");
+  }
+}

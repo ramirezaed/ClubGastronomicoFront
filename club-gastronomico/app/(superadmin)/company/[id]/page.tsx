@@ -1,6 +1,8 @@
 "use client";
+import { DeleteButton } from "@/app/components/ui/DeleteButton";
 import { ErrorState } from "@/app/components/ui/errorState";
 import { LoadingState } from "@/app/components/ui/loandigstate";
+import Modal from "@/app/components/ui/Modal";
 import { useCompany } from "@/hook/useCompany";
 import { usePlans } from "@/hook/usePlans";
 import { Building2, Crown, Mail, Package, Phone } from "lucide-react";
@@ -12,9 +14,12 @@ export default function CompanyDetailPage() {
   const router = useRouter();
 
   const id = params.id as string;
-  const { loading, error, company, fetchCompanyId, changePlanCompany } = useCompany();
+  const { loading, error, company, fetchCompanyId, changePlanCompany, deleteCompany } = useCompany();
   const { plans, fetchPlans } = usePlans();
   const [selectedPlan, setSelectedPlan] = useState("");
+
+  const [modalOpen, setModalOpen] = useState(false); //seteo el modal, por defecto false (cerrado)
+  const [modalMessage, setModalMessage] = useState(""); //mensaje del modal, por defcto vacio
 
   //funcion para obtener datos de la empresa, se ejecuta cuando se renderiza lapagina
   useEffect(() => {
@@ -33,6 +38,7 @@ export default function CompanyDetailPage() {
     }
   }, [company]);
 
+  //funciona para manejar el cambio de plan de una empresa
   const handleChangePlan = async () => {
     if (!company) return;
     if (selectedPlan === company.subscription_plan?.name) return;
@@ -41,6 +47,20 @@ export default function CompanyDetailPage() {
     if (response) {
       await fetchCompanyId(id);
     }
+  };
+
+  // funcion para eliminar una empresa
+  const handleDelete = async () => {
+    if (!company) return;
+    const response = await deleteCompany(company.id);
+    if (response) {
+      setModalOpen(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setModalOpen(false);
+    router.push("/company");
   };
 
   if (loading) {
@@ -245,10 +265,14 @@ export default function CompanyDetailPage() {
               >
                 Volver
               </button>
+              <div className="flex flex-col sm:flex-row sm:justify-center  gap-3 sm:gap-6">
+                <DeleteButton loading={loading} itemName={`al usuario ${company.name}`} onDelete={handleDelete} />
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <Modal isOpen={modalOpen} onClose={handleCloseModal} title="¡Compania Eliminada!" message={modalMessage} />
     </div>
   );
 }

@@ -1,5 +1,6 @@
-import { activate, changePlan, deacticate, getCompanyById } from "@/services/company.service";
+import { activate, changePlan, deacticate, getCompanyById, softDelete } from "@/services/company.service";
 import { Company } from "@/types/company.types";
+import { Fascinate } from "next/font/google";
 import { useState } from "react";
 
 export const useCompany = () => {
@@ -60,6 +61,18 @@ export const useCompany = () => {
     }
   };
 
+  const deleteCompany = async (id: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      return await softDelete(id);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al intentar eliminar la empresa seleccionada");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     loading,
     company,
@@ -67,5 +80,7 @@ export const useCompany = () => {
     fetchCompanyId,
     changePlanCompany,
     activateCompany,
+    deacticateCompany,
+    deleteCompany,
   };
 };

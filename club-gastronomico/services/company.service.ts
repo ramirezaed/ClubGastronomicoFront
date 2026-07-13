@@ -1,5 +1,12 @@
-import { activateDeactivateCompany, Company, getCompaniesParams, PaginationResponse } from "@/types/company.types";
+import {
+  activateDeactivateCompany,
+  Company,
+  getCompaniesParams,
+  PaginationResponse,
+  softDeleteCompany,
+} from "@/types/company.types";
 import api from "@/lib/axios";
+import { promises } from "dns";
 
 export async function getAllCompany(params?: getCompaniesParams): Promise<PaginationResponse<Company>> {
   try {
@@ -63,10 +70,22 @@ export async function deacticate(id: string) {
   }
 }
 
-export async function softDelete(id: string) {
+export async function softDelete(id: string): Promise<softDeleteCompany> {
   try {
     const response = await api.delete(`/company/${id}`);
-    return response;
+    return response.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw error;
+    }
+    throw new Error("ocurrio un error inesperado");
+  }
+}
+
+export async function searchCompany(name?: string): Promise<Company[]> {
+  try {
+    const response = await api.post(`/company/search`, { name });
+    return response.data;
   } catch (error) {
     if (error instanceof Error) {
       throw error;

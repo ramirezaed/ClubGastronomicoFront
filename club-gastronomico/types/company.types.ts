@@ -34,3 +34,7 @@ export interface activateDeactivateCompany {
   id: string;
   is_active: boolean;
 }
+
+export interface softDeleteCompany {
+  message: string;
+}

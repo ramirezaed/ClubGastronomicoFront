@@ -4,20 +4,43 @@ import { LoadingState } from "@/app/components/ui/loandigstate";
 import { useCompanies } from "@/hook/useCompanies";
 import { Building2, CheckCircle, Eye, XCircle } from "lucide-react";
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Pagination from "@/app/components/ui/pagination";
 import { getCompaniesParams } from "@/types/company.types";
 
 export default function CompanyPage() {
-  const { companies, loading, pageLoading, error, pagination, goToPageCompanies, fetchCompanies } = useCompanies();
+  const { companies, loading, pageLoading, error, pagination, goToPageCompanies, fetchCompanies, search } =
+    useCompanies();
 
+  //seteo el parametro de busqueda searchTrem, por defecto ""
+  const [searchTerm, setSearchTerm] = useState("");
+  //fncion para obtener la lista de empresas cuando renderiza la pagina
   useEffect(() => {
     fetchCompanies();
   }, [fetchCompanies]);
 
-  const getStatusBadgeClass = (isActive: boolean) => {
-    return isActive ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700";
+  // Carga la lista completa de companias
+  const loadCompanies = () => {
+    fetchCompanies();
   };
+
+  // Buscador
+  useEffect(() => {
+    if (searchTerm.trim() === "") return;
+
+    const timer = setTimeout(() => {
+      search(searchTerm);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm]);
+
+  // Si el buscador queda vacío, vuelve a cargar la lista
+  useEffect(() => {
+    if (searchTerm.trim() === "") {
+      loadCompanies();
+    }
+  }, [searchTerm]);
 
   if (loading) {
     return <LoadingState title="Cargando lista de empresas" description="Espere un momento por favor" />;
@@ -28,17 +51,30 @@ export default function CompanyPage() {
 
   return (
     <div className="h-full flex flex-col bg-linear-to-r from-orange-100 via-orange-50 to-orange-100">
-      {/* Header con título y botón Agregar */}
       <div className="shrink-0 p-3.5 pb-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-end justify-between">
+          {/* Título */}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
               <Building2 className="w-5 h-5 text-white" />
             </div>
+
             <div>
               <h1 className="text-2xl font-[Poppins] font-extrabold text-gray-800">Empresas</h1>
               <p className="text-gray-500 text-sm">Gestiona las empresas del sistema</p>
             </div>
+          </div>
+
+          {/* Buscador */}
+          <div className="w-full max-w-sm">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">Buscar</label>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Nombre de la empresa"
+              className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
+            />
           </div>
         </div>
       </div>

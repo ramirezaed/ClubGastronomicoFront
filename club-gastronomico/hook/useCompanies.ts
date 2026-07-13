@@ -1,9 +1,9 @@
-import { getAllCompany } from "@/services/company.service";
-import { company, getCompaniesParams } from "@/types/company.types";
+import { getAllCompany, searchCompany } from "@/services/company.service";
+import { Company, getCompaniesParams } from "@/types/company.types";
 import { useCallback, useState } from "react";
 
 export const useCompanies = () => {
-  const [companies, setCompanies] = useState<company[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(true);
   const [pageLoading, setPageLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -13,6 +13,7 @@ export const useCompanies = () => {
     total: 0,
     totalPages: 1,
   });
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const fetchCompanies = useCallback(async (params?: getCompaniesParams, pageChange = false) => {
     if (pageChange) {
@@ -50,5 +51,18 @@ export const useCompanies = () => {
     [fetchCompanies],
   );
 
-  return { companies, loading, pageLoading, error, pagination, goToPageCompanies, fetchCompanies };
+  const search = async (name?: string) => {
+    setError(null);
+    setSearchLoading(true);
+    try {
+      const response = await searchCompany(name);
+      setCompanies(response);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al buscar compania");
+    } finally {
+      setSearchLoading(false);
+    }
+    [];
+  };
+  return { companies, loading, pageLoading, error, pagination, goToPageCompanies, fetchCompanies, search };
 };

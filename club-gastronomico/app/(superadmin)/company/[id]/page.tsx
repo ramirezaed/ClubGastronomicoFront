@@ -5,7 +5,7 @@ import { LoadingState } from "@/app/components/ui/loandigstate";
 import Modal from "@/app/components/ui/Modal";
 import { useCompany } from "@/hook/useCompany";
 import { usePlans } from "@/hook/usePlans";
-import { Building2, Crown, Mail, Package, Phone } from "lucide-react";
+import { Building2, Crown, Home, Mail, Package, Phone } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -89,190 +89,196 @@ export default function CompanyDetailPage() {
   }
 
   return (
-    <div className="w-full min-h-screen bg-linear-to-r from-orange-100 via-orange-50/20 to-orange-100 p-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          {/* Header con ícono y título */}
-          <div className="bg-linear-to-r from-orange-500 to-orange-600 p-6">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
-                <Building2 className="w-5 h-5 text-white" />
+    <div className="w-full min-h-screen bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col overflow-hidden">
+      {/* Header con ícono y título */}
+      <div className="p-8 py-5">
+        <div className="flex items-center gap-2">
+          <div className="w-10 h-10 rounded-2xl bg-linear-to-r from-orange-500 to-orange-600 shadow-lg flex items-center justify-center shrink-0">
+            <Building2 className="w-5 h-5 text-white" />
+          </div>
+
+          <div>
+            <h1 className="text-2xl md:text-3xl font-[Poppins] font-extrabold text-gray-800 flex items-center gap-3 flex-wrap">
+              {company.name}
+              <span className={`px-3 py-1 rounded-full text-sm font-semibold bg-orange-100 text-orange-700`}>
+                {company.subscription_plan?.name || "Sin plan"}
+              </span>
+              <div className="flex items-center gap-1">
+                {company.is_active ? (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-green-500" />
+                    <span className="text-sm font-medium text-green-600">Activo</span>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-2 h-2 rounded-full bg-red-500" />
+                    <span className="text-sm font-medium text-red-600">Inactivo</span>
+                  </>
+                )}
               </div>
-              <div>
-                <h1 className="text-2xl font-bold text-white flex items-center gap-3">
-                  {company.name}
-                  <span className="px-3 py-1 rounded-full text-sm font-semibold bg-white/20 text-white backdrop-blur-sm">
-                    {company.subscription_plan?.name || "Sin plan"}
-                  </span>
-                  <div className="flex items-center gap-1">
-                    {company.is_active ? (
-                      <>
-                        <div className="w-2 h-2 rounded-full bg-green-400" />
-                        <span className="text-sm font-medium text-white/90">Activo</span>
-                      </>
-                    ) : (
-                      <>
-                        <div className="w-2 h-2 rounded-full bg-red-400" />
-                        <span className="text-sm font-medium text-white/90">Inactivo</span>
-                      </>
-                    )}
-                  </div>
-                </h1>
+            </h1>
+          </div>
+        </div>
+      </div>
+
+      <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mt-1 mx-auto mb-4" />
+
+      <div className="p-2 space-y-3 md:p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Información de contacto */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <div className="w-1 h-6 rounded-full bg-linear-to-r from-orange-500 to-orange-600" />
+              Información de Contacto
+            </h2>
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-3 p-4 rounded-xl">
+                <Building2 className="w-5 h-5 text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Nombre</p>
+                  <p className="text-gray-800 font-medium break-all">{company.name}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 rounded-xl">
+                <Home className="w-5 h-5 text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Dirección</p>
+                  <p className="text-gray-800 font-medium break-all">{company.phone}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3 p-4 rounded-xl">
+                <Mail className="w-5 h-5 text-gray-400 shrink-0" />
+                <div>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Email del Dueño</p>
+                  <p className="text-gray-800 font-medium break-all">{company.owner?.email || "No disponible"}</p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="h-0.5 w-full bg-linear-to-r from-orange-500 via-orange-300 to-orange-500" />
-
-          {/* Content */}
-          <div className="p-6 space-y-6">
-            {/* Información de contacto */}
-            <div>
-              <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                <div className="w-1 h-6 rounded-full bg-linear-to-r from-orange-500 to-orange-600" />
-                Información de Contacto
-              </h2>
-              <div className="space-y-3">
-                {/* Nombre */}
-                <div className="flex items-start gap-3 p-4 bg-orange-50 rounded-xl">
-                  <Building2 className="w-5 h-5 text-orange-600 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm text-gray-500 font-medium">Nombre</p>
-                    <p className="text-lg font-semibold text-gray-900">{company.name}</p>
-                  </div>
+          {/* Información de empresa */}
+          <div>
+            <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
+              <div className="w-1 h-6 rounded-full bg-linear-to-r from-orange-500 to-orange-600" />
+              Información de Suscripción
+            </h2>
+            <div className="space-y-0.5">
+              <div className="flex items-center gap-3 p-4 rounded-xl">
+                <div className="w-5 h-5 text-gray-400 shrink-0 flex items-center justify-center">
+                  <span className="text-lg">📋</span>
                 </div>
-
-                {/* Teléfono */}
-                <div className="flex items-start gap-3 p-4 bg-orange-50 rounded-xl">
-                  <Phone className="w-5 h-5 text-orange-600 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm text-gray-500 font-medium">Teléfono</p>
-                    <p className="text-lg font-semibold text-gray-900">{company.phone}</p>
-                  </div>
-                </div>
-
-                {/* Email del dueño */}
-                <div className="flex items-start gap-3 p-4 bg-orange-50 rounded-xl">
-                  <Mail className="w-5 h-5 text-orange-600 mt-0.5 shrink-0" />
-                  <div>
-                    <p className="text-sm text-gray-500 font-medium">Email del Dueño</p>
-                    <p className="text-lg font-semibold text-gray-900">{company.owner?.email || "No disponible"}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Plan de suscripción - con selector y botón */}
-            <div className="rounded-2xl bg-orange-50 p-4">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <h3 className="font-semibold text-gray-800">Plan de Suscripción</h3>
-                  <p className="text-sm text-gray-500 mt-1">Cambia el plan de suscripción de esta empresa.</p>
+                  <p className="text-xs text-gray-500 uppercase tracking-wide">Plan Actual</p>
+                  <p className="text-gray-800 font-medium">{company.subscription_plan?.name || "Sin plan"}</p>
                 </div>
-
-                <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-                  <select
-                    value={selectedPlan}
-                    onChange={(e) => setSelectedPlan(e.target.value)}
-                    className="
-                      w-full
-                      sm:min-w-50
-                      md:min-w-50
-                      px-4 py-3
-                      rounded-xl
-                      border-2 border-orange-200
-                      bg-white
-                      text-gray-700
-                      font-medium
-                      shadow-sm
-                      focus:border-orange-500
-                      focus:ring-4
-                      focus:ring-orange-100
-                      outline-none
-                      transition-all
-                      cursor-pointer
-                    "
-                  >
-                    <option value="" disabled>
-                      Seleccionar plan
-                    </option>
-                    {plans.map((plan) => (
-                      <option key={plan.id} value={plan.id}>
-                        {plan.name}
-                      </option>
-                    ))}
-                  </select>
-
-                  <button
-                    onClick={handleChangePlan}
-                    disabled={selectedPlan === company.subscription_plan?.id || !selectedPlan}
-                    className="
-                      px-6 py-3
-                      rounded-xl
-                      bg-linear-to-r
-                      from-orange-500
-                      to-orange-600
-                      text-white
-                      font-medium
-                      shadow-md
-                      hover:scale-[1.02]
-                      transition-all
-                      disabled:opacity-50
-                      disabled:cursor-not-allowed
-                      whitespace-nowrap
-                      cursor-pointer
-                    "
-                  >
-                    Cambiar plan
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Estado */}
-            <div className="flex items-start gap-3 p-4 bg-orange-50 rounded-xl">
-              <div className="mt-0.5">
-                <div className={`w-3 h-3 rounded-full ${company.is_active ? "bg-green-500" : "bg-red-500"}`} />
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 font-medium">Estado</p>
-                <p className="text-lg font-semibold text-gray-900">{company.is_active ? "Activo" : "Inactivo"}</p>
-              </div>
-            </div>
-
-            {/* Línea divisoria */}
-            <div className="h-0.5 w-full bg-linear-to-r from-orange-100 via-orange-300 to-orange-100 rounded-full my-4" />
-
-            {/* Botones */}
-            <div className="flex flex-col sm:flex-row sm:justify-center gap-3 sm:gap-6">
-              <button
-                onClick={() => router.back()}
-                className="
-                  w-full sm:w-auto
-                  px-6 py-2.5
-                  rounded-xl
-                  bg-linear-to-r
-                  from-orange-500
-                  to-orange-600
-                  text-white
-                  font-medium
-                  shadow-md
-                  hover:scale-[1.02]
-                  transition-all
-                  duration-200
-                  cursor-pointer
-                "
-              >
-                Volver
-              </button>
-              <div className="flex flex-col sm:flex-row sm:justify-center  gap-3 sm:gap-6">
-                <DeleteButton loading={loading} itemName={`al usuario ${company.name}`} onDelete={handleDelete} />
               </div>
             </div>
           </div>
         </div>
       </div>
-      <Modal isOpen={modalOpen} onClose={handleCloseModal} title="¡Compania Eliminada!" message={modalMessage} />
+
+      {/* Plan de suscripción - con selector y botón */}
+      <div className="rounded-2xl p-4 mx-4 md:mx-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div>
+            <h3 className="font-semibold text-gray-800">Plan de Suscripción</h3>
+            <p className="text-sm text-gray-500 mt-1">Cambia el plan de suscripción de esta empresa.</p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+            <select
+              value={selectedPlan}
+              onChange={(e) => setSelectedPlan(e.target.value)}
+              className="
+                w-full
+                sm:min-w-70
+                lg:min-w-[320px]
+                px-4 py-3
+                rounded-xl
+                border-2 border-orange-200
+                bg-white
+                text-gray-700
+                font-medium
+                shadow-sm
+                focus:border-orange-500
+                focus:ring-4
+                focus:ring-orange-100
+                outline-none
+                transition-all
+                cursor-pointer
+              "
+            >
+              <option value="" disabled>
+                Seleccionar plan
+              </option>
+              {plans.map((plan) => (
+                <option key={plan.id} value={plan.id}>
+                  {plan.name} {plan.price ? `- $${plan.price}` : ""}
+                </option>
+              ))}
+            </select>
+
+            <button
+              onClick={handleChangePlan}
+              disabled={selectedPlan === company.subscription_plan?.id || !selectedPlan}
+              className="
+                px-6 py-3
+                rounded-xl
+                bg-linear-to-r
+                from-orange-500
+                to-orange-600
+                text-white
+                font-medium
+                shadow-md
+                hover:scale-[1.02]
+                transition-all
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+                whitespace-nowrap
+                cursor-pointer
+              "
+            >
+              Cambiar plan
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Línea divisoria */}
+      <div className="px-4 md:px-8 py-4 md:py-5 mt-3">
+        <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mt-1 mb-4 mx-auto" />
+
+        {/* Botones */}
+        <div className="mt-2 flex flex-col sm:flex-row sm:justify-center gap-3 sm:gap-6">
+          <button
+            onClick={() => router.back()}
+            className="
+              w-full sm:w-auto
+              px-6 py-2.5
+              rounded-xl
+              bg-linear-to-r
+              from-orange-500
+              to-orange-600
+              text-white
+              font-medium
+              shadow-md
+              hover:scale-[1.02]
+              transition-all
+              duration-200
+              cursor-pointer
+              order-2 sm:order-1
+            "
+          >
+            Volver
+          </button>
+
+          <div className="flex flex-col sm:flex-row sm:justify-center gap-3 sm:gap-6">
+            <DeleteButton loading={loading} itemName={`la empresa ${company.name}`} onDelete={handleDelete} />
+          </div>
+        </div>
+      </div>
+
+      <Modal isOpen={modalOpen} onClose={handleCloseModal} title="¡Compañía Eliminada!" message={modalMessage} />
     </div>
   );
 }

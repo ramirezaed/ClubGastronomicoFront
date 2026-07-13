@@ -14,6 +14,7 @@ export const useUsers = () => {
     total: 0,
     totalPages: 1,
   });
+  const [searchLoading, setSearchLoading] = useState(false);
   const fetchUser = useCallback(async (params?: getUserParams, pageChange = false) => {
     if (pageChange) {
       setPageLoading(true);
@@ -54,14 +55,14 @@ export const useUsers = () => {
   //hook para buscador de usuarios
   const search = async (name?: string, email?: string) => {
     setError(null);
-    setLoading(true);
+    setSearchLoading(true);
     try {
       const response = await searchUser(name, email);
       setUsers(response);
     } catch (error) {
       setError(error instanceof Error ? error.message : "error al buscar usuario");
     } finally {
-      setLoading(false);
+      setSearchLoading(false);
     }
     [];
   };

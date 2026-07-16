@@ -10,21 +10,7 @@ export default function Users() {
 
   return (
     <div>
-      <p>hola pagina de owner</p>
-      <button
-        onClick={handleLogout}
-        style={{
-          marginTop: "20px",
-          padding: "8px 16px",
-          backgroundColor: "#ef4444",
-          color: "white",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
-      >
-        Cerrar Sesión
-      </button>
+      <p>hola pagina de owner1</p>
     </div>
   );
 }

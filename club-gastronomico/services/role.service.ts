@@ -1,7 +1,5 @@
 import { GetRolesResponse, registerRole, role, softDeleteRole } from "@/types/role.types";
 import api from "@/lib/axios";
-import axios, { Axios } from "axios";
-import { updatePlan } from "@/services/plan.service";
 
 export async function getRoles(): Promise<GetRolesResponse> {
   try {

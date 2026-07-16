@@ -7,9 +7,10 @@ import Link from "next/link";
 import { ErrorState } from "@/app/components/ui/errorState";
 import { getUserParams } from "@/types/user.types";
 import { LoadingState } from "@/app/components/ui/loandigstate";
+import Pagination from "@/app/components/ui/pagination";
 
 export default function UsersPage() {
-  const { users, loading, error, fetchUser, search, goToPage, pagination } = useUsers();
+  const { users, loading, pageLoading, error, fetchUser, search, goToPage, pagination } = useUsers();
   //seteo el parametro de busqueda searchTrem, por defecto ""
   const [searchTerm, setSearchTerm] = useState("");
   const [filter, setFilter] = useState({
@@ -63,23 +64,11 @@ export default function UsersPage() {
     return roleMap[roleName] || "bg-gray-100 text-gray-700";
   };
 
-  //funcion para cambiar de pagina respetando los filtros
-  const handlePageChange = (newPage: number) => {
-    const params: getUserParams = {};
-    if (filter.is_active !== "") params.is_active = filter.is_active === "true";
-    if (filter.role) params.role = filter.role;
-    goToPage(newPage, params);
-  };
-
-  //si hay error muestra el error
   if (error) {
     return <ErrorState title={error} subtitle="Por favor intentelo mas tarde" onRetry={loadUsers} />;
   }
 
   //muestra la barra de carga
-  // {
-  //   loading && <LoadingState title="Cargando datos de usuarios" description="Espere un momento por favor" />;
-  // }
   if (loading) {
     return <LoadingState title="Cargando lista de usuarios" description="Espere un momento por favor" />;
   }
@@ -145,16 +134,15 @@ export default function UsersPage() {
       {/* 2. Sección de Tabla (Scrollable) */}
       <div className="flex-1 min-h-0 overflow-hidden">
         <div className="h-full overflow-y-auto overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+          <table className="w-full table-fixed text-left border-collapse">
             <thead>
-              {/* Encabezado con un fondo naranja claro sólido */}
               <tr className="bg-linear-to-r from-orange-200 via-orange-200 to-orange-200 text-sm font-semibold text-gray-700 sticky top-0 z-10">
-                <th className="py-3.5 px-6">Usuario</th>
-                <th className="py-3.5 px-6">Email</th>
-                <th className="py-3.5 px-6">Empresa</th>
-                <th className="py-3.5 px-6">Rol</th>
-                <th className="py-3.5 px-6">Estado</th>
-                <th className="py-3.5 px-6 text-right">Acciones</th>
+                <th className="w-50 py-3.5 px-6">Usuario</th>
+                <th className="w-70 py-3.5 px-6">Email</th>
+                <th className="w-40 py-3.5 px-6">Empresa</th>
+                <th className="w-32 py-3.5 px-6">Rol</th>
+                <th className="w-36 py-3.5 px-6">Estado</th>
+                <th className="w-40 py-3.5 px-6 text-right">Acciones</th>
               </tr>
             </thead>
 
@@ -170,7 +158,11 @@ export default function UsersPage() {
                   </td>
 
                   {/* Email */}
-                  <td className="py-3.5 px-6 text-sm text-gray-600">{user.email}</td>
+                  <td className="py-3.5 px-6 text-sm text-gray-600">
+                    <div className="max-w-xs truncate" title={user.email}>
+                      {user.email}
+                    </div>
+                  </td>
 
                   {/* Empresa */}
                   <td className="py-3.5 px-6 text-sm text-gray-600">{user.company?.name || "—"}</td>
@@ -211,7 +203,7 @@ export default function UsersPage() {
                   <td className="py-3.5 px-6 text-right">
                     <Link
                       href={`/users/${user.id}`}
-                      className="inline-flex items-center gap-2 px-3 py-1.5 bg-linear-to-r from-orange-500 to-orange-600 text-white text-sm font-medium rounded-lg shadow-xs hover:scale-[1.02] transition-all duration-200"
+                      className="inline-flex items-center gap-2 px-2 py-1.5 bg-linear-to-r from-orange-500 to-orange-600 text-white text-sm font-medium rounded-lg shadow-xs hover:scale-[1.02] transition-all duration-200"
                     >
                       <Eye className="w-4 h-4" />
                       Ver detalle
@@ -231,56 +223,19 @@ export default function UsersPage() {
         </div>
       </div>
 
-      {/* 3. Paginación (Inferior - Fijo) */}
       {users.length > 0 && (
-        <div className="shrink-0 flex flex-col sm:flex-row items-center justify-center gap-4 px-6 py-5 bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 border-t border-orange-200/50">
-          <div className="flex items-center gap-4">
-            {/* Botón Anterior */}
-            <button
-              onClick={() => handlePageChange(pagination.page - 1)}
-              disabled={pagination.page <= 1}
-              className="
-                px-5 py-2.5 rounded-xl
-                text-sm font-medium
-                bg-white/90 backdrop-blur-sm
-                border-2 border-gray-200
-                text-gray-600
-                hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600
-                disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-gray-200 disabled:hover:bg-white/90 disabled:hover:text-gray-600
-                transition-all duration-200
-                shadow-sm hover:shadow-md
-                cursor-pointer
-              "
-            >
-              ← Anterior
-            </button>
-
-            {/* Texto de página */}
-            <span className="text-sm text-gray-500 whitespace-nowrap">
-              <span className="font-semibold text-gray-700">{pagination.page}</span>
-              <span className="text-gray-400"> / </span>
-              <span className="font-semibold text-gray-700">{pagination.totalPages ?? 1}</span>
-            </span>
-
-            {/* Botón Siguiente */}
-            <button
-              onClick={() => handlePageChange(pagination.page + 1)}
-              disabled={pagination.page >= (pagination.totalPages ?? 1)}
-              className="
-                px-5 py-2.5 rounded-xl
-                text-sm font-medium
-                bg-linear-to-r from-orange-500 to-orange-600
-                text-white
-                hover:scale-[1.03] hover:shadow-lg
-                disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-md
-                transition-all duration-200
-                shadow-md
-                cursor-pointer
-              "
-            >
-              Siguiente →
-            </button>
-          </div>
+        <div className="shrink-0 flex flex-col sm:flex-row items-center justify-center gap-10 px-6 py-5.5 ">
+          <Pagination
+            currentPage={pagination.page}
+            totalPages={pagination.totalPages}
+            onPageChange={(page) => {
+              const params: getUserParams = {};
+              if (filter.is_active !== "") params.is_active = filter.is_active === "true";
+              if (filter.role) params.role = filter.role;
+              goToPage(page, params);
+            }}
+            isLoading={pageLoading}
+          />
         </div>
       )}
     </div>

@@ -283,7 +283,7 @@ export default function UserDetailPage() {
           >
             Volver
           </button>
-          {/* <div className="order-1 sm:order-2"> */}
+          
           <div className="flex flex-col sm:flex-row sm:justify-center  gap-3 sm:gap-6">
             <DeleteButton loading={loading} itemName={`al usuario ${user.name}`} onDelete={handleDelete} />
           </div>

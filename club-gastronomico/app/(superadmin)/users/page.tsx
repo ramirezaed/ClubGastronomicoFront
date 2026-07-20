@@ -199,7 +199,6 @@ export default function UsersPage() {
                     </div>
                   </td>
 
-                  {/* Acciones alineadas limpiamente a la derecha */}
                   <td className="py-3.5 px-6 text-right">
                     <Link
                       href={`/users/${user.id}`}

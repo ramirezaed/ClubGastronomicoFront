@@ -6,7 +6,6 @@ import {
   softDeleteCompany,
 } from "@/types/company.types";
 import api from "@/lib/axios";
-import { promises } from "dns";
 
 export async function getAllCompany(params?: getCompaniesParams): Promise<PaginationResponse<Company>> {
   try {

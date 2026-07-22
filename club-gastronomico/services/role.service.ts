@@ -12,6 +12,7 @@ export async function getRoles(): Promise<GetRolesResponse> {
     throw new Error("ocurrio un error inesperado");
   }
 }
+
 export async function getRoleById(id: string): Promise<role> {
   try {
     const response = await api.get(`/roles/${id}`);

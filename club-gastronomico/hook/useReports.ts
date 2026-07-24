@@ -1,10 +1,12 @@
-import { getCanceledSales, getDaylySales } from "@/services/reports.service";
-import { canceledSalesResponse, DailySalesResponse } from "@/types/reports.types";
+import { getCanceledSales, getDaylySales, getTopItems } from "@/services/reports.service";
+import { canceledSalesResponse, DailySalesResponse, topItemsResponse } from "@/types/reports.types";
 import { useCallback, useState } from "react";
 
 export const useReports = () => {
   const [dailySales, setDailySales] = useState<DailySalesResponse | null>(null);
   const [canceledSales, setCanceledSales] = useState<canceledSalesResponse | null>(null);
+  const [topItems, setTopItems] = useState<topItemsResponse | null>(null);
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,5 +38,28 @@ export const useReports = () => {
     }
   }, []);
 
-  return { dailySales, canceledSales, loading, error, fetchDailySales, fetchCanceledSales };
+  const fetchTopItems = useCallback(async (date_from?: string, date_to?: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await getTopItems(date_from, date_to);
+      setTopItems(response);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al obtener reporte top 5 items mas vendidos");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return {
+    dailySales,
+    canceledSales,
+    topItems,
+    loading,
+    error,
+    fetchDailySales,
+    fetchCanceledSales,
+    fetchTopItems,
+  };
 };

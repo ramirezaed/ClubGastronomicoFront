@@ -1,5 +1,5 @@
 import api from "@/lib/axios";
-import { canceledSalesResponse, DailySalesResponse, topItemsResponse } from "@/types/reports.types";
+import { canceledSalesResponse, DailySalesResponse, TopHoursResponse, topItemsResponse } from "@/types/reports.types";
 
 //servicio para reporte de ventas diarias
 export async function getDaylySales(date?: string): Promise<DailySalesResponse> {
@@ -36,4 +36,9 @@ export async function getTopItems(date_from?: string, date_to?: string): Promise
     }
     throw new Error("ocurrio un error inesperado");
   }
+}
+
+export async function getTopHours(date_from?: string, date_to?: string): Promise<TopHoursResponse> {
+  const { data } = await api.get<TopHoursResponse>(`/reports/top-hours-days`, { params: { date_from, date_to } });
+  return data;
 }

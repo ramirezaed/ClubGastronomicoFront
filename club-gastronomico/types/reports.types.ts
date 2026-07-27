@@ -20,3 +20,13 @@ export interface topItemsResponse {
   date_to: string;
   topItems: topItem[];
 }
+
+//interface para reporte top de horas con mas ventas por dia
+export interface topDayHour {
+  label: string;
+  total_orders: number;
+}
+
+export interface TopHoursResponse {
+  top_hours: topDayHour[];
+}

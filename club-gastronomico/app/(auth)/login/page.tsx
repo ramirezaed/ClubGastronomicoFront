@@ -21,6 +21,7 @@ export default function LoginPage() {
     try {
       await login(form);
     } catch {
+      console.log("buscando error", error);
       setError("Email o contraseña incorrectos");
       setIsLoading(false);
     }

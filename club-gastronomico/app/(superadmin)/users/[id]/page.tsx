@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { useUser } from "@/hook/useUser";
-import { User } from "@/types/user.types";
-import { CheckCircle, XCircle, User as UserIcon, Mail, Building2, Store, Briefcase } from "lucide-react";
+import { CheckCircle, XCircle, User as UserIcon, Mail, Building2 } from "lucide-react";
 import { StatusToggle } from "@/app/components/ui/togleStatus";
 import { useRouter } from "next/navigation";
 import { DeleteButton } from "@/app/components/ui/DeleteButton";
@@ -17,58 +16,59 @@ export default function UserDetailPage() {
   const router = useRouter();
   const params = useParams();
   const id = params.id as string;
-  const { loading, updating, error, fetchById, toogglestatus, deleteUser, updateRolUser } = useUser();
-  const [user, setUser] = useState<User | null>(null);
-  const [modalOpen, setModalOpen] = useState(false); //seteo el modal, por defecto false (cerrado)
-  const [modalMessage, setModalMessage] = useState(""); //mensaje del modal, por defcto vacio
-  const { roles, fetchRoles } = useRoles(); //trae todos los datos de los roles para cambiar de rol al usuario
-  const [selectedRole, setSelectedRole] = useState("");
+  const { loading, updating, user, error, fetchById, toogglestatus, deleteUser, updateRolUser } = useUser();
 
-  //funcion para manejar el cambio de estado
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalMessage, setModalMessage] = useState("");
+  const { roles, fetchRoles } = useRoles();
+  // const [selectedRole, setSelectedRole] = useState("");
+  const [selectedRole, setSelectedRole] = useState(user?.role?.id || "");
+
+  // Cargar datos al renderizar la pagina
+  useEffect(() => {
+    const loadData = async () => {
+      if (id) {
+        await fetchById(id);
+        await fetchRoles();
+      }
+    };
+    loadData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]); // Solo depende de id
+
+  // Función para recargar el usuario
+  const loadUser = async () => {
+    if (id) {
+      await fetchById(id);
+    }
+  };
+
+  // Manejar cambio de estado
   const handleToggleStatus = async () => {
     if (!user) return;
     const response = await toogglestatus(user.id, user.is_active);
     if (response) {
-      setUser({
-        ...user,
-        is_active: response.userActualizado.is_active,
-      });
+      await loadUser(); // Recargar para actualizar el estado
     }
   };
 
-  //funcion para maneja el boton de eliianr
+  // Manejar eliminación
   const handleDelete = async () => {
     if (!user) return;
     const response = await deleteUser(user.id);
     if (response) {
+      setModalMessage(response.message || "Usuario eliminado exitosamente");
       setModalOpen(true);
     }
   };
 
-  //funcion cerrar modal, al cerrar vuelve a la pagina usuarios
+  // Cerrar modal
   const handleCloseModal = () => {
     setModalOpen(false);
     router.push("/users");
   };
 
-  //funcion para obtener los datos del usuario mediante su id y actualizar el estado local
-  const loadUser = async () => {
-    const response = await fetchById(id);
-    if (response) {
-      setUser(response);
-      setSelectedRole(response.role.id);
-    }
-  };
-  //useEffect que obtiene la informacion del usuario al cargar la pagina
-  //y vuelve a ejecutarse si cambia el id recibido por la ruta
-  useEffect(() => {
-    if (id) {
-      loadUser(); //carga los datos del usuario
-      fetchRoles(); //trae todos los datos de los roles
-    }
-  }, [id, fetchRoles]);
-
-  //funcion para mostrar  roles con  badges
+  //  Badges para roles
   const getRoleBadgeClass = (roleName: string) => {
     const roleMap: Record<string, string> = {
       SuperAdmin: "bg-purple-100 text-purple-700",
@@ -78,27 +78,26 @@ export default function UserDetailPage() {
     return roleMap[roleName] || "bg-gray-100 text-gray-700";
   };
 
-  //funcion para cambiar el rol de usuario
+  //  Cambiar rol
   const handleChangeRole = async () => {
     if (!user) return;
-    // if (selectedRole === user.role.id) return;
+    if (selectedRole === user.role.id) return; // No hacer nada si es el mismo rol
+
     const response = await updateRolUser(user.id, selectedRole);
     if (response) {
-      await loadUser();
+      await loadUser(); // Recargar para actualizar el estado
     }
   };
 
+  // Estados de carga y error
   if (loading) {
-    //componente que muestra eel estado meintras se llama a la api
-    return <LoadingState title="Cargando datos del usuario" description=" Espere un momento por favor" />;
+    return <LoadingState title="Cargando datos del usuario" description="Espere un momento por favor" />;
   }
 
-  //componente muestra error cuando no hay respuesta de la api
   if (error) {
     return <ErrorState title={error} onRetry={loadUser} />;
   }
 
-  //muestra error si el usuario no fue encontrado
   if (!user) {
     return (
       <div className="min-h-screen bg-linear-to-br from-orange-50 to-amber-50 p-8">
@@ -112,7 +111,6 @@ export default function UserDetailPage() {
   }
 
   return (
-    // <div className="w-full h-full bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col">
     <div className="w-full min-h-screen bg-linear-to-r from-orange-100 via-orange-50 to-orange-100 flex flex-col overflow-hidden">
       {/* Header con ícono y título */}
       <div className="p-8 py-5">
@@ -122,7 +120,7 @@ export default function UserDetailPage() {
           </div>
 
           <div>
-            <h1 className="text-2xl md:text-3xl font-[Poppins] font-extrabold text-gray-800 flex items-center gap-3">
+            <h1 className="text-2xl md:text-3xl font-[Poppins] font-extrabold text-gray-800 flex items-center gap-3 flex-wrap">
               {user.name} {user.lastname}
               <span className={`px-3 py-1 rounded-full text-sm font-semibold ${getRoleBadgeClass(user.role.name)}`}>
                 {user.role.name}
@@ -144,9 +142,10 @@ export default function UserDetailPage() {
           </div>
         </div>
       </div>
-      <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mt-1 mx-auto mb-4 " />
 
-      <div className="p-2 space-y-3 md:p-6 ">
+      <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mt-1 mx-auto mb-4" />
+
+      <div className="p-2 space-y-3 md:p-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Información de contacto */}
           <div>
@@ -170,7 +169,7 @@ export default function UserDetailPage() {
               Información de Empresa
             </h2>
             <div className="space-y-3">
-              <div className="flex items-center gap-3 p-4  rounded-xl">
+              <div className="flex items-center gap-3 p-4 rounded-xl">
                 <Building2 className="w-5 h-5 text-gray-400 shrink-0" />
                 <div>
                   <p className="text-xs text-gray-500 uppercase tracking-wide">Empresa</p>
@@ -182,8 +181,8 @@ export default function UserDetailPage() {
         </div>
       </div>
 
-      {/* Estado del usuario - con padding reducido en móvil */}
-      <div className="rounded-2xl  p-4  mx-4 md:mx-6">
+      {/* Estado del usuario */}
+      <div className="rounded-2xl p-4 mx-4 md:mx-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h3 className="font-semibold text-gray-800">Estado del usuario</h3>
@@ -193,11 +192,11 @@ export default function UserDetailPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl   p-4  mx-4 md:mx-6 mt-0.5">
+      {/* Rol del usuario */}
+      <div className="rounded-2xl p-4 mx-4 md:mx-6 mt-0.5">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
           <div>
             <h3 className="font-semibold text-gray-800 text-lg">Rol del usuario</h3>
-
             <p className="text-sm text-gray-500 mt-1">Selecciona un nuevo rol para este usuario.</p>
           </div>
 
@@ -206,23 +205,23 @@ export default function UserDetailPage() {
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
               className="
-          w-full
-          sm:min-w-70
-          lg:min-w-[320px]
-          px-4 py-3
-          rounded-xl
-          border-2 border-orange-200
-          bg-white
-          text-gray-700
-          font-medium
-          shadow-sm
-          focus:border-orange-500
-          focus:ring-4
-          focus:ring-orange-100
-          outline-none
-          transition-all
-          cursor-pointer
-        "
+                w-full
+                sm:min-w-70
+                lg:min-w-[320px]
+                px-4 py-3
+                rounded-xl
+                border-2 border-orange-200
+                bg-white
+                text-gray-700
+                font-medium
+                shadow-sm
+                focus:border-orange-500
+                focus:ring-4
+                focus:ring-orange-100
+                outline-none
+                transition-all
+                cursor-pointer
+              "
             >
               {roles.map((role) => (
                 <option key={role.id} value={role.id}>
@@ -235,21 +234,21 @@ export default function UserDetailPage() {
               onClick={handleChangeRole}
               disabled={selectedRole === user.role.id}
               className="
-          px-6 py-3
-          rounded-xl
-          bg-linear-to-r
-          from-orange-500
-          to-orange-600
-          text-white
-          font-medium
-          shadow-md
-          hover:scale-[1.02]
-          transition-all
-          disabled:opacity-50
-          disabled:cursor-not-allowed
-          whitespace-nowrap
-          cursor-pointer
-        "
+                px-6 py-3
+                rounded-xl
+                bg-linear-to-r
+                from-orange-500
+                to-orange-600
+                text-white
+                font-medium
+                shadow-md
+                hover:scale-[1.02]
+                transition-all
+                disabled:opacity-50
+                disabled:cursor-not-allowed
+                whitespace-nowrap
+                cursor-pointer
+              "
             >
               Cambiar rol
             </button>
@@ -257,36 +256,34 @@ export default function UserDetailPage() {
         </div>
       </div>
 
-      {/* Botones - sin gap-40 ni py-20 en móvil */}
-      <div className=" px-4 md:px-8 py-4 md:py-6 mt-4">
+      {/* Botones */}
+      <div className="px-4 md:px-8 py-4 md:py-6 mt-4">
         <div className="h-0.5 w-10/12 bg-linear-to-r from-orange-100 via-orange-500 to-orange-100 rounded-full mt-16 mb-4 mx-auto" />
 
         <div className="mt-2 flex flex-col sm:flex-row sm:justify-center gap-3 sm:gap-6">
           <button
             onClick={() => router.back()}
             className="
-            w-full sm:w-auto
-            px-6 py-2.5
-            rounded-xl
-            bg-linear-to-r
-            from-orange-500
-            to-orange-600
-            text-white
-            font-medium
-            shadow-md
-            hover:scale-[1.02]
-            transition-all
-            duration-200
-            cursor-pointer
-            order-2 sm:order-1
-          "
+              w-full sm:w-auto
+              px-6 py-2.5
+              rounded-xl
+              bg-linear-to-r
+              from-orange-500
+              to-orange-600
+              text-white
+              font-medium
+              shadow-md
+              hover:scale-[1.02]
+              transition-all
+              duration-200
+              cursor-pointer
+              order-2 sm:order-1
+            "
           >
             Volver
           </button>
-          
-          <div className="flex flex-col sm:flex-row sm:justify-center  gap-3 sm:gap-6">
-            <DeleteButton loading={loading} itemName={`al usuario ${user.name}`} onDelete={handleDelete} />
-          </div>
+
+          <DeleteButton loading={loading} itemName={`al usuario ${user.name}`} onDelete={handleDelete} />
         </div>
       </div>
 

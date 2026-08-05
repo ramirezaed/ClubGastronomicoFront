@@ -5,7 +5,7 @@ import { AlignLeft, Package, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-export default function newRolePage() {
+export default function NewRolePage() {
   const router = useRouter();
   const { loading, error, registerRole } = useRole();
   const [name, setName] = useState(""); //seteo el campo , por default vacio

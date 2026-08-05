@@ -23,7 +23,6 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
       accessTokenExpires: expiration,
     };
   } catch (error) {
-    console.log("REFRESH FALLÓ");
     return {
       ...token,
       error: "RefreshAccessTokenError",

@@ -13,3 +13,24 @@ export function AuthWatcher() {
   }, [session]);
   return null;
 }
+
+// "use client";
+
+// import { useEffect } from "react";
+// import { signOut, useSession } from "next-auth/react";
+
+// export function AuthWatcher() {
+//   const { data: session } = useSession();
+
+//   useEffect(() => {
+//     if (session?.error === "RefreshAccessTokenError") {
+//       signOut({
+//         redirect: false,
+//       }).finally(() => {
+//         window.location.replace("/login");
+//       });
+//     }
+//   }, [session]);
+
+//   return null;
+// }

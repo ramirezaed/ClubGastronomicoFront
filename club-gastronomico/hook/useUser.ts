@@ -1,27 +1,31 @@
 import { activate, deactivate, getById, softDelete, updateRol } from "@/services/user.service";
-import { useState } from "react";
+import { User } from "@/types/user.types";
+import { useCallback, useState } from "react";
 /**
  * Hook personalizado para gestionar las acciones individuales de un usuario.
  * Proporciona estados de carga, actualización y manejo de errores.
  */
 export const useUser = () => {
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   //obtener usuario por id
-  const fetchById = async (id: string) => {
+  const fetchById = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
     try {
       const response = await getById(id);
+      setUser(response);
       return response;
     } catch (error) {
       setError(error instanceof Error ? error.message : " error al obtener datos del usuario");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
   // Activa una cuenta de usuario.
   const activateUser = async (id: string) => {
     setUpdating(true);
@@ -83,6 +87,7 @@ export const useUser = () => {
   return {
     loading,
     error,
+    user,
     fetchById,
     activateUser,
     deactivateUser,

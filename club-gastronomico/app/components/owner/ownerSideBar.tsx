@@ -23,8 +23,8 @@ export function OwnerSideBar() {
     {
       label: "Informes",
       icon: Building2,
-      href: "/reports",
-      active: pathname === "/reports" || pathname?.startsWith("/reports/"),
+      href: "/dashboard",
+      active: pathname === "/reports" || pathname?.startsWith("/dashboard/"),
     },
     {
       label: "Menu",

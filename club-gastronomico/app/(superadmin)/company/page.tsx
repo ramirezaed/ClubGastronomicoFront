@@ -19,11 +19,6 @@ export default function CompanyPage() {
     fetchCompanies();
   }, [fetchCompanies]);
 
-  // Carga la lista completa de companias
-  const loadCompanies = () => {
-    fetchCompanies();
-  };
-
   // Buscador
   useEffect(() => {
     if (searchTerm.trim() === "") return;
@@ -33,14 +28,14 @@ export default function CompanyPage() {
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [searchTerm]);
+  }, [search, searchTerm]);
 
   // Si el buscador queda vacío, vuelve a cargar la lista
   useEffect(() => {
     if (searchTerm.trim() === "") {
-      loadCompanies();
+      fetchCompanies();
     }
-  }, [searchTerm]);
+  }, [fetchCompanies, searchTerm]);
 
   if (loading) {
     return <LoadingState title="Cargando lista de empresas" description="Espere un momento por favor" />;

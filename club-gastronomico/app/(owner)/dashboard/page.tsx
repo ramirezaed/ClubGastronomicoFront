@@ -1,204 +1,349 @@
 "use client";
 
-import { ErrorState } from "@/app/components/ui/errorState";
-import { LoadingState } from "@/app/components/ui/loandigstate";
-import { useUsers } from "@/hook/useUsers";
-import { CheckCircle, Eye, XCircle, Search, Users as UsersIcon } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import Pagination from "@/app/components/ui/pagination";
-import { getUserParams } from "@/types/user.types";
+import { useReports } from "@/hook/useReports";
+import { LoadingState } from "@/app/components/ui/loandigstate";
+import { TrendingUp, XCircle, Trophy, Search, Calendar } from "lucide-react";
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
+import { ErrorState } from "@/app/components/ui/errorState";
 
-export default function Users() {
-  const { users, loading, pageLoading, error, fetchUser, search, goToPage, pagination } = useUsers();
-  const [searchTerm, setSearchTerm] = useState("");
+export default function Reports() {
+  const {
+    dailySales,
+    canceledSales,
+    topItems,
+    loading,
+    error,
+    fetchCanceledSales,
+    fetchDailySales,
+    fetchTopItems,
+    fetchTopHours,
+  } = useReports();
+  const today = new Date().toISOString().split("T")[0];
 
+  const [activeTab, setActiveTab] = useState<"ventas" | "top">("ventas");
+  const [selectedDate, setSelectedDate] = useState(today);
+  const [topFromDate, setTopFromDate] = useState(today);
+  const [topToDate, setTopToDate] = useState(today);
+  const [hourfromDate, setHourFromDate] = useState(today);
+  const [hourToDate, setHourToate] = useState(today);
+
+  //carga los reportes cuando se renderiza la pagina por primera vez
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+    fetchDailySales(today);
+    fetchCanceledSales(today);
+    fetchTopItems();
+    //segundo argumento, array de dependencia, si cambia algo del array se renderiza la pagina
+  }, [today, fetchDailySales, fetchCanceledSales, fetchTopItems]);
 
-  const loadUsers = () => {
-    fetchUser();
+  //funcion para buscar por fecha las ventas y cancelaciones
+  const handleDateSearch = async () => {
+    await fetchDailySales(selectedDate);
+    await fetchCanceledSales(selectedDate);
+  };
+  //funcion para buscar el top de items
+  const handleTopItemsSearch = async () => {
+    await fetchTopItems(topFromDate, topToDate);
   };
 
-  useEffect(() => {
-    if (searchTerm.trim() === "") return;
-    const timer = setTimeout(() => {
-      const isEmail = searchTerm.includes("@");
-      search(isEmail ? undefined : searchTerm, isEmail ? searchTerm : undefined);
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [searchTerm, search]);
-
-  useEffect(() => {
-    if (searchTerm.trim() === "") {
-      loadUsers();
-    }
-  }, [searchTerm]);
-
-  const getRoleBadgeClass = (roleName: string) => {
-    const roleMap: Record<string, string> = {
-      SuperAdmin: "bg-indigo-50 text-indigo-700",
-      owner: "bg-blue-50 text-blue-700",
-      employee: "bg-emerald-50 text-emerald-700",
-    };
-    return roleMap[roleName] || "bg-gray-50 text-gray-700";
+  //funcion muestra el dia y las horas con mas pedidos
+  const handleTopHoursSearch = async () => {
+    await fetchTopHours(hourfromDate, hourfromDate);
   };
 
-  const getRoleLabel = (roleName: string) => {
-    const roleMap: Record<string, string> = {
-      SuperAdmin: "Admin",
-      owner: "Propietario",
-      employee: "Empleado",
-    };
-    return roleMap[roleName] || roleName;
-  };
+  //define colores para el grafico de torta
+  const COLORS = [
+    "#f59e0b",
+    "#f97316",
+    "#ef4444",
+    "#8b5cf6",
+    "#3b82f6",
+    "#10b981",
+    "#ec4899",
+    "#14b8a6",
+    "#f43f5e",
+    "#8b5cf6",
+  ];
 
-  if (loading) {
-    return <LoadingState title="Cargando empleados" description="Espere un momento por favor" />;
-  }
+  const chartData =
+    topItems?.topItems?.map((item, index) => ({
+      name: item.item_name,
+      value: item.total_amount,
+      quantity: item.total_quantity,
+      category: item.category_name,
+      color: COLORS[index % COLORS.length],
+    })) || [];
+
+  const totalAmount = chartData.reduce((sum, item) => sum + item.value, 0);
+
   if (error) {
-    return <ErrorState title={error} onRetry={loadUsers} />;
+    return <ErrorState title={error} subtitle="Por favor intentelo mas tarde" onRetry={() => fetchTopItems} />;
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header con buscador a la derecha */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-linear-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shrink-0">
-            <UsersIcon className="w-6 h-6 text-white" />
+    <div className="h-full bg-linear-to-br from-slate-50 via-white to-slate-100 p-4 sm:p-6 lg:p-8 overflow-hidden">
+      <div className="relative z-10 max-w-7xl mx-auto">
+        {loading && <LoadingState />}
+
+        {/* Pestañas */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="border-b border-slate-200">
+            <div className="flex">
+              <button
+                onClick={() => setActiveTab("ventas")}
+                className={`px-6 py-4 text-sm font-medium transition-colors relative ${
+                  activeTab === "ventas"
+                    ? "text-amber-600 border-b-2 border-amber-600"
+                    : "text-slate-600 hover:text-slate-800 hover:bg-slate-50"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4" />
+                  Ventas y Cancelaciones
+                </div>
+              </button>
+
+              <button
+                onClick={() => setActiveTab("top")}
+                className={`px-6 py-4 text-sm font-medium transition-colors relative ${
+                  activeTab === "top"
+                    ? "text-amber-600 border-b-2 border-amber-600"
+                    : "text-slate-600 hover:text-slate-800 hover:bg-slate-50"
+                }`}
+              >
+                <div className="flex items-center gap-2">
+                  <Trophy className="w-4 h-4" />
+                  Productos mas vendidos
+                </div>
+              </button>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Empleados</h1>
-            <p className="text-sm text-gray-500">Gestiona los empleados de tu negocio</p>
-          </div>
-        </div>
 
-        {/* Buscador alineado a la derecha */}
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar por email..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-gray-200 bg-white/80 backdrop-blur-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all duration-200 shadow-sm hover:shadow-md"
-          />
-        </div>
-      </div>
+          {/* Contenido de la pestaña Ventas */}
+          {activeTab === "ventas" && (
+            <div className="p-6">
+              <div className="flex flex-wrap items-center gap-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-50 rounded-xl">
+                    <Calendar className="w-4 h-4 text-blue-600" />
+                  </div>
+                  <span className="text-sm font-medium text-slate-700">Fecha:</span>
+                  <input
+                    type="date"
+                    value={selectedDate}
+                    max={today}
+                    onChange={(e) => setSelectedDate(e.target.value)}
+                    className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-slate-50"
+                  />
+                </div>
+                <button
+                  onClick={handleDateSearch}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center gap-1"
+                >
+                  <Search className="w-4 h-4" />
+                  Buscar
+                </button>
+              </div>
 
-      {/* Línea decorativa */}
-      <div className="h-0.5 w-full bg-linear-to-r from-indigo-500 via-purple-500 to-transparent rounded-full mb-6" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Ventas Diarias */}
+                <div className="bg-slate-50 rounded-xl p-5">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-blue-100 rounded-xl">
+                      <TrendingUp className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <h3 className="text-base font-semibold text-slate-800">Ventas Diarias</h3>
+                  </div>
 
-      {/* Tabla */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-linear-to-r from-gray-50 to-gray-100/50 border-b border-gray-200">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Usuario
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Empresa
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Rol
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Estado
-                </th>
-                <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50/80 transition-colors duration-150 group">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-linear-to-br from-indigo-100 to-purple-100 flex items-center justify-center shrink-0">
-                        <span className="text-xs font-semibold text-indigo-600">
-                          {user.name.charAt(0)}
-                          {user.lastname?.charAt(0) || ""}
+                  {dailySales ? (
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center py-2 border-b border-slate-200">
+                        <span className="text-sm text-slate-600">Fecha</span>
+                        <span className="text-sm font-medium text-slate-800">{dailySales.date}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 border-b border-slate-200">
+                        <span className="text-sm text-slate-600">Total pedidos</span>
+                        <span className="text-sm font-medium text-slate-800">{dailySales.total_orders}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 bg-blue-50 rounded-lg px-3 -mx-1">
+                        <span className="text-sm font-medium text-blue-700">Total vendido</span>
+                        <span className="text-lg font-bold text-blue-700">
+                          ${dailySales.total_amount.toLocaleString("es-AR")}
                         </span>
                       </div>
-                      <span className="font-medium text-gray-900">
-                        {user.name} {user.lastname}
-                      </span>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-gray-600">{user.email}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-gray-600">{user.company?.name || "—"}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeClass(user.role.name)}`}>
-                      {getRoleLabel(user.role.name)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      {user.is_active ? (
-                        <>
-                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          <span className="text-sm font-medium text-emerald-600">Activo</span>
-                        </>
-                      ) : (
-                        <>
-                          <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                          <span className="text-sm font-medium text-red-600">Inactivo</span>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <Link
-                      href={`/users/${user.id}`}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-indigo-500 to-purple-600 text-white text-sm font-medium rounded-xl shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200 group-hover:shadow-lg"
-                    >
-                      <Eye className="w-4 h-4" />
-                      <span>Ver</span>
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  ) : (
+                    <div className="text-center py-8 text-slate-500 text-sm">No hay datos para esta fecha</div>
+                  )}
+                </div>
 
-        {/* Estado vacío */}
-        {users.length === 0 && (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-              <UsersIcon className="w-8 h-8 text-gray-400" />
+                {/* Órdenes Canceladas */}
+                <div className="bg-slate-50 rounded-xl p-5">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-red-100 rounded-xl">
+                      <XCircle className="w-5 h-5 text-red-600" />
+                    </div>
+                    <h3 className="text-base font-semibold text-slate-800">Cancelaciones</h3>
+                  </div>
+
+                  {canceledSales ? (
+                    <div className="space-y-3">
+                      <div className="flex justify-between items-center py-2 border-b border-slate-200">
+                        <span className="text-sm text-slate-600">Fecha</span>
+                        <span className="text-sm font-medium text-slate-800">{canceledSales.date}</span>
+                      </div>
+                      <div className="flex justify-between items-center py-2 bg-red-50 rounded-lg px-3 -mx-1">
+                        <span className="text-sm font-medium text-red-700">Total canceladas</span>
+                        <span className="text-lg font-bold text-red-700">{canceledSales.total_orders}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-slate-500 text-sm">No hay datos para esta fecha</div>
+                  )}
+                </div>
+              </div>
             </div>
-            <p className="text-sm text-gray-500">No se encontraron empleados</p>
-          </div>
-        )}
-      </div>
+          )}
 
-      {/* Paginación */}
-      {users.length > 0 && (
-        <div className="mt-6 flex justify-center">
-          <Pagination
-            currentPage={pagination.page}
-            totalPages={pagination.totalPages}
-            onPageChange={(page) => {
-              const params: getUserParams = {};
-              goToPage(page, params);
-            }}
-            isLoading={pageLoading}
-          />
+          {/* Contenido de la pestaña Top Productos */}
+          {activeTab === "top" && (
+            <div className="p-6">
+              <div className="flex flex-wrap items-center gap-4 mb-6">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-600">Desde:</span>
+                  <input
+                    type="date"
+                    value={topFromDate}
+                    max={today}
+                    onChange={(e) => setTopFromDate(e.target.value)}
+                    className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-slate-50"
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-slate-600">Hasta:</span>
+                  <input
+                    type="date"
+                    value={topToDate}
+                    max={today}
+                    onChange={(e) => setTopToDate(e.target.value)}
+                    className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-slate-50"
+                  />
+                </div>
+                <button
+                  onClick={handleTopItemsSearch}
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-medium hover:bg-amber-700 transition-colors flex items-center gap-1"
+                >
+                  <Search className="w-4 h-4" />
+                  Buscar
+                </button>
+              </div>
+
+              {topItems && chartData.length > 0 ? (
+                <>
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Gráfico de Torta */}
+                    <div>
+                      <div className="h-64">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <PieChart>
+                            <Pie
+                              data={chartData}
+                              cx="50%"
+                              cy="50%"
+                              labelLine={false}
+                              outerRadius={80}
+                              fill="#8884d8"
+                              dataKey="value"
+                            >
+                              {chartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                              ))}
+                            </Pie>
+                            <Tooltip
+                              formatter={(value) => `$${Number(value).toLocaleString("es-AR")}`}
+                              contentStyle={{
+                                backgroundColor: "white",
+                                border: "1px solid #e2e8f0",
+                                borderRadius: "8px",
+                                padding: "8px 12px",
+                              }}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                      </div>
+
+                      {/* Leyenda de colores */}
+                      <div className="flex flex-wrap gap-2 justify-center mt-2">
+                        {chartData.map((item, index) => (
+                          <div key={index} className="flex items-center gap-1">
+                            <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                            <span className="text-xs text-slate-600">{item.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Tabla minimalista */}
+                    <div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="border-b border-slate-200">
+                              <th className="text-left py-2 px-2 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                Producto
+                              </th>
+                              <th className="text-left py-2 px-2 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                Categoría
+                              </th>
+                              <th className="text-center py-2 px-2 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                Cant.
+                              </th>
+                              <th className="text-right py-2 px-2 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                Total
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {topItems.topItems.map((item, index) => (
+                              <tr key={index} className="border-b border-slate-100 hover:bg-slate-50 transition-colors">
+                                <td className="py-2 px-2 text-slate-800">
+                                  <div className="flex items-center gap-2">
+                                    <div
+                                      className="w-2 h-2 rounded-full shrink-0"
+                                      style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                                    />
+                                    {item.item_name}
+                                  </div>
+                                </td>
+                                <td className="py-2 px-2 text-slate-600">{item.category_name}</td>
+                                <td className="py-2 px-2 text-center text-slate-700">{item.total_quantity}</td>
+                                <td className="py-2 px-2 text-right font-medium text-slate-800">
+                                  ${item.total_amount.toLocaleString("es-AR")}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+
+                      {/* Total */}
+                      <div className="mt-3 pt-2 border-t border-slate-200 flex justify-end">
+                        <span className="text-sm font-medium text-amber-600">
+                          Total: ${totalAmount.toLocaleString("es-AR")}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-12 text-slate-500">
+                  No hay datos para mostrar en el período seleccionado
+                </div>
+              )}
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }

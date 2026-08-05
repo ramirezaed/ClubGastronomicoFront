@@ -5,7 +5,7 @@ import { LoadingState } from "@/app/components/ui/loandigstate";
 import Modal from "@/app/components/ui/Modal";
 import { useCompany } from "@/hook/useCompany";
 import { usePlans } from "@/hook/usePlans";
-import { Building2, Crown, Home, Mail, Package, Phone } from "lucide-react";
+import { Building2, Home, Mail, Package } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -16,7 +16,7 @@ export default function CompanyDetailPage() {
   const id = params.id as string;
   const { loading, error, company, fetchCompanyId, changePlanCompany, deleteCompany } = useCompany();
   const { plans, fetchPlans } = usePlans();
-  const [selectedPlan, setSelectedPlan] = useState("");
+  const [selectedPlan, setSelectedPlan] = useState(company?.subscription_plan?.id || "");
 
   const [modalOpen, setModalOpen] = useState(false); //seteo el modal, por defecto false (cerrado)
   const [modalMessage, setModalMessage] = useState(""); //mensaje del modal, por defcto vacio
@@ -24,19 +24,18 @@ export default function CompanyDetailPage() {
   //funcion para obtener datos de la empresa, se ejecuta cuando se renderiza lapagina
   useEffect(() => {
     fetchCompanyId(id);
-  }, [id]); //si el id cambia, se vuelve a ejecutar la funcion
+  }, [id, fetchCompanyId]); //si el id cambia, se vuelve a ejecutar la funcion
+
+  useEffect(() => {
+    if (company) {
+      setSelectedPlan(company?.subscription_plan?.id);
+    }
+  }, [company]);
 
   //muestra todos los planes
   useEffect(() => {
     fetchPlans();
   }, [fetchPlans]);
-
-  // Actualizar el plan seleccionado cuando se cargue la empresa
-  useEffect(() => {
-    if (company?.subscription_plan?.id) {
-      setSelectedPlan(company.subscription_plan.id);
-    }
-  }, [company]);
 
   //funciona para manejar el cambio de plan de una empresa
   const handleChangePlan = async () => {
@@ -54,6 +53,7 @@ export default function CompanyDetailPage() {
     if (!company) return;
     const response = await deleteCompany(company.id);
     if (response) {
+      setModalMessage("La compañía ha sido eliminada exitosamente");
       setModalOpen(true);
     }
   };

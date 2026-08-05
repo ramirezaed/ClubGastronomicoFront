@@ -52,8 +52,7 @@ export const useUsers = () => {
     [fetchUser],
   );
 
-  //hook para buscador de usuarios
-  const search = async (name?: string, email?: string) => {
+  const search = useCallback(async (name?: string, email?: string) => {
     setError(null);
     setSearchLoading(true);
     try {
@@ -64,8 +63,7 @@ export const useUsers = () => {
     } finally {
       setSearchLoading(false);
     }
-    [];
-  };
+  }, []);
 
   return { users, loading, pageLoading, error, pagination, fetchUser, search, goToPage };
 };

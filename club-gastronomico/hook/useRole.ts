@@ -1,6 +1,6 @@
 import { deleteRole, getRoleById, register, update } from "@/services/role.service";
 import { registerRole, role } from "@/types/role.types";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export const useRole = () => {
   const [role, setRole] = useState<role | null>(null);
@@ -8,7 +8,7 @@ export const useRole = () => {
   const [error, setError] = useState<string | null>(null);
 
   //hook para obtener los datos de un rol
-  const fetchRoleById = async (id: string) => {
+  const fetchRoleById = useCallback(async (id: string) => {
     setError(null);
     setLoading(true);
     try {
@@ -20,7 +20,8 @@ export const useRole = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
   const softDeleteRole = async (id: string) => {
     setLoading(true);
     setError(null);

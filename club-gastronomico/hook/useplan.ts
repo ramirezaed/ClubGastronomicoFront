@@ -1,6 +1,6 @@
 import { getplanById, newPlan, softDeletePlan, updatePlan } from "@/services/plan.service";
 import { Plans, RegisterPlan } from "@/types/plans.types";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export const usePlan = () => {
   const [plan, setPlan] = useState<Plans | null>(null);
@@ -8,7 +8,7 @@ export const usePlan = () => {
   const [error, setError] = useState<string | null>(null);
 
   //hook para buscar un plan por id
-  const fetchPlanById = async (id: string) => {
+  const fetchPlanById = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
     try {
@@ -20,7 +20,7 @@ export const usePlan = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   //hook para eliinar un plan
   const deletePlan = async (id: string) => {

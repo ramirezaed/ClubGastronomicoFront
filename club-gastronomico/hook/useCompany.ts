@@ -1,14 +1,13 @@
 import { activate, changePlan, deacticate, getCompanyById, softDelete } from "@/services/company.service";
 import { Company } from "@/types/company.types";
-import { Fascinate } from "next/font/google";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export const useCompany = () => {
   const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCompanyId = async (id: string) => {
+  const fetchCompanyId = useCallback(async (id: string) => {
     setLoading(true);
     setError(null);
     try {
@@ -20,7 +19,7 @@ export const useCompany = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const changePlanCompany = async (id: string, namePlan: string) => {
     setError(null);

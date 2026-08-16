@@ -1,5 +1,3 @@
-// app/components/reports/EvolutionsMonths.tsx
-
 "use client";
 
 import { TrendingUp, Calendar, Package, DollarSign } from "lucide-react";
@@ -48,17 +46,21 @@ export function EvolutionsMonths({ evolutions, loading }: EvolutionsMonthsProps)
     }).format(value);
   };
 
-  // ✅ Calcular el rango del eje Y ajustado a los datos
+  // Calcular el rango del eje Y ajustado a los datos
   const minAmount = Math.min(...chartData.map((item) => item.amount), 0);
   const maxAmount = Math.max(...chartData.map((item) => item.amount), 0);
 
-  // ✅ Rango ajustado: 10% del rango total
+  // Rango ajustado: 10% del rango total
   const range = maxAmount - minAmount;
   const padding = range * 0.15 || 100000;
 
-  // ✅ Forzar valores específicos para que se vea la diferencia
+  // Forzar valores específicos para que se vea la diferencia
   const yAxisMin = Math.max(0, minAmount - padding);
   const yAxisMax = maxAmount + padding;
+
+  // ✅ CORRECCIÓN: Eliminar ticks duplicados
+  const customTicks = [yAxisMin, minAmount, (minAmount + maxAmount) / 2, maxAmount, yAxisMax];
+  const uniqueTicks = customTicks.filter((value, index, self) => self.indexOf(value) === index).sort((a, b) => a - b);
 
   // Calcular totales
   const totalOrders = chartData.reduce((sum, item) => sum + item.orders, 0);
@@ -72,7 +74,7 @@ export function EvolutionsMonths({ evolutions, loading }: EvolutionsMonthsProps)
   );
 
   // Custom Tooltip
-  const CustomTooltip = ({ active, payload, label }: any) => {
+  const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
@@ -114,7 +116,7 @@ export function EvolutionsMonths({ evolutions, loading }: EvolutionsMonthsProps)
       {chartData.length > 0 ? (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
+            <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
               <div className="flex items-center gap-2 mb-1">
                 <Package className="w-4 h-4 text-blue-600" />
                 <span className="text-xs font-medium text-blue-700 uppercase tracking-wider">Total Pedidos</span>
@@ -123,7 +125,7 @@ export function EvolutionsMonths({ evolutions, loading }: EvolutionsMonthsProps)
               <p className="text-sm text-blue-700">En {chartData.length} meses</p>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
+            <div className="bg-linear-to-br from-emerald-50 to-emerald-100 rounded-xl p-4 border border-emerald-200">
               <div className="flex items-center gap-2 mb-1">
                 <DollarSign className="w-4 h-4 text-emerald-600" />
                 <span className="text-xs font-medium text-emerald-700 uppercase tracking-wider">Total Ventas</span>
@@ -132,7 +134,7 @@ export function EvolutionsMonths({ evolutions, loading }: EvolutionsMonthsProps)
               <p className="text-sm text-emerald-700">En el período</p>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
+            <div className="bg-linear-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
               <div className="flex items-center gap-2 mb-1">
                 <TrendingUp className="w-4 h-4 text-purple-600" />
                 <span className="text-xs font-medium text-purple-700 uppercase tracking-wider">Promedio Mensual</span>
@@ -141,7 +143,7 @@ export function EvolutionsMonths({ evolutions, loading }: EvolutionsMonthsProps)
               <p className="text-sm text-purple-700">Pedidos por mes</p>
             </div>
 
-            <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-4 border border-amber-200">
+            <div className="bg-linear-to-br from-amber-50 to-amber-100 rounded-xl p-4 border border-amber-200">
               <div className="flex items-center gap-2 mb-1">
                 <Calendar className="w-4 h-4 text-amber-600" />
                 <span className="text-xs font-medium text-amber-700 uppercase tracking-wider">Mejor Mes</span>
@@ -175,10 +177,10 @@ export function EvolutionsMonths({ evolutions, loading }: EvolutionsMonthsProps)
                     padding={{ left: 10, right: 10 }}
                   />
 
-                  {/* ✅ Eje Y con rango forzado */}
+                  {/* ✅ CORRECCIÓN: Usar uniqueTicks en lugar del array con duplicados */}
                   <YAxis
                     domain={[yAxisMin, yAxisMax]}
-                    ticks={[yAxisMin, minAmount, (minAmount + maxAmount) / 2, maxAmount, yAxisMax]}
+                    ticks={uniqueTicks}
                     tick={{ fontSize: 12, fill: "#64748b" }}
                     tickLine={false}
                     axisLine={{ stroke: "#e2e8f0" }}
@@ -216,7 +218,7 @@ export function EvolutionsMonths({ evolutions, loading }: EvolutionsMonthsProps)
                     }}
                   />
 
-                  {/* ✅ Línea de referencia para el promedio */}
+                  {/* Línea de referencia para el promedio */}
                   <ReferenceLine
                     y={totalAmount / chartData.length}
                     stroke="#94a3b8"
@@ -232,7 +234,7 @@ export function EvolutionsMonths({ evolutions, loading }: EvolutionsMonthsProps)
               </ResponsiveContainer>
             </div>
 
-            {/* ✅ Información de valores para debug */}
+            {/* Información de valores para debug */}
             <div className="mt-2 text-xs text-slate-400 flex flex-wrap justify-between">
               <span>Min: {formatCurrency(yAxisMin)}</span>
               <span>Max: {formatCurrency(yAxisMax)}</span>
@@ -240,7 +242,7 @@ export function EvolutionsMonths({ evolutions, loading }: EvolutionsMonthsProps)
               <span>Padding: {formatCurrency(padding)}</span>
             </div>
 
-            {/* ✅ Mostrar valores por mes para verificar */}
+            {/* Mostrar valores por mes para verificar */}
             <div className="mt-2 flex flex-wrap gap-4 text-xs text-slate-500">
               {chartData.map((item, index) => (
                 <span key={index}>

@@ -54,3 +54,15 @@ export interface evolutionMonths {
 export interface salesEvolutions {
   months: evolutionMonths[];
 }
+
+export interface sellers {
+  menuItems_id: string;
+  item_name: string;
+  category_name: string;
+  total_quantity: number;
+}
+
+export interface getTopAndLeastResponse {
+  top_sellers: sellers[];
+  least_sellers: sellers[];
+}

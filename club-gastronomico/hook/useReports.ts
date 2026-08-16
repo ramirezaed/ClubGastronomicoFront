@@ -5,12 +5,14 @@ import {
   getTopItems,
   GetCancellationsAnalysis,
   saleEvolutions,
+  getTopAndLeast,
 } from "@/services/reports.service";
 import {
   canceledSalesResponse,
   cancellationsAnalysisResponse,
   DailySalesResponse,
-  evolutionMonths,
+  getTopAndLeastResponse,
+  salesEvolutions,
   TopHoursResponse,
   topItemsResponse,
 } from "@/types/reports.types";
@@ -21,9 +23,9 @@ export const useReports = () => {
   const [canceledSales, setCanceledSales] = useState<canceledSalesResponse | null>(null);
   const [topItems, setTopItems] = useState<topItemsResponse | null>(null);
   const [topHours, setTopHours] = useState<TopHoursResponse | null>(null);
-
+  const [topAndLeast, setTopAndLeast] = useState<getTopAndLeastResponse | null>(null);
   const [analysisCancelled, setAnalysisCancelled] = useState<cancellationsAnalysisResponse | null>(null);
-  const [evolutions, setEvolutions] = useState<evolutionMonths | null>(null);
+  const [evolutions, setEvolutions] = useState<salesEvolutions | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -110,6 +112,19 @@ export const useReports = () => {
     }
   }, []);
 
+  const fetchTopAndLeast = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await getTopAndLeast();
+      setTopAndLeast(response);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "ocurrio un error inesperado");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     dailySales,
     canceledSales,
@@ -119,11 +134,13 @@ export const useReports = () => {
     error,
     analysisCancelled,
     evolutions,
+    topAndLeast,
     fetchDailySales,
     fetchCanceledSales,
     fetchTopItems,
     fetchTopHours,
     fetchCancellationsAnalysis,
     fetchEvolutions,
+    fetchTopAndLeast,
   };
 };

@@ -3,7 +3,8 @@ import {
   canceledSalesResponse,
   cancellationsAnalysisResponse,
   DailySalesResponse,
-  evolutionMonths,
+  getTopAndLeastResponse,
+  salesEvolutions,
   TopHoursResponse,
   topItemsResponse,
 } from "@/types/reports.types";
@@ -42,7 +43,12 @@ export async function GetCancellationsAnalysis(
   return data;
 }
 
-export async function saleEvolutions(): Promise<evolutionMonths> {
-  const { data } = await api.get<evolutionMonths>(`/reports/sales-evolutions`);
+export async function saleEvolutions(): Promise<salesEvolutions> {
+  const { data } = await api.get<salesEvolutions>(`/reports/sales-evolutions`);
+  return data;
+}
+
+export async function getTopAndLeast(): Promise<getTopAndLeastResponse> {
+  const { data } = await api.get<getTopAndLeastResponse>(`/reports/items-ranking`);
   return data;
 }

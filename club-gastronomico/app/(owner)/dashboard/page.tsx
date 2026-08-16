@@ -1,25 +1,38 @@
+// page.tsx
+
 "use client";
 
 import { useEffect, useState } from "react";
 import { useReports } from "@/hook/useReports";
 import { LoadingState } from "@/app/components/ui/loandigstate";
 import { ErrorState } from "@/app/components/ui/errorState";
-import { TrendingUp, Trophy } from "lucide-react";
+import { TrendingUp, Trophy, Clock } from "lucide-react";
 import { ReportsTabs } from "@/app/components/reports/ReportsTabs";
 import { SalesReport } from "@/app/components/reports/SalesReport";
 import { TopItemsReport } from "@/app/components/reports/TopItemsReport";
+import { TopHoursReport } from "@/app/components/reports/TopHoursReport";
 
 // Definir el tipo de las pestañas disponibles
 type TabId = "ventas" | "top" | "horas";
 
 export default function Reports() {
-  const { dailySales, canceledSales, topItems, loading, error, fetchCanceledSales, fetchDailySales, fetchTopItems } =
-    useReports();
+  const {
+    dailySales,
+    canceledSales,
+    topItems,
+    topHours,
+    loading,
+    error,
+    fetchCanceledSales,
+    fetchDailySales,
+    fetchTopItems,
+    fetchTopHours,
+  } = useReports();
 
   const today = new Date().toISOString().split("T")[0];
   const [activeTab, setActiveTab] = useState<TabId>("ventas");
 
-  // Definición de pestañas - Fácil de extender
+  // Definición de pestañas
   const tabs = [
     {
       id: "ventas" as const,
@@ -31,17 +44,11 @@ export default function Reports() {
       label: "Productos más vendidos",
       icon: <Trophy className="w-4 h-4" />,
     },
-    // Ejemplo de cómo agregar más pestañas
-    //     // {
-    //     //   id: "horas",
-    //     //   label: "Horas pico",
-    //     //   icon: <Clock className="w-4 h-4" />,
-    //     // },
-    // {
-    //   id: "categorias",
-    //   label: "Categorías",
-    //   icon: <Star className="w-4 h-4" />,
-    // },
+    {
+      id: "horas" as const,
+      label: "Horas pico",
+      icon: <Clock className="w-4 h-4" />,
+    },
   ];
 
   // Carga inicial
@@ -49,7 +56,8 @@ export default function Reports() {
     fetchDailySales(today);
     fetchCanceledSales(today);
     fetchTopItems();
-  }, [today, fetchDailySales, fetchCanceledSales, fetchTopItems]);
+    fetchTopHours(today, today); // Carga las horas del día actual
+  }, [today, fetchDailySales, fetchCanceledSales, fetchTopItems, fetchTopHours]);
 
   // Manejadores de búsqueda
   const handleSalesSearch = async (date: string) => {
@@ -61,8 +69,21 @@ export default function Reports() {
     await fetchTopItems(fromDate, toDate);
   };
 
+  const handleTopHoursSearch = async (dateFrom: string, dateTo: string) => {
+    await fetchTopHours(dateFrom, dateTo);
+  };
+
   if (error) {
-    return <ErrorState title={error} subtitle="Por favor intentelo más tarde" onRetry={() => fetchTopItems()} />;
+    return (
+      <ErrorState
+        title={error}
+        subtitle="Por favor intentelo más tarde"
+        onRetry={() => {
+          fetchTopItems();
+          fetchTopHours(today, today);
+        }}
+      />
+    );
   }
 
   return (
@@ -81,6 +102,10 @@ export default function Reports() {
           )}
 
           {activeTab === "top" && <TopItemsReport topItems={topItems} onSearch={handleTopItemsSearch} today={today} />}
+
+          {activeTab === "horas" && (
+            <TopHoursReport topHours={topHours} onSearch={handleTopHoursSearch} today={today} />
+          )}
         </ReportsTabs>
       </div>
     </div>

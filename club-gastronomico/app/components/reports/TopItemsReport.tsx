@@ -8,7 +8,7 @@ import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { topItemsResponse, topItem } from "@/types/reports.types";
 
 interface TopItemsReportProps {
-  topItems: topItemsResponse | null; // ← Tipado correcto
+  topItems: topItemsResponse | null;
   onSearch: (fromDate: string, toDate: string) => Promise<void>;
   today: string;
 }
@@ -54,13 +54,6 @@ export function TopItemsReport({ topItems, onSearch, today }: TopItemsReportProp
 
   const totalAmount = chartData.reduce((sum: number, item: ChartDataItem) => sum + item.value, 0);
 
-  // Mostrar rango de fechas si existe
-  const dateRange = topItems ? (
-    <div className="text-sm text-slate-500 mb-4">
-      Mostrando resultados del {topItems.date_from} al {topItems.date_to}
-    </div>
-  ) : null;
-
   return (
     <div>
       <div className="flex flex-wrap items-center gap-4 mb-6">
@@ -92,8 +85,6 @@ export function TopItemsReport({ topItems, onSearch, today }: TopItemsReportProp
           Buscar
         </button>
       </div>
-
-      {dateRange}
 
       {topItems && chartData.length > 0 ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

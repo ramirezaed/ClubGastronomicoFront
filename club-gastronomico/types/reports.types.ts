@@ -30,3 +30,18 @@ export interface topDayHour {
 export interface TopHoursResponse {
   top_hours: topDayHour[];
 }
+
+export interface reasonCancellations {
+  reason: string;
+  total: number;
+  percentage_of_cancellations: number;
+}
+
+export interface cancellationsAnalysisResponse {
+  date_from: string;
+  date_to: string;
+  total_orders: number;
+  total_cancellations: number;
+  cancellations_porcentage: number;
+  reason: reasonCancellations[];
+}

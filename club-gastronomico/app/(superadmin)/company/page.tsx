@@ -107,7 +107,7 @@ export default function CompanyPage() {
                   {/* Plan de Suscripción */}
                   <td className="py-3.5 px-6">
                     <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                      {company.subscription_plan?.name || "Sin plan"}
+                      {company.subscription_plan?.name}
                     </span>
                   </td>
 

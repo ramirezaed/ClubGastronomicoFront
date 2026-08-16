@@ -1,19 +1,17 @@
-// // page.tsx
-
 // "use client";
 
 // import { useEffect, useState } from "react";
 // import { useReports } from "@/hook/useReports";
 // import { LoadingState } from "@/app/components/ui/loandigstate";
 // import { ErrorState } from "@/app/components/ui/errorState";
-// import { TrendingUp, Trophy, Clock } from "lucide-react";
+// import { TrendingUp, Trophy, Clock, XCircle } from "lucide-react";
 // import { ReportsTabs } from "@/app/components/reports/ReportsTabs";
 // import { SalesReport } from "@/app/components/reports/SalesReport";
 // import { TopItemsReport } from "@/app/components/reports/TopItemsReport";
 // import { TopHoursReport } from "@/app/components/reports/TopHoursReport";
+// import { CancellationsAnalysisReport } from "@/app/components/reports/CancelledAnalisys";
 
-// // Definir el tipo de las pestañas disponibles
-// type TabId = "ventas" | "top" | "horas";
+// type TabId = "ventas" | "top" | "horas" | "cancelaciones";
 
 // export default function Reports() {
 //   const {
@@ -21,18 +19,19 @@
 //     canceledSales,
 //     topItems,
 //     topHours,
+//     analysisCancelled,
 //     loading,
 //     error,
 //     fetchCanceledSales,
 //     fetchDailySales,
 //     fetchTopItems,
 //     fetchTopHours,
+//     fetchCancellationsAnalysis,
 //   } = useReports();
 
 //   const today = new Date().toISOString().split("T")[0];
 //   const [activeTab, setActiveTab] = useState<TabId>("ventas");
 
-//   // Definición de pestañas
 //   const tabs = [
 //     {
 //       id: "ventas" as const,
@@ -49,17 +48,21 @@
 //       label: "Horas pico",
 //       icon: <Clock className="w-4 h-4" />,
 //     },
+//     {
+//       id: "cancelaciones" as const,
+//       label: "Análisis de Cancelaciones",
+//       icon: <XCircle className="w-4 h-4" />,
+//     },
 //   ];
 
-//   // Carga inicial
 //   useEffect(() => {
 //     fetchDailySales(today);
 //     fetchCanceledSales(today);
 //     fetchTopItems();
-//     fetchTopHours(today, today); // Carga las horas del día actual
-//   }, [today, fetchDailySales, fetchCanceledSales, fetchTopItems, fetchTopHours]);
+//     fetchTopHours(today, today);
+//     fetchCancellationsAnalysis(today, today);
+//   }, [today, fetchDailySales, fetchCanceledSales, fetchTopItems, fetchTopHours, fetchCancellationsAnalysis]);
 
-//   // Manejadores de búsqueda
 //   const handleSalesSearch = async (date: string) => {
 //     await fetchDailySales(date);
 //     await fetchCanceledSales(date);
@@ -73,6 +76,10 @@
 //     await fetchTopHours(dateFrom, dateTo);
 //   };
 
+//   const handleCancellationsAnalysisSearch = async (dateFrom: string, dateTo: string) => {
+//     await fetchCancellationsAnalysis(dateFrom, dateTo);
+//   };
+
 //   if (error) {
 //     return (
 //       <ErrorState
@@ -81,6 +88,7 @@
 //         onRetry={() => {
 //           fetchTopItems();
 //           fetchTopHours(today, today);
+//           fetchCancellationsAnalysis(today, today);
 //         }}
 //       />
 //     );
@@ -106,6 +114,14 @@
 //           {activeTab === "horas" && (
 //             <TopHoursReport topHours={topHours} onSearch={handleTopHoursSearch} today={today} />
 //           )}
+
+//           {activeTab === "cancelaciones" && (
+//             <CancellationsAnalysisReport
+//               analysis={analysisCancelled}
+//               onSearch={handleCancellationsAnalysisSearch}
+//               today={today}
+//             />
+//           )}
 //         </ReportsTabs>
 //       </div>
 //     </div>
@@ -120,14 +136,15 @@ import { useEffect, useState } from "react";
 import { useReports } from "@/hook/useReports";
 import { LoadingState } from "@/app/components/ui/loandigstate";
 import { ErrorState } from "@/app/components/ui/errorState";
-import { TrendingUp, Trophy, Clock, XCircle } from "lucide-react";
+import { TrendingUp, Trophy, Clock, XCircle, BarChart3 } from "lucide-react";
 import { ReportsTabs } from "@/app/components/reports/ReportsTabs";
 import { SalesReport } from "@/app/components/reports/SalesReport";
 import { TopItemsReport } from "@/app/components/reports/TopItemsReport";
 import { TopHoursReport } from "@/app/components/reports/TopHoursReport";
 import { CancellationsAnalysisReport } from "@/app/components/reports/CancelledAnalisys";
+import { EvolutionsMonths } from "@/app/components/reports/EvolutionsMonths";
 
-type TabId = "ventas" | "top" | "horas" | "cancelaciones";
+type TabId = "ventas" | "top" | "horas" | "cancelaciones" | "evolucion";
 
 export default function Reports() {
   const {
@@ -136,6 +153,7 @@ export default function Reports() {
     topItems,
     topHours,
     analysisCancelled,
+    evolutions,
     loading,
     error,
     fetchCanceledSales,
@@ -143,6 +161,7 @@ export default function Reports() {
     fetchTopItems,
     fetchTopHours,
     fetchCancellationsAnalysis,
+    fetchEvolutions,
   } = useReports();
 
   const today = new Date().toISOString().split("T")[0];
@@ -169,6 +188,11 @@ export default function Reports() {
       label: "Análisis de Cancelaciones",
       icon: <XCircle className="w-4 h-4" />,
     },
+    {
+      id: "evolucion" as const,
+      label: "Evolución de Ventas",
+      icon: <BarChart3 className="w-4 h-4" />,
+    },
   ];
 
   useEffect(() => {
@@ -177,7 +201,16 @@ export default function Reports() {
     fetchTopItems();
     fetchTopHours(today, today);
     fetchCancellationsAnalysis(today, today);
-  }, [today, fetchDailySales, fetchCanceledSales, fetchTopItems, fetchTopHours, fetchCancellationsAnalysis]);
+    fetchEvolutions();
+  }, [
+    today,
+    fetchDailySales,
+    fetchCanceledSales,
+    fetchTopItems,
+    fetchTopHours,
+    fetchCancellationsAnalysis,
+    fetchEvolutions,
+  ]);
 
   const handleSalesSearch = async (date: string) => {
     await fetchDailySales(date);
@@ -205,6 +238,7 @@ export default function Reports() {
           fetchTopItems();
           fetchTopHours(today, today);
           fetchCancellationsAnalysis(today, today);
+          fetchEvolutions();
         }}
       />
     );
@@ -238,6 +272,8 @@ export default function Reports() {
               today={today}
             />
           )}
+
+          {activeTab === "evolucion" && <EvolutionsMonths evolutions={evolutions} loading={loading} />}
         </ReportsTabs>
       </div>
     </div>

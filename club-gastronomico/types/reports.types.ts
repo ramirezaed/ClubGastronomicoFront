@@ -45,3 +45,12 @@ export interface cancellationsAnalysisResponse {
   cancellation_percentage: number;
   reasons: reasonCancellations[];
 }
+
+export interface evolutionMonths {
+  month: string;
+  total_orders: number;
+  total_amount: number;
+}
+export interface salesEvolutions {
+  months: evolutionMonths[];
+}

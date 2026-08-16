@@ -3,6 +3,7 @@ import {
   canceledSalesResponse,
   cancellationsAnalysisResponse,
   DailySalesResponse,
+  evolutionMonths,
   TopHoursResponse,
   topItemsResponse,
 } from "@/types/reports.types";
@@ -38,5 +39,10 @@ export async function GetCancellationsAnalysis(
   const { data } = await api.get<cancellationsAnalysisResponse>(`/reports/cancellations`, {
     params: { date_from, date_to },
   });
+  return data;
+}
+
+export async function saleEvolutions(): Promise<evolutionMonths> {
+  const { data } = await api.get<evolutionMonths>(`/reports/sales-evolutions`);
   return data;
 }

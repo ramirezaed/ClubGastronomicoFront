@@ -4,11 +4,13 @@ import {
   getTopHours,
   getTopItems,
   GetCancellationsAnalysis,
+  saleEvolutions,
 } from "@/services/reports.service";
 import {
   canceledSalesResponse,
   cancellationsAnalysisResponse,
   DailySalesResponse,
+  evolutionMonths,
   TopHoursResponse,
   topItemsResponse,
 } from "@/types/reports.types";
@@ -21,6 +23,7 @@ export const useReports = () => {
   const [topHours, setTopHours] = useState<TopHoursResponse | null>(null);
 
   const [analysisCancelled, setAnalysisCancelled] = useState<cancellationsAnalysisResponse | null>(null);
+  const [evolutions, setEvolutions] = useState<evolutionMonths | null>(null);
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -94,6 +97,19 @@ export const useReports = () => {
     }
   }, []);
 
+  const fetchEvolutions = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await saleEvolutions();
+      setEvolutions(response);
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "ocurrio un error inesperado");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   return {
     dailySales,
     canceledSales,
@@ -102,10 +118,12 @@ export const useReports = () => {
     loading,
     error,
     analysisCancelled,
+    evolutions,
     fetchDailySales,
     fetchCanceledSales,
     fetchTopItems,
     fetchTopHours,
     fetchCancellationsAnalysis,
+    fetchEvolutions,
   };
 };

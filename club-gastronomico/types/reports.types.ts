@@ -42,6 +42,6 @@ export interface cancellationsAnalysisResponse {
   date_to: string;
   total_orders: number;
   total_cancellations: number;
-  cancellations_porcentage: number;
-  reason: reasonCancellations[];
+  cancellation_percentage: number;
+  reasons: reasonCancellations[];
 }

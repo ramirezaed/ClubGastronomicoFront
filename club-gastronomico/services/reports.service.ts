@@ -35,7 +35,7 @@ export async function GetCancellationsAnalysis(
   date_from?: string,
   date_to?: string,
 ): Promise<cancellationsAnalysisResponse> {
-  const { data } = await api.get<cancellationsAnalysisResponse>(`/reports/cancellatios`, {
+  const { data } = await api.get<cancellationsAnalysisResponse>(`/reports/cancellations`, {
     params: { date_from, date_to },
   });
   return data;

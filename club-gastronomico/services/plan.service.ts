@@ -1,17 +1,9 @@
 import api from "@/lib/axios";
 import { Plans, RegisterPlan, softDeletePlanResponse } from "@/types/plans.types";
-import axios from "axios";
 
 export async function getPlans(): Promise<Plans[]> {
-  try {
-    const response = await api.get("/plans");
-    return response.data;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("ocurrio un error inesperado");
-  }
+  const { data } = await api.get<Plans[]>(`/plans`);
+  return data;
 }
 
 export async function getplanById(id: string): Promise<Plans> {

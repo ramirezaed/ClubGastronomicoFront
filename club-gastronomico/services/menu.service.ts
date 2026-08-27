@@ -1,5 +1,6 @@
 import api from "@/lib/axios";
 import {
+  createMenu,
   deactivateActivateMenuItems,
   deleteItems,
   getItemsParams,
@@ -18,6 +19,11 @@ export async function getMenu(params?: getItemsParams): Promise<PaginationRespon
 export async function getById(id: string): Promise<MenuItem> {
   const { data } = await api.get<MenuItem>(`/menu-items/${id}`, { params: { id } });
   return data;
+}
+
+export async function createItems(data: createMenu): Promise<MenuItem> {
+  const { data: response } = await api.post<MenuItem>(`/menu-items`, data);
+  return response;
 }
 
 export async function updatemenuI(id: string, data: UpdateMenuItems): Promise<UpdateMenuResponse> {

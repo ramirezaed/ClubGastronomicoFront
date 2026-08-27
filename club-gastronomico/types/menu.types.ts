@@ -66,3 +66,13 @@ export interface getItemsParams {
   page?: number;
   limit?: number;
 }
+
+export interface createMenu {
+  category_id: string;
+  name: string;
+  description: string;
+  price: number;
+  preparation_time_minutes: number;
+  stock: number;
+  image_url?: string | null;
+}

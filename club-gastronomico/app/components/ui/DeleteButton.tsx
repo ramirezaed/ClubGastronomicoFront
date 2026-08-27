@@ -46,9 +46,6 @@ export function DeleteButton({ loading = false, itemName = "este elemento", onDe
       {open && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div className="w-full max-w-sm mx-4 bg-white rounded-2xl shadow-xl overflow-hidden">
-            {/* Línea superior */}
-            <div className="h-1 bg-linear-to-r from-orange-500 to-orange-600"></div>
-
             <div className="p-6">
               <div className="text-center">
                 <div className="w-12 h-12 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-4">
@@ -81,8 +78,7 @@ export function DeleteButton({ loading = false, itemName = "este elemento", onDe
                   disabled={loading}
                   className="
                     flex-1 py-2.5
-                    bg-linear-to-r from-orange-500 to-orange-600
-                    text-white font-semibold text-sm
+                   bg-gray-100 text-gray-700
                     rounded-xl shadow-xs
                     hover:scale-[1.02]
                     transition-all duration-200

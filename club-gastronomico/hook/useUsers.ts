@@ -15,6 +15,7 @@ export const useUsers = () => {
     totalPages: 1,
   });
   const [searchLoading, setSearchLoading] = useState(false);
+
   const fetchUser = useCallback(async (params?: getUserParams, pageChange = false) => {
     if (pageChange) {
       setPageLoading(true);
@@ -65,5 +66,5 @@ export const useUsers = () => {
     }
   }, []);
 
-  return { users, loading, pageLoading, error, pagination, fetchUser, search, goToPage };
+  return { users, loading, pageLoading, error, pagination, fetchUser, search, goToPage, searchLoading };
 };

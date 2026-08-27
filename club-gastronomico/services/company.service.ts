@@ -8,87 +8,36 @@ import {
 import api from "@/lib/axios";
 
 export async function getAllCompany(params?: getCompaniesParams): Promise<PaginationResponse<Company>> {
-  try {
-    const response = await api.get(`/company`, { params });
-    return response.data;
-  } catch (error) {
-    //devuelve el error que envia la api
-    //el interceptor axios maneja los errores
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("ocurrio un error inesperado");
-  }
+  const { data } = await api.get<PaginationResponse<Company>>(`/company`, { params });
+  return data;
 }
 
-export async function getCompanyById(id: string) {
-  try {
-    const response = await api.get(`/company/${id}`);
-    return response.data.company;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("ocurrio un error inesperado");
-  }
+export async function getCompanyById(id: string): Promise<Company> {
+  const { data } = await api.get<{ company: Company }>(`/company/${id}`);
+  return data.company;
 }
 
-export async function changePlan(id: string, plan_id: string) {
-  try {
-    const response = await api.patch(`/company/change-plan/${id}`, { plan_id });
-    return response.data;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("ocrurrio un error inesperado");
-  }
+export async function changePlan(id: string, plan_id: string): Promise<Company> {
+  const { data } = await api.patch<Company>(`/company/change-plan/${id}`, { plan_id });
+  return data;
 }
 
 export async function activate(id: string): Promise<activateDeactivateCompany> {
-  try {
-    const response = await api.patch(`/company/activate/${id}`);
-    return response.data;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("ocurrio un error inesperado");
-  }
+  const { data } = await api.patch<activateDeactivateCompany>(`/company/activate/${id}`);
+  return data;
 }
 
-export async function deacticate(id: string) {
-  try {
-    const response = await api.patch(`/company/deactivate/${id}`);
-    return response;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("ocurrio un error inesperado");
-  }
+export async function deacticate(id: string): Promise<activateDeactivateCompany> {
+  const { data } = await api.patch<activateDeactivateCompany>(`/company/deactivate/${id}`);
+  return data;
 }
 
 export async function softDelete(id: string): Promise<softDeleteCompany> {
-  try {
-    const response = await api.delete(`/company/${id}`);
-    return response.data;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("ocurrio un error inesperado");
-  }
+  const { data } = await api.delete<softDeleteCompany>(`/company/${id}`);
+  return data;
 }
 
 export async function searchCompany(name?: string): Promise<Company[]> {
-  try {
-    const response = await api.post(`/company/search`, { name });
-    return response.data;
-  } catch (error) {
-    if (error instanceof Error) {
-      throw error;
-    }
-    throw new Error("ocurrio un error inesperado");
-  }
+  const { data } = await api.post<Company[]>(`/company/search`, { name });
+  return data;
 }

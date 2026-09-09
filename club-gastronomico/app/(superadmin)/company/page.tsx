@@ -19,11 +19,6 @@ export default function CompanyPage() {
     fetchCompanies();
   }, [fetchCompanies]);
 
-  // Carga la lista completa de companias
-  const loadCompanies = () => {
-    fetchCompanies();
-  };
-
   // Buscador
   useEffect(() => {
     if (searchTerm.trim() === "") return;
@@ -33,14 +28,14 @@ export default function CompanyPage() {
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [searchTerm]);
+  }, [search, searchTerm]);
 
   // Si el buscador queda vacío, vuelve a cargar la lista
   useEffect(() => {
     if (searchTerm.trim() === "") {
-      loadCompanies();
+      fetchCompanies();
     }
-  }, [searchTerm]);
+  }, [fetchCompanies, searchTerm]);
 
   if (loading) {
     return <LoadingState title="Cargando lista de empresas" description="Espere un momento por favor" />;
@@ -112,7 +107,7 @@ export default function CompanyPage() {
                   {/* Plan de Suscripción */}
                   <td className="py-3.5 px-6">
                     <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
-                      {company.subscription_plan?.name || "Sin plan"}
+                      {company.subscription_plan?.name}
                     </span>
                   </td>
 

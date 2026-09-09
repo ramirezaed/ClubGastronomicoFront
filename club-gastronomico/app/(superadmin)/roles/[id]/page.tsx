@@ -5,11 +5,11 @@ import { ErrorState } from "@/app/components/ui/errorState";
 import { LoadingState } from "@/app/components/ui/loandigstate";
 import Modal from "@/app/components/ui/Modal";
 import { useRole } from "@/hook/useRole";
-import { ArrowLeft, CheckCircle, Shield, XCircle, Save, AlignLeft } from "lucide-react";
+import { CheckCircle, Shield, XCircle, Save, AlignLeft } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function roleDetail() {
+export default function RoleDetail() {
   const params = useParams();
   const router = useRouter();
   const id = params.id as string;
@@ -23,7 +23,13 @@ export default function roleDetail() {
   //carga los datos del rol cuando se renderiza la pagina
   useEffect(() => {
     fetchRoleById(id);
-  }, [id]); //cuando cambia el id se vuelve a ejecutar la funcion
+  }, [id, fetchRoleById]); //cuando cambia el id se vuelve a ejecutar la funcion
+
+  useEffect(() => {
+    if (role) {
+      setDescription(role.description || "");
+    }
+  }, [role]);
 
   //funcion para manejar el boton eliminar
   const handleDelete = async () => {
@@ -40,13 +46,6 @@ export default function roleDetail() {
     setModalOpen(false);
     router.push("/roles");
   };
-
-  //funcion para cargar el formulario con los datos que se puede modificar
-  useEffect(() => {
-    if (role) {
-      setDescription(role.description || "");
-    }
-  }, [role]); //se ejecuta cada vez que cambia la descripcion del rol
 
   //funcion para modificar el rol
   const handleUpdate = async () => {

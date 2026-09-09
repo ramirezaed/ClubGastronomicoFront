@@ -25,7 +25,7 @@ export default function Roles() {
   };
 
   if (error) {
-    return <ErrorState title={error} subtitle="Por favor intentelo mas tarde" onRetry={() => fetchRoles} />;
+    return <ErrorState title={error} subtitle="Por favor intentelo mas tarde" onRetry={fetchRoles} />;
   }
   //muestra la barra de carga
   if (loading) {

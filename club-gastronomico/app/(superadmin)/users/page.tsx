@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useUsers } from "@/hook/useUsers";
-import { Users as UsersIcon, CheckCircle, XCircle, Eye } from "lucide-react";
+import { Users as CheckCircle, XCircle, Eye } from "lucide-react";
 import Link from "next/link";
 import { ErrorState } from "@/app/components/ui/errorState";
 import { getUserParams } from "@/types/user.types";
@@ -32,8 +32,8 @@ export default function UsersPage() {
 
   //funcion que se ejecuta cuando cambia alguno de los filtros
   useEffect(() => {
-    loadUsers();
-  }, [filter]);
+    fetchUser();
+  }, [fetchUser]);
 
   //buscador se ejecuta cuando se quiere buscar un usuario
   // la busqueda se ejecuta 400ms dps de escribir la ultima letra
@@ -44,7 +44,7 @@ export default function UsersPage() {
       search(isEmail ? undefined : searchTerm, isEmail ? searchTerm : undefined);
     }, 400);
     return () => clearTimeout(timer);
-  }, [searchTerm]);
+  }, [searchTerm, search]);
 
   //limpia el buscador cuando se vuelve a la lista general
   //si el buscador esta vacio llama carga la lista
@@ -124,7 +124,7 @@ export default function UsersPage() {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Nombre o email"
+              placeholder="ingrese el correo"
               className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500 transition-all outline-none"
             />
           </div>
@@ -199,7 +199,6 @@ export default function UsersPage() {
                     </div>
                   </td>
 
-                  {/* Acciones alineadas limpiamente a la derecha */}
                   <td className="py-3.5 px-6 text-right">
                     <Link
                       href={`/users/${user.id}`}

@@ -51,7 +51,7 @@ export const useCompanies = () => {
     [fetchCompanies],
   );
 
-  const search = async (name?: string) => {
+  const search = useCallback(async (name?: string) => {
     setError(null);
     setSearchLoading(true);
     try {
@@ -62,7 +62,17 @@ export const useCompanies = () => {
     } finally {
       setSearchLoading(false);
     }
-    [];
+  }, []);
+
+  return {
+    companies,
+    loading,
+    pageLoading,
+    error,
+    pagination,
+    searchLoading,
+    goToPageCompanies,
+    fetchCompanies,
+    search,
   };
-  return { companies, loading, pageLoading, error, pagination, goToPageCompanies, fetchCompanies, search };
 };

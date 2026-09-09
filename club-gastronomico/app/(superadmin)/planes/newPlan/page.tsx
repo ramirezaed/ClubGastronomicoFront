@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { usePlan } from "@/hook/useplan";
 import { LoadingState } from "@/app/components/ui/loandigstate";
-import { ArrowLeft, Save, Package, DollarSign, AlignLeft } from "lucide-react";
+import { Save, Package, DollarSign, AlignLeft } from "lucide-react";
 
 export default function RegisterPlanPage() {
   const router = useRouter();

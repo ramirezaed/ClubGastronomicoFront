@@ -19,14 +19,20 @@ export default function PlanDetailPage() {
   const [modalMessage, setModalMessage] = useState("");
 
   //seteo el estado de los campos para modificar
-  const [price, setPrice] = useState("");
-  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState(plan?.price?.toString() || "");
+  const [description, setDescription] = useState(plan?.description || "");
   const [formError, setFormError] = useState("");
 
   //obtiene los datos del plan cuando se renderiz la pagina
   useEffect(() => {
     fetchPlanById(id);
-  }, [id]); //cuando cambia el id del plan se vuele a ejecutar la funcion
+  }, [id, fetchPlanById]); //cuando cambia el id del plan se vuele a ejecutar la funcion
+  useEffect(() => {
+    if (plan) {
+      setDescription(plan.description || "");
+      setPrice(plan.price || "");
+    }
+  }, [plan]);
 
   //fucnion para eliminar un plan
   const handleDelete = async () => {
@@ -37,14 +43,6 @@ export default function PlanDetailPage() {
       setModalOpen(true);
     }
   };
-
-  //funcion se encarga de rellenar los campos del formulario
-  useEffect(() => {
-    if (plan) {
-      setPrice(plan.price.toString());
-      setDescription(plan.description);
-    }
-  }, [plan]);
 
   //funcion para modificar los datos del plan
   const handleUpdate = async () => {

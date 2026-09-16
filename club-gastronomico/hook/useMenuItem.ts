@@ -1,5 +1,5 @@
-import { activate, deactivate, getById, softDeleteItems, updatemenuI } from "@/services/menu.service";
-import { MenuItem, UpdateMenuItems, UpdateMenuResponse } from "@/types/menu.types";
+import { activate, createItems, deactivate, getById, softDeleteItems, updatemenuI } from "@/services/menu.service";
+import { createMenu, MenuItem, UpdateMenuItems, UpdateMenuResponse } from "@/types/menu.types";
 import { useCallback, useState } from "react";
 
 export const useMenuItems = () => {
@@ -7,6 +7,7 @@ export const useMenuItems = () => {
   const [error, setError] = useState<string | null>(null);
   const [menuItems, setMenuItems] = useState<MenuItem | null>(null);
   const [menuItemsUpdate, setMenuItemsUpdate] = useState<UpdateMenuResponse | null>(null);
+  const [createdItem, setCreatedItem] = useState<MenuItem | null>(null);
 
   const fetchById = useCallback(async (id: string) => {
     setLoading(true);
@@ -22,7 +23,6 @@ export const useMenuItems = () => {
       setLoading(false);
     }
   }, []);
-
   const itemsUpdate = useCallback(async (id: string, data: UpdateMenuItems): Promise<UpdateMenuResponse> => {
     setError(null);
     setLoading(true);
@@ -37,7 +37,6 @@ export const useMenuItems = () => {
       setLoading(false);
     }
   }, []);
-
   const activateItems = async (id: string) => {
     setError(null);
     try {
@@ -62,7 +61,6 @@ export const useMenuItems = () => {
     }
     return activateItems(id);
   };
-
   const deleteItems = async (id: string) => {
     setError(null);
     try {
@@ -73,16 +71,29 @@ export const useMenuItems = () => {
     }
   };
 
+  const registerItems = async (data: createMenu) => {
+    setError(null);
+    try {
+      const response = await createItems(data);
+      setCreatedItem(response);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al intentar crear un items");
+    }
+  };
+
   return {
     error,
     loading,
     menuItems,
     menuItemsUpdate,
+    createdItem,
     fetchById,
     itemsUpdate,
     activateItems,
     deactivateItems,
     deleteItems,
     toogglestatus,
+    registerItems,
   };
 };

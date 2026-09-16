@@ -20,8 +20,19 @@ export default withAuth(
     const token = req.nextauth.token;
     const { pathname } = req.nextUrl;
 
+    // SI ESTÁ EN LOGIN, NO HACER NADA (evita el bucle)
+    if (pathname === "/login") {
+      return NextResponse.next();
+    }
+
+    // Si el token tiene error de refresh y NO está en login, redirigir al login
+    if (token?.error === "RefreshAccessTokenError") {
+      const loginUrl = new URL("/login", req.url);
+      return NextResponse.redirect(loginUrl);
+    }
+
     // Landing pública
-    if (pathname === "/" || pathname === "/login") {
+    if (pathname === "/") {
       if (!token) {
         return NextResponse.next();
       }
@@ -29,7 +40,13 @@ export default withAuth(
       return NextResponse.redirect(new URL(ROLE_HOME[role], req.url));
     }
 
-    const role = token?.user.role_name as Role;
+    // Si no hay token, redirigir al login
+    if (!token) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+
+    // Verificar roles
+    const role = token?.user?.role_name as Role;
     const isUnauthorized = (Object.entries(ROLE_PREFIXES) as [Role, string[]][]).some(
       ([r, prefixes]) => r !== role && prefixes.some((p) => pathname.startsWith(p)),
     );
@@ -37,20 +54,24 @@ export default withAuth(
     if (isUnauthorized) {
       return NextResponse.redirect(new URL(ROLE_HOME[role], req.url));
     }
-  },
 
+    return NextResponse.next();
+  },
   {
     callbacks: {
       authorized: ({ token, req }) => {
         const pathname = req.nextUrl.pathname;
+        // Permitir acceso a login y root sin token
         if (pathname === "/" || pathname === "/login") {
           return true;
         }
+        // Para otras rutas, necesita token
         return !!token;
       },
     },
   },
 );
+
 export const config = {
   matcher: [
     "/",

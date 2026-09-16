@@ -1,4 +1,3 @@
-//este componente redirije a la pagina de inicio cuando el token exprira luego de 7 dias
 "use client";
 import { useEffect } from "react";
 import { signOut, useSession } from "next-auth/react";
@@ -7,30 +6,14 @@ export function AuthWatcher() {
   const { data: session } = useSession();
 
   useEffect(() => {
+    // Solo para errores de token - aquí SÍ debe mostrar confirmación
     if (session?.error === "RefreshAccessTokenError") {
-      signOut({ callbackUrl: "/login" });
+      // Esta llamada DEBE mostrar la página de confirmación
+      signOut({
+        redirect: true,
+        callbackUrl: "/",
+      });
     }
   }, [session]);
   return null;
 }
-
-// "use client";
-
-// import { useEffect } from "react";
-// import { signOut, useSession } from "next-auth/react";
-
-// export function AuthWatcher() {
-//   const { data: session } = useSession();
-
-//   useEffect(() => {
-//     if (session?.error === "RefreshAccessTokenError") {
-//       signOut({
-//         redirect: false,
-//       }).finally(() => {
-//         window.location.replace("/login");
-//       });
-//     }
-//   }, [session]);
-
-//   return null;
-// }

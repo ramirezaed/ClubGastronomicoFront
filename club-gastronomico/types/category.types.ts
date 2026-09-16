@@ -7,3 +7,12 @@ export interface categoryResponse {
   name: string;
   is_active: boolean;
 }
+
+export interface categoriesResponse {
+  data: categoriesResponse[];
+}
+
+export interface categoryStatus {
+  id: string;
+  is_active: boolean;
+}

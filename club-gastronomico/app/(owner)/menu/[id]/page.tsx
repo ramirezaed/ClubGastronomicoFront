@@ -8,6 +8,7 @@ import { UpdateMenuItems } from "@/types/menu.types";
 import { StatusToggle } from "@/app/components/ui/togleStatus";
 import { DeleteButton } from "@/app/components/ui/DeleteButton";
 import { ArrowLeft, Package, CheckCircle, XCircle, Clock, Edit, Save, AlertCircle } from "lucide-react";
+import { LoadingState } from "@/app/components/ui/loandigstate";
 
 export default function MenuItemPage() {
   const { id } = useParams<{ id: string }>();
@@ -135,18 +136,9 @@ export default function MenuItemPage() {
     }).format(value);
   };
 
-  // Solo loading inicial
   if (loading) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="text-center">
-          <div className="mx-auto h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-          <p className="mt-4 text-slate-600">Cargando producto...</p>
-        </div>
-      </div>
-    );
+    return <LoadingState title="Cargando.." description="Espere un momento por favor" />;
   }
-
   if (error) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center p-4">

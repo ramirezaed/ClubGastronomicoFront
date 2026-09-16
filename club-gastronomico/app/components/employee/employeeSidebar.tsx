@@ -7,7 +7,7 @@ import { Users, LogOut, Menu, X, User as UserIcon, Building2, Tag, Utensils } fr
 import { useSession } from "next-auth/react";
 import { useAuth } from "@/hook/useAuth";
 
-export function OwnerSideBar() {
+export function EmployeeSideBar() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const { data: session } = useSession();
@@ -15,25 +15,19 @@ export function OwnerSideBar() {
 
   const menuItems = [
     {
-      label: "Personal",
-      icon: Users,
-      href: "/personal",
-      active: pathname === "/personal" || pathname?.startsWith("/personal/"),
-    },
-    {
-      label: "Informes",
+      label: "Menu",
       icon: Building2,
       href: "/dashboard",
       active: pathname === "/reports" || pathname?.startsWith("/dashboard/"),
     },
     {
-      label: "Menu",
+      label: "Mi perfil",
       icon: Utensils,
       href: "/menu",
       active: pathname === "/menu" || pathname?.startsWith("/menu/"),
     },
     {
-      label: "Categorias",
+      label: "Pedidos",
       icon: Tag,
       href: "/categorias",
       active: pathname === "/categorias" || pathname?.startsWith("/categorias/"),

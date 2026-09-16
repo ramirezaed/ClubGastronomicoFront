@@ -27,8 +27,8 @@ export async function createItems(data: createMenu): Promise<MenuItem> {
 }
 
 export async function updatemenuI(id: string, data: UpdateMenuItems): Promise<UpdateMenuResponse> {
-  const { data: responseData } = await api.patch<UpdateMenuResponse>(`/menu-items/${id}`, data);
-  return responseData;
+  const { data: response } = await api.patch<UpdateMenuResponse>(`/menu-items/${id}`, data);
+  return response;
 }
 
 export async function activate(id: string): Promise<deactivateActivateMenuItems> {

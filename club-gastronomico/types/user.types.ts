@@ -59,3 +59,20 @@ export interface changeRol {
     role_id: string;
   };
 }
+
+export interface registerEmploye {
+  name: string;
+  lastname: string;
+  email: string;
+  password: string;
+}
+
+export interface registerEmployeResponse {
+  id: string;
+  name: string;
+  lastname: string;
+  role_id: string;
+  role_name: string;
+  company_id: string;
+  is_active: boolean;
+}

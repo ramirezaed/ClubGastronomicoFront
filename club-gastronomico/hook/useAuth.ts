@@ -17,8 +17,10 @@ export const useAuth = () => {
   };
 
   const logout = async () => {
-    await signOut({ redirect: false });
-    window.location.href = "/";
+    await signOut({
+      redirect: true,
+      callbackUrl: "/",
+    });
   };
 
   return { login, logout };

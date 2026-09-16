@@ -3,6 +3,8 @@ import {
   changeRol,
   getUserParams,
   PaginationResponse,
+  registerEmploye,
+  registerEmployeResponse,
   softDeleteUser,
   User,
 } from "@/types/user.types";
@@ -40,5 +42,10 @@ export async function updateRol(id: string, role_id: string): Promise<changeRol>
 
 export async function searchUser(name?: string, email?: string): Promise<User[]> {
   const { data } = await api.post<User[]>(`/user/search`, { name, email });
+  return data;
+}
+
+export async function registerEmployee(params: registerEmploye): Promise<registerEmployeResponse> {
+  const { data } = await api.post<registerEmployeResponse>(`/user/register`, params); //por body
   return data;
 }

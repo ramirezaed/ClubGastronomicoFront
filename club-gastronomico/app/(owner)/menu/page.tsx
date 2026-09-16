@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useMenu } from "@/hook/useMenu";
 import { getItemsParams, MenuItem } from "@/types/menu.types";
-import { Search, Package, CheckCircle, XCircle, AlertCircle, Eye } from "lucide-react";
+import { Search, Package, CheckCircle, XCircle, AlertCircle, Eye, Plus } from "lucide-react";
 import Pagination from "@/app/components/ui/pagination";
 import { ErrorState } from "@/app/components/ui/errorState";
+import Link from "next/link";
+import { LoadingState } from "@/app/components/ui/loandigstate";
 
 interface FilterState {
   is_active: string;
@@ -62,20 +64,8 @@ export default function MenuPage() {
     return "text-emerald-600";
   };
 
-  // Navegar a detalle
-  const handleViewDetail = (id: string) => {
-    router.push(`/menu/${id}`);
-  };
-
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-10 w-10 border-4 border-blue-600 border-t-transparent"></div>
-          <p className="mt-4 text-slate-600">Cargando menú...</p>
-        </div>
-      </div>
-    );
+    return <LoadingState title="Cargando menu" description="Espere un momento por favor" />;
   }
 
   if (error) {
@@ -105,8 +95,17 @@ export default function MenuPage() {
           </select>
         </div>
 
+        <div className="w-full sm:w-auto">
+          <Link href="/menu/create">
+            <button className="w-full sm:w-auto border border-slate-200 hover:cursor-pointer px-6 py-2 bg-white text-indigo-950 rounded-xl hover:bg-indigo-10 transition-all duration-200 flex items-center justify-center gap-2 shadow-sm hover:shadow-md">
+              <Plus className="w-5 h-5" />
+              <span>Agregar Item</span>
+            </button>
+          </Link>
+        </div>
+
         {/* Buscador - Derecha */}
-        <div className="relative w-full sm:w-72">
+        <div className="relative w-full sm:w-72 ">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
@@ -203,13 +202,13 @@ export default function MenuPage() {
                       </td>
                       <td className="py-3 px-4">
                         <div className="flex items-center justify-center">
-                          <button
-                            onClick={() => handleViewDetail(item.id)}
-                            className="inline-flex items-center hover:cursor-pointer gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg text-xs font-medium transition-colors"
+                          <Link
+                            href={`/menu/${item.id}`}
+                            className="inline-flex items-center hover:cursor-pointer gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700  rounded-lg text-xs font-medium transition-colors"
                           >
-                            <Eye className="w-3.5 h-3.5" />
-                            Ver detalle
-                          </button>
+                            <Eye className="w-4 h-4" />
+                            <span>Ver detalle</span>
+                          </Link>
                         </div>
                       </td>
                     </tr>

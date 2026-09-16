@@ -3,15 +3,23 @@
 import { ErrorState } from "@/app/components/ui/errorState";
 import { LoadingState } from "@/app/components/ui/loandigstate";
 import { useUsers } from "@/hook/useUsers";
-import { Eye, Search, Users as UsersIcon } from "lucide-react";
+import { CheckCircle, Eye, Search, Users as UsersIcon, XCircle, Plus } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Pagination from "@/app/components/ui/pagination";
 import { getUserParams } from "@/types/user.types";
 
+interface FilterState {
+  is_active: string;
+}
+
 export default function Users() {
   const { users, loading, pageLoading, error, fetchUser, search, goToPage, pagination } = useUsers();
   const [searchTerm, setSearchTerm] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState(users);
+  const [filter, setFilter] = useState<FilterState>({
+    is_active: "",
+  });
 
   useEffect(() => {
     fetchUser();
@@ -21,20 +29,29 @@ export default function Users() {
     fetchUser();
   };
 
+  // Filtro local de usuarios por búsqueda y estado
   useEffect(() => {
-    if (searchTerm.trim() === "") return;
-    const timer = setTimeout(() => {
-      const isEmail = searchTerm.includes("@");
-      search(isEmail ? undefined : searchTerm, isEmail ? searchTerm : undefined);
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [searchTerm, search]);
+    let filtered = users;
 
-  useEffect(() => {
-    if (searchTerm.trim() === "") {
-      loadUsers();
+    // Filtrar por estado
+    if (filter.is_active !== "") {
+      const isActive = filter.is_active === "true";
+      filtered = filtered.filter((user) => user.is_active === isActive);
     }
-  }, [searchTerm]);
+
+    // Filtrar por búsqueda (nombre o email)
+    if (searchTerm.trim() !== "") {
+      const search = searchTerm.toLowerCase();
+      filtered = filtered.filter(
+        (user) =>
+          user.name.toLowerCase().includes(search) ||
+          user.lastname?.toLowerCase().includes(search) ||
+          user.email.toLowerCase().includes(search),
+      );
+    }
+
+    setFilteredUsers(filtered);
+  }, [searchTerm, filter, users]);
 
   const getRoleBadgeClass = (roleName: string) => {
     const roleMap: Record<string, string> = {
@@ -62,143 +79,178 @@ export default function Users() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Header con buscador a la derecha */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-linear-to-br from-indigo-500 to-purple-600 rounded-xl shadow-lg shrink-0">
-            <UsersIcon className="w-6 h-6 text-white" />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Empleados</h1>
-            <p className="text-sm text-gray-500">Gestiona los empleados de tu negocio</p>
-          </div>
+    <div className="p-4 sm:p-6">
+      {/* Filtros y Buscador - ESTILO MENÚ */}
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
+        {/* Filtro de Estado - Izquierda */}
+        <div className="w-full sm:w-64">
+          <label className="block text-sm font-semibold text-gray-700 mb-2">Estado</label>
+          <select
+            value={filter.is_active}
+            onChange={(e) =>
+              setFilter({
+                ...filter,
+                is_active: e.target.value,
+              })
+            }
+            className="w-full px-4 py-2 rounded-xl border border-gray-200 bg-white text-gray-700 shadow-xs focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all outline-none"
+          >
+            <option value="">Todos los estados</option>
+            <option value="true">Activos</option>
+            <option value="false">Inactivos</option>
+          </select>
         </div>
 
-        {/* Buscador alineado a la derecha */}
-        <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+        {/* Botón Agregar Usuario */}
+        <div className="w-full sm:w-auto">
+          <Link href="/personal/create">
+            <button className="w-full sm:w-auto border border-slate-200 hover:cursor-pointer px-6 py-2 bg-white text-indigo-950 rounded-xl hover:bg-indigo-10 transition-all duration-200 flex items-center justify-center gap-2 shadow-sm hover:shadow-md">
+              <Plus className="w-5 h-5" />
+              <span>Agregar Usuario</span>
+            </button>
+          </Link>
+        </div>
+
+        {/* Buscador - Derecha */}
+        <div className="relative w-full sm:w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
+            placeholder="Buscar por nombre o email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="Buscar por email..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl border border-gray-200 bg-white/80 backdrop-blur-sm text-gray-700 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500 transition-all duration-200 shadow-sm hover:shadow-md"
+            className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white outline-none"
           />
         </div>
       </div>
 
-      {/* Línea decorativa */}
-      <div className="h-0.5 w-full bg-linear-to-r from-indigo-500 via-purple-500 to-transparent rounded-full mb-6" />
-
       {/* Tabla */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-linear-to-r from-gray-50 to-gray-100/50 border-b border-gray-200">
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Usuario
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Empresa
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Rol
-                </th>
-                <th className="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Estado
-                </th>
-                <th className="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                  Acciones
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {users.map((user) => (
-                <tr key={user.id} className="hover:bg-gray-50/80 transition-colors duration-150 group">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-linear-to-br from-indigo-100 to-purple-100 flex items-center justify-center shrink-0">
-                        <span className="text-xs font-semibold text-indigo-600">
-                          {user.name.charAt(0)}
-                          {user.lastname?.charAt(0) || ""}
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        {filteredUsers.length > 0 ? (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200">
+                    <th className="text-left py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      Nombre
+                    </th>
+                    <th className="text-left py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      Apellido
+                    </th>
+                    <th className="text-left py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th className="text-left py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      Empresa
+                    </th>
+                    <th className="text-left py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      Rol
+                    </th>
+                    <th className="text-center py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      Estado
+                    </th>
+                    <th className="text-center py-3 px-4 text-xs font-medium text-slate-500 uppercase tracking-wider">
+                      Acciones
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredUsers.map((user) => (
+                    <tr key={user.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="py-3 px-4">
+                        <span className="text-sm text-slate-600">{user.name}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="text-sm text-slate-600">{user.lastname}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="text-sm text-slate-600">{user.email}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span className="text-sm text-slate-600">{user.company?.name || "—"}</span>
+                      </td>
+                      <td className="py-3 px-4">
+                        <span
+                          className={`inline-flex px-2 py-0.5 text-xs rounded-full ${getRoleBadgeClass(user.role.name)}`}
+                        >
+                          {getRoleLabel(user.role.name)}
                         </span>
-                      </div>
-                      <span className="font-medium text-gray-900">
-                        {user.name} {user.lastname}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-gray-600">{user.email}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="text-sm text-gray-600">{user.company?.name || "—"}</span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${getRoleBadgeClass(user.role.name)}`}>
-                      {getRoleLabel(user.role.name)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      {user.is_active ? (
-                        <>
-                          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                          <span className="text-sm font-medium text-emerald-600">Activo</span>
-                        </>
-                      ) : (
-                        <>
-                          <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                          <span className="text-sm font-medium text-red-600">Inactivo</span>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <Link
-                      href={`/users/${user.id}`}
-                      className="inline-flex items-center gap-2 px-4 py-2 bg-linear-to-r from-indigo-500 to-purple-600 text-white text-sm font-medium rounded-xl shadow-sm hover:shadow-md hover:scale-105 transition-all duration-200 group-hover:shadow-lg"
-                    >
-                      <Eye className="w-4 h-4" />
-                      <span>Ver</span>
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        {/* Estado vacío */}
-        {users.length === 0 && (
-          <div className="text-center py-16">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
-              <UsersIcon className="w-8 h-8 text-gray-400" />
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center justify-center">
+                          <span
+                            className={`flex items-center gap-1 text-xs font-medium ${
+                              user.is_active ? "text-emerald-600" : "text-red-600"
+                            }`}
+                          >
+                            {user.is_active ? (
+                              <CheckCircle className="w-3.5 h-3.5" />
+                            ) : (
+                              <XCircle className="w-3.5 h-3.5" />
+                            )}
+                            {user.is_active ? "Activo" : "Inactivo"}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="py-3 px-4">
+                        <div className="flex items-center justify-center">
+                          <Link
+                            href={`/personal/${user.id}`}
+                            className="inline-flex items-center hover:cursor-pointer gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-lg text-xs font-medium transition-colors"
+                          >
+                            <Eye className="w-4 h-4" />
+                            <span>Ver detalle</span>
+                          </Link>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <p className="text-sm text-gray-500">No se encontraron empleados</p>
+
+            {/* Footer con paginación */}
+            {users.length > 0 && pagination.totalPages > 0 && (
+              <div className="shrink-0 flex flex-col sm:flex-row items-center justify-center gap-10 px-6 py-5.5 border-t border-slate-200">
+                <Pagination
+                  currentPage={pagination.page}
+                  totalPages={pagination.totalPages}
+                  onPageChange={(page) => {
+                    const params: getUserParams = {};
+                    goToPage(page, params);
+                  }}
+                  isLoading={pageLoading}
+                />
+              </div>
+            )}
+          </>
+        ) : (
+          <div className="py-12 text-center">
+            {searchTerm ? (
+              <>
+                <UsersIcon className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-slate-500 font-medium">No se encontraron resultados</p>
+                <p className="text-sm text-slate-400 mt-1">
+                  No hay usuarios que coincidan con &quot;{searchTerm}&quot;
+                </p>
+              </>
+            ) : filter.is_active !== "" ? (
+              <>
+                <UsersIcon className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-slate-500 font-medium">
+                  No hay usuarios {filter.is_active === "true" ? "activos" : "inactivos"}
+                </p>
+              </>
+            ) : (
+              <>
+                <UsersIcon className="w-12 h-12 text-slate-300 mx-auto mb-3" />
+                <p className="text-slate-500 font-medium">No hay usuarios disponibles</p>
+              </>
+            )}
           </div>
         )}
       </div>
-
-      {/* Paginación */}
-      {users.length > 0 && (
-        <div className="mt-6 flex justify-center">
-          <Pagination
-            currentPage={pagination.page}
-            totalPages={pagination.totalPages}
-            onPageChange={(page) => {
-              const params: getUserParams = {};
-              goToPage(page, params);
-            }}
-            isLoading={pageLoading}
-          />
-        </div>
-      )}
     </div>
   );
 }

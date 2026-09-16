@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useReports } from "@/hook/useReports";
-import { LoadingState } from "@/app/components/ui/loandigstate";
 import { ErrorState } from "@/app/components/ui/errorState";
 import { TrendingUp, Trophy, Clock, XCircle, BarChart3, ArrowUpDown } from "lucide-react";
 import { ReportsTabs } from "@/app/components/reports/ReportsTabs";
@@ -125,10 +124,13 @@ export default function Reports() {
 
   return (
     <div className="h-full bg-linear-to-br from-slate-50 via-white to-slate-100 p-4 sm:p-6 lg:p-8 overflow-hidden">
-      <div className="relative z-10 max-w-7xl mx-auto">
-        {loading && <LoadingState />}
-
-        <ReportsTabs tabs={tabs} activeTab={activeTab} onTabChange={(tabId) => setActiveTab(tabId as TabId)}>
+      <div className="relative z-10 max-w-7xl mx-auto h-full flex flex-col">
+        <ReportsTabs
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={(tabId) => setActiveTab(tabId as TabId)}
+          className="flex-1 min-h-0" // ← Agregar className aquí
+        >
           {activeTab === "ventas" && (
             <SalesReport
               dailySales={dailySales}

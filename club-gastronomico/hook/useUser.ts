@@ -1,5 +1,5 @@
-import { activate, deactivate, getById, softDelete, updateRol } from "@/services/user.service";
-import { User } from "@/types/user.types";
+import { activate, deactivate, getById, registerEmployee, softDelete, updateRol } from "@/services/user.service";
+import { registerEmploye, registerEmployeResponse, User } from "@/types/user.types";
 import { useCallback, useState } from "react";
 /**
  * Hook personalizado para gestionar las acciones individuales de un usuario.
@@ -10,6 +10,7 @@ export const useUser = () => {
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [employee, setEmployee] = useState<registerEmployeResponse | null>(null);
 
   //obtener usuario por id
   const fetchById = useCallback(async (id: string) => {
@@ -84,10 +85,26 @@ export const useUser = () => {
       setLoading(false);
     }
   };
+
+  const addEmployee = async (data: registerEmploye) => {
+    setError(null);
+    setLoading(true);
+    try {
+      const response = await registerEmployee(data);
+      setEmployee(response);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al registrar un nuevo empleado");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     loading,
     error,
     user,
+    employee,
     fetchById,
     activateUser,
     deactivateUser,
@@ -95,5 +112,6 @@ export const useUser = () => {
     updating,
     deleteUser,
     updateRolUser,
+    addEmployee,
   };
 };

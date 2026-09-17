@@ -1,5 +1,5 @@
-import { getById } from "@/services/order.service";
-import { Order } from "@/types/ordertypes";
+import { cancelar, getById } from "@/services/order.service";
+import { CancelOrderPayload, Order } from "@/types/ordertypes";
 import { useCallback, useState } from "react";
 
 export const useOrder = () => {
@@ -21,10 +21,20 @@ export const useOrder = () => {
     }
   }, []);
 
+  const cancelarOrden = async (id: string, params: CancelOrderPayload) => {
+    setError(null);
+    try {
+      const response = await cancelar(id, params);
+      return response;
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "error al cancelar la orden");
+    }
+  };
   return {
     loading,
     order,
     error,
     fetchById,
+    cancelarOrden,
   };
 };

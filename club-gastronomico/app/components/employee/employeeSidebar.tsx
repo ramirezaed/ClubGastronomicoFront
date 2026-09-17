@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Users, LogOut, Menu, X, User as UserIcon, Building2, Tag, Utensils } from "lucide-react";
+import { LogOut, Menu, X, User as UserIcon, Tag, Utensils } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useAuth } from "@/hook/useAuth";
 
@@ -15,10 +15,10 @@ export function EmployeeSideBar() {
 
   const menuItems = [
     {
-      label: "Menu",
-      icon: Building2,
-      href: "/dashboard",
-      active: pathname === "/reports" || pathname?.startsWith("/dashboard/"),
+      label: "Pedidos",
+      icon: Tag,
+      href: "/orders",
+      active: pathname === "/orders" || pathname?.startsWith("/orders/"),
     },
     {
       label: "Mi perfil",
@@ -27,7 +27,7 @@ export function EmployeeSideBar() {
       active: pathname === "/menu" || pathname?.startsWith("/menu/"),
     },
     {
-      label: "Pedidos",
+      label: "Cancelaciones",
       icon: Tag,
       href: "/categorias",
       active: pathname === "/categorias" || pathname?.startsWith("/categorias/"),

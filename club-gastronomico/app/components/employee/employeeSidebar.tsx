@@ -23,14 +23,8 @@ export function EmployeeSideBar() {
     {
       label: "Mi perfil",
       icon: Utensils,
-      href: "/menu",
-      active: pathname === "/menu" || pathname?.startsWith("/menu/"),
-    },
-    {
-      label: "Cancelaciones",
-      icon: Tag,
-      href: "/categorias",
-      active: pathname === "/categorias" || pathname?.startsWith("/categorias/"),
+      href: "/me",
+      active: pathname === "/me" || pathname?.startsWith("/me/"),
     },
   ];
 

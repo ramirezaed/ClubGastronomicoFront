@@ -7,11 +7,8 @@ import { useOrders } from "@/hook/useOrders";
 import { Order, OrderItem, ORDER_COLUMNS, OrderStatus, CancelOrderPayload } from "@/types/ordertypes";
 import { LoadingState } from "@/app/components/ui/loandigstate";
 import { ErrorState } from "@/app/components/ui/errorState";
-import { ModalConfirmacion } from "@/app/components/ui/ModalConfirmacion";
 import { CancelOrderModal } from "@/app/components/ui/CancelOrderModal";
 import { useOrder } from "@/hook/useOrder";
-
-/* ---------------------------------- Config ---------------------------------- */
 
 const COLUMN_STYLES: Record<OrderStatus, { header: string; dot: string; ring: string; cardBorder: string }> = {
   Pendiente: {
@@ -53,16 +50,21 @@ const buildEmptyBoard = (): Record<OrderStatus, Order[]> => ({
 
 export default function OrdersPage() {
   const { orders, loading, error, fetchOrders } = useOrders();
-  const { cancelarOrden } = useOrder();
+  const { cancelarOrden, changeStatusOrder } = useOrder();
   const [draggedOrder, setDraggedOrder] = useState<Order | null>(null);
   const [dragOverColumn, setDragOverColumn] = useState<OrderStatus | null>(null);
   const [selectedDate, setSelectedDate] = useState(() => toDateInputValue(new Date()));
   const [overrides, setOverrides] = useState<Record<string, OrderStatus>>({});
   const [orderToCancel, setOrderToCancel] = useState<Order | null>(null);
-  const [showNewOrder, setShowNewOrder] = useState(false);
 
   useEffect(() => {
     fetchOrders({ limit: 100 });
+
+    const interval = setInterval(() => {
+      fetchOrders({ limit: 100 }, false, true);
+    }, 5000);
+
+    return () => clearInterval(interval);
   }, [fetchOrders]);
 
   const board = useMemo<Record<OrderStatus, Order[]>>(() => {
@@ -76,32 +78,56 @@ export default function OrdersPage() {
   }, [orders, selectedDate, overrides]);
 
   const handleDrop = useCallback(
-    (e: React.DragEvent, target: OrderStatus) => {
+    async (e: React.DragEvent, target: OrderStatus) => {
       e.preventDefault();
       setDragOverColumn(null);
       if (!draggedOrder) return;
 
-      const from = (overrides[draggedOrder.id] ?? draggedOrder.status) as OrderStatus;
+      const order = draggedOrder;
+      const from = (overrides[order.id] ?? order.status) as OrderStatus;
+
+      // Seguridad extra: si la orden viene de Completo, no se puede mover
+      if (from === "Completo") {
+        setDraggedOrder(null);
+        return;
+      }
+
       const adjacent = Math.abs(ORDER_COLUMNS.indexOf(target) - ORDER_COLUMNS.indexOf(from)) === 1;
 
-      if (adjacent) {
-        setOverrides((prev) => ({ ...prev, [draggedOrder.id]: target }));
-      }
       setDraggedOrder(null);
+      if (!adjacent || from === target) return;
+
+      setOverrides((prev) => ({ ...prev, [order.id]: target }));
+
+      const response = await changeStatusOrder(order.id, target);
+
+      if (!response) {
+        // Rollback si falla
+        setOverrides((prev) => {
+          const next = { ...prev };
+          delete next[order.id];
+          return next;
+        });
+      }
     },
-    [draggedOrder, overrides],
+    [draggedOrder, overrides, changeStatusOrder],
   );
 
-  /* --------------------------------- Acciones -------------------------------- */
+  const handleDragEnd = useCallback(() => {
+    setDraggedOrder(null);
+    setDragOverColumn(null);
+  }, []);
 
   const askCancel = useCallback((order: Order) => setOrderToCancel(order), []);
 
   const confirmCancel = useCallback(
-    (id: string, payload: CancelOrderPayload) => cancelarOrden(id, payload),
-    [cancelarOrden],
+    async (id: string, payload: CancelOrderPayload) => {
+      await cancelarOrden(id, payload);
+      setOrderToCancel(null);
+      await fetchOrders({ limit: 100 });
+    },
+    [cancelarOrden, fetchOrders],
   );
-
-  /* ---------------------------------- Render --------------------------------- */
 
   if (loading) return <LoadingState title="Cargando Ordenes" description="Espere un momento por favor" />;
 
@@ -109,23 +135,20 @@ export default function OrdersPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
-      {/* Botón Nuevo pedido */}
-      <div className="mb-4 flex justify-center">
-        <button
-          type="button"
-          onClick={() => setShowNewOrder(true)}
-          className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700"
-        >
-          <Plus className="h-4 w-4" />
-          Nuevo pedido
-        </button>
-      </div>
-
       {/* Header */}
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Órdenes</h1>
-          <p className="mt-1 text-sm text-gray-500">Arrastra las órdenes entre columnas para actualizar su estado.</p>
+          <h1 className="text-2xl font-bold text-gray-900">Lista De Pedidos</h1>
+          <p className="mt-1 text-sm text-gray-500">Arrastra las órdenes para actualizar su estado.</p>
+        </div>
+        {/* Botón Nuevo pedido */}
+        <div className="w-full sm:w-auto">
+          <Link href="/orders/create">
+            <button className="w-full sm:w-auto border border-gray-300 hover:cursor-pointer px-5 py-1.5 bg-white text-indigo-950 rounded-xl hover:bg-indigo-10 transition-all duration-200 flex items-center justify-center gap-2 shadow-sm hover:shadow-md">
+              <Plus className="w-5 h-5" />
+              <span>Nuevo Pedido</span>
+            </button>
+          </Link>
         </div>
 
         <div className="flex items-center gap-2">
@@ -185,12 +208,10 @@ export default function OrdersPage() {
                     order={order}
                     borderClass={styles.cardBorder}
                     canCancel={canCancel}
+                    canDrag={column !== "Completo"}
                     isDragging={draggedOrder?.id === order.id}
                     onDragStart={setDraggedOrder}
-                    onDragEnd={() => {
-                      setDraggedOrder(null);
-                      setDragOverColumn(null);
-                    }}
+                    onDragEnd={handleDragEnd}
                     onCancel={askCancel}
                   />
                 ))}
@@ -207,45 +228,7 @@ export default function OrdersPage() {
       </div>
 
       {/* Modal: Cancelar */}
-      <CancelOrderModal
-        order={orderToCancel}
-        onClose={() => setOrderToCancel(null)}
-        onConfirm={confirmCancel}
-        onSuccess={() => fetchOrders({ limit: 100 })}
-      />
-
-      {/* Modal: Nuevo pedido (placeholder) */}
-      <ModalConfirmacion
-        open={showNewOrder}
-        onClose={() => setShowNewOrder(false)}
-        title="Nuevo pedido"
-        maxWidth="lg"
-        footer={
-          <>
-            <button
-              type="button"
-              onClick={() => setShowNewOrder(false)}
-              className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-50"
-            >
-              Cancelar
-            </button>
-            <button
-              type="button"
-              disabled
-              title="Pendiente: conectar hook de registro"
-              className="rounded-lg bg-blue-600 px-3 py-1.5 text-sm font-medium text-white opacity-50"
-            >
-              Registrar pedido
-            </button>
-          </>
-        }
-      >
-        <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-6 text-center">
-          <Plus className="mx-auto mb-2 h-8 w-8 text-slate-300" />
-          <p className="text-sm font-medium text-slate-600">Formulario de nuevo pedido</p>
-          <p className="mt-1 text-xs text-slate-400">Aquí irá el formulario cuando esté listo el hook de registro.</p>
-        </div>
-      </ModalConfirmacion>
+      <CancelOrderModal order={orderToCancel} onClose={() => setOrderToCancel(null)} onConfirm={confirmCancel} />
     </div>
   );
 }
@@ -256,6 +239,7 @@ interface OrderCardProps {
   order: Order;
   borderClass: string;
   canCancel: boolean;
+  canDrag: boolean;
   isDragging: boolean;
   onDragStart: (order: Order) => void;
   onDragEnd: () => void;
@@ -266,6 +250,7 @@ const OrderCard = memo(function OrderCard({
   order,
   borderClass,
   canCancel,
+  canDrag,
   isDragging,
   onDragStart,
   onDragEnd,
@@ -284,12 +269,12 @@ const OrderCard = memo(function OrderCard({
 
   return (
     <div
-      draggable
-      onDragStart={() => onDragStart(order)}
-      onDragEnd={onDragEnd}
-      className={`cursor-grab rounded-lg border border-l-4 border-gray-200 bg-white p-3 transition-all hover:shadow-sm active:cursor-grabbing ${borderClass} ${
-        isDragging ? "opacity-40" : "opacity-100"
-      }`}
+      draggable={canDrag}
+      onDragStart={canDrag ? () => onDragStart(order) : undefined}
+      onDragEnd={canDrag ? onDragEnd : undefined}
+      className={`rounded-lg border border-l-4 border-gray-200 bg-white p-3 transition-all hover:shadow-sm ${
+        canDrag ? "cursor-grab active:cursor-grabbing" : "cursor-default"
+      } ${borderClass} ${isDragging ? "opacity-40" : "opacity-100"}`}
     >
       <div className="mb-2 flex items-center justify-between">
         <span className="text-xs font-semibold text-gray-500">#{order.order_number}</span>

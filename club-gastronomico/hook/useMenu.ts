@@ -57,7 +57,9 @@ export const useMenu = () => {
     menu,
     pageLoading,
     pagination,
+
     fetchMenu,
     goToPage,
+    // cargarProductos,
   };
 };

@@ -9,7 +9,7 @@ export interface categoryResponse {
 }
 
 export interface categoriesResponse {
-  data: categoriesResponse[];
+  data: categoryResponse[];
 }
 
 export interface categoryStatus {

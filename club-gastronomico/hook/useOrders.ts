@@ -15,32 +15,35 @@ export const useOrders = () => {
     totalPages: 1,
   });
 
-  const fetchOrders = useCallback(async (params?: getItemsParams, pageChange = false) => {
+  const fetchOrders = useCallback(async (params?: getItemsParams, pageChange = false, background = false) => {
     if (pageChange) {
       setPageLoading(true);
-    } else {
+    } else if (!background) {
       setLoading(true);
     }
+
     setError(null);
+
     try {
       const response = await getOrders(params);
 
       setOrders(response.data);
 
-      if (response) {
-        setPagination({
-          page: response.page || 1,
-          limit: response.limit || 10,
-          total: response.total || 0,
-          totalPages: response.totalPages || 1,
-        });
-      }
+      setPagination({
+        page: response.page || 1,
+        limit: response.limit || 10,
+        total: response.total || 0,
+        totalPages: response.totalPages || 1,
+      });
 
       return response;
     } catch (error) {
-      setError(error instanceof Error ? error.message : "Error al obtener el menú");
+      setError(error instanceof Error ? error.message : "Error al obtener las órdenes");
     } finally {
-      setLoading(false);
+      if (!background) {
+        setLoading(false);
+      }
+
       setPageLoading(false);
     }
   }, []);

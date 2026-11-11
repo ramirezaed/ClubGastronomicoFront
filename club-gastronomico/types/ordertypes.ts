@@ -8,11 +8,21 @@ export interface Order {
   created_at: Date;
 }
 
+export interface RegisterOrder {
+  customer: OrderCustomer;
+  items: RegisterOrderItems[];
+}
+export interface RegisterOrderItems {
+  menuItems_id: string;
+  quantity: number;
+}
+
 export interface OrderCustomer {
   name: string;
   address: string;
   phone: string;
-  telegram_username: string;
+  telegram_id?: string;
+  telegram_username?: string;
 }
 export interface OrderItem {
   items_name: string;
@@ -65,4 +75,18 @@ export type CancelReason = keyof typeof CANCEL_REASONS;
 export interface CancelOrderPayload {
   reason: string;
   custom_reason?: string;
+}
+
+export interface changeStatusResponse {
+  id: string;
+  status: string;
+}
+
+export interface RegisterOrder {
+  customer: OrderCustomer;
+  items: RegisterOrderItems[];
+}
+export interface RegisterOrderItems {
+  menuItems_id: string;
+  quantity: number;
 }

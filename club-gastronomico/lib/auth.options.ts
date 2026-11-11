@@ -21,13 +21,9 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
       ...token,
       accessToken: data.accessToken,
       accessTokenExpires: expiration,
-      error: undefined, // limpiamos error si el refresh ahora funcionó
+      error: undefined,
     };
   } catch (error) {
-    // IMPORTANTE: no tirar excepción acá.
-    // Si explota, getServerSession() en el layout raíz crashea el render.
-    // En cambio, devolvemos el token marcado con error para que
-    // el cliente (AuthWatcher) haga signOut de forma controlada.
     return {
       ...token,
       error: "RefreshAccessTokenError",
